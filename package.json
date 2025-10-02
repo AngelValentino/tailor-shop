@@ -1,0 +1,18 @@
+{
+  "name": "tailor-shop",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.8",
+    "vite-plugin-restart": "^1.0.0"
+  }
+}

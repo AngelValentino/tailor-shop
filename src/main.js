@@ -1,15 +1,58 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { DRACOLoader } from 'three/examples/jsm/Addons.js';
-import { GUI } from 'lil-gui';
+import GUI from 'lil-gui';
 const gui = new GUI();
 
+const debug = {
+  ambientColor: 0xbfdfff,
+  ambientIntensity: 2,
+  pointColor: 0xffe0b0,
+  pointIntensity: 10
+};
 
-const canvas = document.querySelector('canvas.webgl');
+class PointerControls {
+  constructor(camera, options = {}) {
+    this.camera = camera;
+    this.options = options;
 
-const scene = new THREE.Scene();
+    this.maxOffset = options.maxOffset || { x: 0.1, y: 0.05 };
+    this.smoothing = options.smoothing || 0.05;
+    this.basePosition = options.basePosition || { x: 0, y: 0 };
 
+    this.cursor = {
+      x: 0,
+      y: 0
+    }
 
+    window.addEventListener('mousemove', this.onMouseMove.bind(this));
+  }
+
+  onMouseMove(e) {
+    this.cursor.x = e.clientX / window.innerWidth - 0.5;
+    this.cursor.y = - (e.clientY / window.innerHeight - 0.5);
+  }
+
+  update() {
+    const targetX = this.basePosition.x + this.cursor.x * this.maxOffset.x;
+    const targetY = this.basePosition.y + this.cursor.y * this.maxOffset.y;
+
+    this.camera.position.lerp(
+      new THREE.Vector3(targetX, targetY, this.camera.position.z),
+      this.smoothing
+    );
+  }
+}
+
+function setViewport(camera, renderer) {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+}
+
+// loaders
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('/draco/');
 
@@ -27,40 +70,35 @@ gltfLoader.load(
         }
     });
     scene.add(gltf.scene);
-  },
-  () => {
-    console.log('progress');
-  },
-  (error) => {
-    console.log(error);
   }
 );
 
-const params = {
-  ambientColor: 0xbfdfff,
-  ambientIntensity: 2,
-  pointColor: 0xffe0b0,
-  pointIntensity: 10
-};
+// scene
+const scene = new THREE.Scene();
 
-// Ambient Light
-const ambientLight = new THREE.AmbientLight(params.ambientColor, params.ambientIntensity);
+// camera
+const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 1, 4);
+scene.add(camera);
+
+// renderer
+const canvas = document.querySelector('canvas.webgl');
+const renderer = new THREE.WebGLRenderer({
+  canvas: canvas
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+
+// light
+const ambientLight = new THREE.AmbientLight(debug.ambientColor, debug.ambientIntensity);
 scene.add(ambientLight);
 
-gui.addColor(params, 'ambientColor').onChange(value => {
-  ambientLight.color.set(value);
-});
-gui.add(params, 'ambientIntensity', 0, 4).onChange(value => {
-  ambientLight.intensity = value;
-});
-
-// Point Light
-const pointLight = new THREE.PointLight(params.pointColor, params.pointIntensity, 10);
+const pointLight = new THREE.PointLight(debug.pointColor, debug.pointIntensity, 10);
 pointLight.position.set(0, 2, 0);
 scene.add(pointLight);
 pointLight.castShadow = true;
 
-// Shadow settings to fix acne/artifacts
 pointLight.shadow.mapSize.width = 1024;
 pointLight.shadow.mapSize.height = 1024;
 pointLight.shadow.bias = -0.001; // reduce shadow acne
@@ -68,69 +106,42 @@ pointLight.shadow.normalBias = 0.05; // helps on glancing angles
 pointLight.shadow.camera.near = 0.5;
 pointLight.shadow.camera.far = 20;
 
-gui.addColor(params, 'pointColor').onChange(value => {
-  pointLight.color.set(value);
+// controls
+const pointerControls = new PointerControls(camera, { 
+  maxOffset: { x: 0.1, y: 0.05 },
+  basePosition: { x: 0, y: 1 },
+  smoothing: 0.05
 });
-gui.add(params, 'pointIntensity', 0, 10).onChange(value => {
-  pointLight.intensity = value;
-});
 
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2);
-//scene.add(pointLightHelper);
+// debug
+gui
+  .addColor(debug, 'ambientColor')
+  .onChange(value => {
+    ambientLight.color.set(value);
+  });
 
-gui.add(pointLight.position, 'x', -10, 10);
-gui.add(pointLight.position, 'y', 0, 10);
-gui.add(pointLight.position, 'z', -10, 10);
+gui
+  .add(ambientLight, 'intensity', 0, 5);
+
+gui
+  .addColor(debug, 'pointColor')
+  .onChange(value => {
+    pointLight.color.set(value);
+  });
+
+gui
+  .add(pointLight, 'intensity', 0, 20);
 
 
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight
-};
-
+// events
 window.addEventListener('resize', () => {
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
-
-  camera.aspect = sizes.width / sizes.height;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
-
-const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100);
-camera.position.set(0, 1, 4);
-scene.add(camera);
-
-
-// Cursor-based parallax
-let cursor = { x: 0, y: 0 };
-window.addEventListener('mousemove', (event) => {
- cursor.x = (event.clientX / window.innerWidth - 0.5);
-  cursor.y = (event.clientY / window.innerHeight - 0.5);
+  setViewport(camera, renderer);
 });
 
 
-const maxOffset = { x: 0.1, y: 0.05 }; // limit movement
-
-const renderer = new THREE.WebGLRenderer({
-  canvas: canvas
-});
-renderer.setSize(sizes.width, sizes.height);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-
+// render loop
 function renderLoop() {
-  // Calculate target camera position based on cursor
-  const targetX = cursor.x * maxOffset.x;
-  const targetY = 1 - cursor.y * maxOffset.y; // base height 1
-  // Smoothly interpolate
-  camera.position.x += (targetX - camera.position.x) * 0.05;
-  camera.position.y += (targetY - camera.position.y) * 0.05;
-
-  // camera.lookAt(0, 1, 0);
-
+  pointerControls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(renderLoop);
 }

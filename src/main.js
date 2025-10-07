@@ -4,12 +4,22 @@ import { DRACOLoader } from 'three/examples/jsm/Addons.js';
 import GUI from 'lil-gui';
 const gui = new GUI();
 
+let mannequins = {
+  left: [],
+  right: []
+};
+
+let allMeshes = [];
+let lastHovered = null;
+
 const debug = {
   ambientColor: 0xbfdfff,
   ambientIntensity: 2,
   pointColor: 0xffe0b0,
   pointIntensity: 10
 };
+
+const mouse = new THREE.Vector2();
 
 class PointerControls {
   constructor(camera, options = {}) {
@@ -52,6 +62,34 @@ function setViewport(camera, renderer) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 }
 
+function handleMannequinHover() {
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(allMeshes);
+
+  if (intersects.length) {
+    const hit = intersects[0].object;
+
+    if (hit !== lastHovered) {
+      // If there was a previously hovered object, trigger "mouse leave" logic
+      if (lastHovered) {
+        console.log(`Mouse left: ${lastHovered.name}`);
+        lastHovered.material.emissive.setHex(0x000000);
+      }
+
+      // Trigger "mouse enter" logic for the new hit object
+      console.log(`Mouse entered: ${hit.name}`);
+      hit.material.emissive.setHex(0xff0000);
+      lastHovered = hit;
+    }
+  }
+  // If no intersections are found but there was a previously hovered object
+  else if (lastHovered) {
+    console.log(`Mouse left: ${lastHovered.name}`);
+    lastHovered.material.emissive.setHex(0x000000);
+    lastHovered = null;
+  }
+}
+
 // loaders
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('/draco/');
@@ -67,9 +105,20 @@ gltfLoader.load(
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
+          child.material.side = THREE.FrontSide; 
         }
     });
     scene.add(gltf.scene);
+
+    mannequins.left = scene.getObjectByName('mannequins-left').children;
+    mannequins.right = scene.getObjectByName('mannequins-right').children;
+
+    mannequins.left.forEach(m => m.userData.side = 'left');
+    mannequins.right.forEach(m => m.userData.side = 'right');
+
+    allMeshes.push(...mannequins.left, ...mannequins.right);
+
+    console.log(mannequins);
   }
 );
 
@@ -113,6 +162,9 @@ const pointerControls = new PointerControls(camera, {
   smoothing: 0.05
 });
 
+// raycaster
+const raycaster = new THREE.Raycaster();
+
 // debug
 gui
   .addColor(debug, 'ambientColor')
@@ -132,16 +184,30 @@ gui
 gui
   .add(pointLight, 'intensity', 0, 20);
 
-
 // events
 window.addEventListener('resize', () => {
   setViewport(camera, renderer);
 });
 
+window.addEventListener('mousemove', e => {
+  mouse.x = e.clientX / window.innerWidth * 2 - 1;
+  mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
+});
+
+window.addEventListener('click', () => {
+  if (lastHovered) {
+    console.log(`Clicked ${lastHovered.userData.side} mannequin!`, lastHovered.name);
+  }
+});
 
 // render loop
 function renderLoop() {
   pointerControls.update();
+
+  if (allMeshes.length) {
+    handleMannequinHover();
+  }
+
   renderer.render(scene, camera);
   requestAnimationFrame(renderLoop);
 }

@@ -4,13 +4,42 @@
 }
 
 html,
-body {
+body,
+main {
   overflow: hidden;
+}
+
+main { 
+  position: fixed; 
+  inset: 0; 
+  border: 2px solid red; 
+}
+
+.ui-container {
+  margin: 0 auto;
+  max-width: 1980px; 
+  position: absolute;
+  inset: 0;
+  border: 2px solid blue;
 }
 
 .webgl {
   position: fixed;
+  outline: none;
   top: 0;
   left: 0;
-  outline: none;
+  z-index: 0;
 }
+
+button {
+  padding: 8px 12px;
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  display: none;
+}
+
+button.visible {
+  display: inline-block;
+}
+

@@ -4,13 +4,27 @@ import { DRACOLoader } from 'three/examples/jsm/Addons.js';
 import GUI from 'lil-gui';
 const gui = new GUI();
 
-let mannequins = {
+const viewMoreBtn = document.getElementById('view-more-btn');
+
+const mannequins = {
   left: [],
   right: []
 };
 
+const roomBounds = {
+  width: 0,
+  depth: 0,
+  height: 0,
+  cols: 8,
+  rows: 8,
+  gridY: 0.01
+}
+
+let roomBox = null;
+
 let allMeshes = [];
 let lastHovered = null;
+let currentActiveMannequin = null;
 
 const debug = {
   ambientColor: 0xbfdfff,
@@ -113,14 +127,70 @@ gltfLoader.load(
     mannequins.left = scene.getObjectByName('mannequins-left').children;
     mannequins.right = scene.getObjectByName('mannequins-right').children;
 
-    mannequins.left.forEach(m => m.userData.side = 'left');
-    mannequins.right.forEach(m => m.userData.side = 'right');
+    mannequins.left.forEach(mesh => mesh.userData.side = 'left');
+    mannequins.right.forEach(mesh => mesh.userData.side = 'right');
 
     allMeshes.push(...mannequins.left, ...mannequins.right);
 
     console.log(mannequins);
+
+    const roomMesh = gltf.scene.getObjectByName('room');
+    roomBox = new THREE.Box3().setFromObject(roomMesh);
+
+    roomBounds.width = roomBox.max.x - roomBox.min.x;
+    roomBounds.depth = roomBox.max.z - roomBox.min.z;
+    roomBounds.height = roomBox.max.y - roomBox.min.y;
+
+    roomBounds.cellWidth = roomBounds.width / roomBounds.cols;
+    roomBounds.cellDepth = roomBounds.depth / roomBounds.rows;
+
+    drawRoomGrid(roomBox);
   }
 );
+
+function drawRoomGrid(roomBox) {
+  // size along X and Z
+  const width = roomBounds.width;
+  const depth = roomBounds.depth;
+
+  // number of divisions
+  const divisionsX = roomBounds.cols;
+  const divisionsZ = roomBounds.rows;
+
+  // GridHelper draws square grids, so pick the larger dimension for size
+  const size = Math.max(width, depth);
+  const divisions = Math.max(divisionsX, divisionsZ);
+
+  // create the grid
+  const gridHelper = new THREE.GridHelper(size, divisions, 0xff0000, 0x00ff00);
+  gridHelper.position.set(
+    (roomBox.min.x + roomBox.max.x) / 2,
+    roomBounds.gridY, // y-position
+    (roomBox.min.z + roomBox.max.z) / 2
+  );
+
+  scene.add(gridHelper);
+}
+
+const gridOrigin = {
+  x: -roomBounds.width / 2,
+  z: -roomBounds.depth / 2,
+  y: 0
+};
+
+function getGridPosition(col, row, options = {}) {
+  // options.flipRows: when true, row=0 is front; when false, row=0 is back.
+  if (!roomBox) return null;
+
+  // If your model's orientation is reversed, you can flip rows by options.flipRows = true
+  const rowIndex = options.flipRows ? (roomBounds.rows - 1 - row) : row;
+
+  const x = roomBox.min.x + roomBounds.cellWidth * (col + 0.5);
+  const z = roomBox.min.z + roomBounds.cellDepth * (rowIndex + 0.5);
+  const y = 0; // floor
+
+  return { x, y, z };
+}
 
 // scene
 const scene = new THREE.Scene();
@@ -194,9 +264,100 @@ window.addEventListener('mousemove', e => {
   mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
 });
 
+function mannequinsLoaded() {
+  if (mannequins.left.length || mannequins.right.length) {
+    return true;
+  }
+  return false;
+}
+
+
+function hideMannequins(sideToHide) {
+  const hidden = [];
+  allMeshes = allMeshes.filter(mesh => {
+    if (mesh.userData.side === sideToHide) {
+      mesh.visible = false;
+      hidden.push(mesh);
+      return false; // remove from allMeshes
+    }
+    return true; // keep in allMeshes
+  });
+  return hidden;
+}
+
+function showMannequins(hidden) {
+  hidden.forEach(mesh => {
+    mesh.visible = true;
+    allMeshes.push(mesh);
+  });
+}
+
+function createMeshCloneHandler() {
+  console.log(currentActiveMannequin);
+
+  console.log(currentActiveMannequin.userData.side)
+  console.log(mannequinsLoaded())
+
+  if (mannequinsLoaded()) {
+    if (currentActiveMannequin.userData.side === 'left') {
+
+      console.log(allMeshes)
+      //hide right
+      const hiddenMeshes = hideMannequins('right');
+      //clone current elemnt to right
+      const clonedMannequin = currentActiveMannequin.clone();
+      clonedMannequin.geometry = currentActiveMannequin.geometry.clone();
+      clonedMannequin.material = currentActiveMannequin.material.clone();
+
+      scene.add(clonedMannequin);
+
+      const gridPos = getGridPosition(roomBounds.cols - 2, 1, {flipRows: false});
+      clonedMannequin.position.x = gridPos.x;
+      clonedMannequin.position.z = gridPos.z;
+      clonedMannequin.rotation.set(0, 0, 0); 
+
+      clonedMannequin.updateMatrixWorld(true);
+
+      console.log(gridPos)
+  
+    } 
+    else {
+      const hiddenMeshes = hideMannequins('left');
+
+      const clonedMannequin = currentActiveMannequin.clone();
+      clonedMannequin.geometry = currentActiveMannequin.geometry.clone();
+      clonedMannequin.material = currentActiveMannequin.material.clone();
+
+      scene.add(clonedMannequin);
+
+      const gridPos = getGridPosition(1, 1, {flipRows: false});
+      clonedMannequin.position.x = gridPos.x;
+      clonedMannequin.position.z = gridPos.z;
+      clonedMannequin.rotation.set(0, 0, 0); 
+
+      clonedMannequin.updateMatrixWorld(true);
+
+      console.log(gridPos)
+    }
+  }
+}
+
+function toggleUiBtn() {
+  viewMoreBtn.classList.add('visible');
+
+  if (viewMoreBtn.classList.contains('visible')) {
+    viewMoreBtn.addEventListener('click', createMeshCloneHandler);
+  } 
+  else {
+    viewMoreBtn.removeEventListener('click', createMeshCloneHandler);
+  }
+}
+
 window.addEventListener('click', () => {
   if (lastHovered) {
     console.log(`Clicked ${lastHovered.userData.side} mannequin!`, lastHovered.name);
+    currentActiveMannequin = lastHovered;
+    toggleUiBtn();
   }
 });
 

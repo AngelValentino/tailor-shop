@@ -2,12 +2,13 @@ import * as THREE from 'three';
 
 
 export default class TailorShopExperience {
-  constructor(scene, camera, mannequinManager, hoverControls) {
+  constructor(scene, camera, mannequinManager, hoverControls, mannequinInfoPanel) {
     this.scene = scene;
     this.camera = camera;
 
     this.mannequinManager = mannequinManager;
     this.hoverControls = hoverControls;
+    this.mannequinInfoPanel = mannequinInfoPanel;
 
     this.roomBounds = {
       width: 0,
@@ -87,12 +88,25 @@ export default class TailorShopExperience {
     const targetRow = side === 'left' ? 1 : 1;
     const gridPos = this.getGridPosition(targetCol, targetRow)
     
-    this.mannequinManager.hideSide(opposite);
     const cloned = this.mannequinManager.cloneMannequin(currentActiveMannequin);
+    if (!cloned) return;
+    console.log('hide', opposite);
+    this.mannequinManager.hideSide(opposite);
+    console.log('position new clone')
     cloned.position.x = gridPos.x;
     cloned.position.z = gridPos.z;
     cloned.rotation.set(0, 0, 0); 
 
     cloned.updateMatrixWorld(true);
+  }
+
+  restoreOppositeSide() {
+    // delete the curernt clone
+    this.mannequinManager.deleteActiveClone();
+    // set up the stored hidden meshes
+    this.mannequinManager.showHidden();
+    // hide UI
+    this.mannequinInfoPanel.hideRestoreBtn();
+    console.log('restored opposite')
   }
 }

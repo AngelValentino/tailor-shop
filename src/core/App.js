@@ -8,6 +8,7 @@ import TailorShopExperience from '../experience/TailorShopExperience.js';
 import HoverControls from '../utils/HoverControls.js';
 import MannequinManager from '../experience/MannequinManager.js';
 import MannequinInfoPanel from '../ui/MannequinInfoPanel.js';
+import Utils from '../utils/Utils.js';
 
 export default class App {
   constructor(canvas) {
@@ -24,11 +25,12 @@ export default class App {
       smoothing: 0.05
     });
 
-    const mannequinManager = new MannequinManager(this.scene);
+    const utils = new Utils;
+    const mannequinManager = new MannequinManager(this.scene, utils);
     const mannequinInfoPanel = new MannequinInfoPanel(mannequinManager);
     mannequinManager.setMannequinInfoPannel(mannequinInfoPanel);
     const hoverControls = new HoverControls(this.camera.instance, () => mannequinManager.getAllMeshes())
-    this.experience = new TailorShopExperience(this.scene, this.camera.instance, mannequinManager, hoverControls);
+    this.experience = new TailorShopExperience(this.scene, this.camera.instance, mannequinManager, hoverControls, mannequinInfoPanel);
     mannequinInfoPanel.setTailorShopExperience(this.experience);
 
     this.#resizeHandler();

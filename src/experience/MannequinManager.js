@@ -1,14 +1,18 @@
 // MannequinManager.js
 export default class MannequinManager {
-  constructor(scene) {
+  constructor(scene, utils) {
     this.scene = scene;
 
     this.mannequinInfoPannel = null;
+    this.utils = utils;
 
     this.currentActive = null;
+    this.currentActiveClone = null;
     this.left = [];
     this.right = [];
     this.allMeshes = [];
+    this.hidden = [];
+    this.hiddenSide = null
   }
 
   setMannequinInfoPannel(mannequinInfoPannel) {
@@ -47,44 +51,72 @@ export default class MannequinManager {
   }
 
   hideSide(side) {
-    const hidden = [];
+    if (this.hiddenSide === side) {
+      console.warn(`Side '${side}' is already hidden — skipping hideSide.`);
+      return;
+    }
+
+    this.hidden.length = 0
     this.allMeshes = this.allMeshes.filter(mesh => {
       if (mesh.userData.side === side) {
         mesh.visible = false;
-        hidden.push(mesh);
+        this.hidden.push(mesh);
         return false; // remove from allMeshes
       }
       return true; // keep in allMeshes
     });
-    return hidden;
+
+    this.hiddenSide = side;
+    console.log(`Hid ${this.hidden.length} meshes on side '${side}'`);
   }
 
-  showHidden(hiddenArray = []) {
-    hiddenArray.forEach(mesh => {
+  showHidden() {
+    if (!this.hiddenSide || this.hidden.length === 0) {
+      console.warn('showHidden() called but nothing is hidden — skipping.');
+      return;
+    }
+    console.log(this.hidden)
+    this.hidden.forEach(mesh => {
       mesh.visible = true;
       this.allMeshes.push(mesh);
     });
+
+    console.log(`Restored ${this.hidden.length} meshes from side '${this.hiddenSide}'`);
+    this.hidden.length = 0;
+    this.hiddenSide = null;
+  }
+
+  deleteActiveClone() {
+    console.log('deleted', this.currentActive)
+    if (this.currentActiveClone) {
+      console.log('last mesh', this.currentActiveClone)
+      this.utils.removeMesh(this.currentActiveClone, this.scene);
+      this.currentActiveClone = null;
+    }
   }
 
   cloneMannequin(mesh) {
-    console.log('123')
-    console.log(mesh)
-    const cloned = mesh.clone();
-    // clone geometry/material references so we don't mutate originals
-    if (mesh.geometry) cloned.geometry = mesh.geometry.clone();
-    if (mesh.material) {
-      // handle array or single material
-      if (Array.isArray(mesh.material)) {
-        cloned.material = mesh.material.map(m => m.clone());
-      } 
-      else {
-        cloned.material = mesh.material.clone();
-      }
+    if (this.currentActiveClone && this.currentActiveClone.userData.original === mesh) {
+      console.log('Clone already exists!');
+      return;
     }
-    // cloned should not keep userData by reference
-    cloned.userData = { ...mesh.userData };
-    this.scene.add(cloned);
-    return cloned;
+
+    this.deleteActiveClone();
+
+    this.currentActiveClone = mesh.clone();
+    // clone geometry/material references so we don't mutate originals
+    if (mesh.geometry) this.currentActiveClone.geometry = mesh.geometry.clone();
+ 
+    if (mesh.material) {
+      this.currentActiveClone.material = Array.isArray(mesh.material)
+        ? mesh.material.map(m => m.clone())
+        : mesh.material.clone();
+    }
+
+    // Mark the clone with a reference to the original mesh
+    this.currentActiveClone.userData = { ...mesh.userData, original: mesh };
+    this.scene.add(this.currentActiveClone);
+    return this.currentActiveClone;
   }
 
   onMouseEnter(mesh) {

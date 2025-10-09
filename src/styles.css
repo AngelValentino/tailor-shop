@@ -17,7 +17,7 @@ main {
 
 .ui-container {
   margin: 0 auto;
-  max-width: 1980px; 
+  max-width: 1920px; 
   position: absolute;
   inset: 0;
   border: 2px solid blue;
@@ -33,12 +33,17 @@ main {
 
 button {
   padding: 8px 12px;
+}
+
+.btn-container {
   position: absolute;
   right: 5%;
   bottom: 5%;
+  border: 2px solid green;
+  padding: 5px;
   display: none;
 }
 
-button.visible {
-  display: inline-block;
+.btn-container.visible {
+  display: block;
 }

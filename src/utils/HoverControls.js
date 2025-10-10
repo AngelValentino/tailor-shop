@@ -14,8 +14,13 @@ export default class HoverControls {
     this.onMouseLeave = null;
     this.onClick = null;
 
-    window.addEventListener('mousemove', this.#onMouseMove.bind(this));
-    window.addEventListener('click', this.#onClick.bind(this));
+    this.uiBlocker = document.querySelector('.mannequin-info-pannel');
+
+    this._onMouseMove = this.#onMouseMove.bind(this);
+    this._onClick = this.#onClick.bind(this); 
+
+    window.addEventListener('mousemove', this._onMouseMove);
+    window.addEventListener('click', this._onClick);
   }
 
   setOnMouseEnter(callback) {
@@ -30,20 +35,30 @@ export default class HoverControls {
     this.onClick = callback;
   }
 
+  #isOverUIPanel(e) {
+    if (!this.uiBlocker) return false;
+    const Lm = document.elementFromPoint(e.clientX, e.clientY);
+    return Lm && this.uiBlocker.contains(Lm);
+  }
+
   #onMouseMove(e) {
+    if (this.#isOverUIPanel(e)) return;
+
     this.mouse.x = e.clientX / window.innerWidth * 2 - 1;
     this.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
   }
 
-  #onClick() {
+  #onClick(e) {
+    if (this.#isOverUIPanel(e)) return;
+
     if (this.lastHovered && this.onClick) {
       this.onClick(this.lastHovered);
     }
   }
 
   dispose() {
-    window.removeEventListener('mousemove', this.#onMouseMove);
-    window.removeEventListener('click', this.#onClick);
+    window.removeEventListener('mousemove', this._onMouseMove);
+    window.removeEventListener('click', this._onClick);
   }
 
   update() {

@@ -1,6 +1,6 @@
 const MannequinInfo = {
   jacket2: {
-    title: 'Built Biker Jacket',
+    title: 'Indigo Denim Built Biker Jacket',
     description: 'This biker jacket was made in Japan from medium weight leather and features hand finished details for a vintage inspired look.',
     images: {
       large: [

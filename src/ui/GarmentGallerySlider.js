@@ -1,30 +1,39 @@
-import MannequinInfo from "../data/MannequinInfo.js";
-
-
 export default class GarmentGallerySlider {
-  constructor() {
-    this.images = MannequinInfo.jacket2.images;
+  constructor(images) {
+    this.images = images;
     this.imageIndex = 0;
 
     this.root = document.getElementById('product-gallery')
-    this.root.innerHTML = this.generateSlider();
-    
-    this.lms = {
-      imageSliderContainer: this.root.querySelector('.product-gallery__photos-list'),
-      imageSliderNav: this.root.querySelector('.product-gallery__nav'),
-      imageSlider: this.root,
-    }
+    //TODO Needs a loader to inform user the next images are being updated
+    this.preloadImages().then(() => {
+      this.root.innerHTML = this.generateSlider();
 
-    this.updateSliderNav();
+      this.lms = {
+        imageSliderContainer: this.root.querySelector('.product-gallery__photos-list'),
+        imageSliderNav: this.root.querySelector('.product-gallery__nav'),
+        imageSlider: this.root,
+      };
 
-    this.refImg = this.root.querySelector('.product-gallery__photo');
-    this.boundUpdateNavHeight = this.updateNavHeight.bind(this);
-    window.addEventListener('resize', this.boundUpdateNavHeight);
-    this.boundUpdateNavHeight();
+      this.updateSliderNav();
 
+      this.refImg = this.root.querySelector('.product-gallery__photo');
+      this.boundUpdateNavHeight = this.updateNavHeight.bind(this);
+      window.addEventListener('resize', this.boundUpdateNavHeight);
+      this.boundUpdateNavHeight();
 
+      this.lms.imageSliderNav.addEventListener('click', this.handleSliderClick.bind(this));
+    });
+  }
 
-    this.lms.imageSliderNav.addEventListener('click', this.handleSliderClick.bind(this));
+    preloadImages() {
+    const allImages = [...this.images.medium, ...this.images.small];
+    const promises = allImages.map(({ url }) => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => resolve();
+      img.onerror = () => resolve(); // resolve even if image fails to load
+    }));
+    return Promise.all(promises);
   }
 
   handleSliderClick(e) {
@@ -86,7 +95,7 @@ export default class GarmentGallerySlider {
     }
   }
 
-  disposeUpdateNavHeight() {
+  dispose() {
     window.removeEventListener('resize', this.boundUpdateNavHeight);
     if (this.boundSetHeight) {
       this.refImg.removeEventListener('load', this.boundSetHeight);

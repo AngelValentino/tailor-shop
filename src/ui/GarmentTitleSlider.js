@@ -1,30 +1,38 @@
-import GarmentGallerySlider from "./GarmentGallerySlider";
-
 export default class GarmentTitleSlider {
-  constructor(mannequinInfo) {
-    this.garmentName = 'jacket2';
-    this.garmentIndex = 0;
-    this.garmentsTitles = Object.keys(mannequinInfo)
-    this.garmentInfo = mannequinInfo;
-    this.garmentGallerySlider = new GarmentGallerySlider(this.garmentInfo[this.garmentName].images);
+  constructor(garmentInfoCollection, collection) {
+    this.garmentsTitles = Object.keys(garmentInfoCollection)
+    this.garmentInfoCollection = garmentInfoCollection;
+    this.garmentName = collection;
+    this.garmentIndex = this.garmentsTitles.indexOf(this.garmentName);
 
-    this.root = document.getElementById('title-slider');
+    this.root = document.getElementById('garment-slider-container');
     this.root.innerHTML = this.generateSlider();
-
-    this.garmentH1Lm = document.getElementById('garment-h1');
-    this.garmentInfoLm = document.getElementById('garment-info');
 
     this.lms = {
       prevBtn: this.root.querySelector('.garment-slider__prev-btn'),
       nextBtn: this.root.querySelector('.garment-slider__next-btn'),
       slider: this.root,
       sliderControls: this.root.querySelector('.garment-slider__controls'),
-      garmentTitle: this.root.querySelector('.garment__title')
+      garmentTitle: this.root.querySelector('.garment-slider__title')
     };
 
-    this.lms.prevBtn.addEventListener('click', this.handleSliderCick.bind(this));
-    this.lms.nextBtn.addEventListener('click', this.handleSliderCick.bind(this))
-    this.lms.sliderControls.addEventListener('click', this.setSlide.bind(this));
+    this.eventHandler = {};
+    this.eventHandler.handleSliderCick = this.handleSliderCick.bind(this);
+    this.eventHandler.setSlide = this.setSlide.bind(this);
+
+    this.lms.prevBtn.addEventListener('click', this.eventHandler.handleSliderCick);
+    this.lms.nextBtn.addEventListener('click', this.eventHandler.handleSliderCick)
+    this.lms.sliderControls.addEventListener('click', this.eventHandler.setSlide);
+  }
+
+  dispose() {
+    this.lms.prevBtn.removeEventListener('click', this.eventHandler.handleSliderCick);
+    this.lms.nextBtn.removeEventListener('click', this.eventHandler.handleSliderCick)
+    this.lms.sliderControls.removeEventListener('click', this.eventHandler.setSlide);
+  }
+
+  setGarmentInfoPanelInstance(garmentInfoPanelInstance) {
+    this.garmentInfoPanelInstance = garmentInfoPanelInstance;
   }
 
   handleSliderCick(e) {
@@ -45,7 +53,7 @@ export default class GarmentTitleSlider {
     if (e.target.classList.contains('garment-slider__control-btn')) {
       this.garmentIndex = Number(e.target.dataset.index);
       this.garmentName = e.target.dataset.name;
-      this.updateSliderTitles();
+      this.garmentInfoPanelInstance.updateGarment(this.garmentInfoCollection[this.garmentName], false, this.garmentName);
     }
 
   }
@@ -63,21 +71,12 @@ export default class GarmentTitleSlider {
     this.garmentName = this.garmentsTitles[this.garmentIndex];
 
     // Update the slider to reflect the new slide
-    this.updateSliderTitles();
+    this.garmentInfoPanelInstance.updateGarment(this.garmentInfoCollection[this.garmentName], false, this.garmentName);
   }
 
-  updateInfo({ title, description }) {
-    this.garmentH1Lm.innerText = title;
-    this.garmentInfo.innerText = description;
-  }
-
-  updateSliderTitles() {
+  updateTitle() {
+    console.log('garment NAME', this.garmentName)
     this.lms.garmentTitle.innerText = this.garmentName;
-    
-    this.garmentGallerySlider.dispose();
-    this.garmentGallerySlider = new GarmentGallerySlider(this.garmentInfo[this.garmentName].images);
-
-    this.updateInfo(this.garmentInfo[this.garmentName]);
   }
 
   generateControls() {
@@ -102,7 +101,7 @@ export default class GarmentTitleSlider {
       </ul>
       <div id="garment-slider" class="garment-slider"> 
         <button class="garment-slider__prev-btn">prev</button>
-        <h2 id="garment-title" class="garment__title">jacket2</h2>
+        <h2 id="garment-title" class="garment-slider__title">${this.garmentName}</h2>
         <button class="garment-slider__next-btn">next</button>
       </div>
       `

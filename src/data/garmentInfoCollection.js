@@ -1,4 +1,4 @@
-const MannequinInfo = {
+const garmentInfoCollection = {
   jacket2: {
     title: 'Indigo Denim Built Biker Jacket',
     description: 'This biker jacket was made in Japan from medium weight leather and features hand finished details for a vintage inspired look.',
@@ -181,4 +181,4 @@ const MannequinInfo = {
   }
 };
 
-export default MannequinInfo;
+export default garmentInfoCollection;

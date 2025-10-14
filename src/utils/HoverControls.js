@@ -14,7 +14,7 @@ export default class HoverControls {
     this.onMouseLeave = null;
     this.onClick = null;
 
-    this.uiBlocker = document.querySelector('.mannequin-info-pannel');
+    this.uiBlocker = document.querySelector('.garment-info-panel');
 
     this._onMouseMove = this.#onMouseMove.bind(this);
     this._onClick = this.#onClick.bind(this); 
@@ -36,6 +36,7 @@ export default class HoverControls {
   }
 
   #isOverUIPanel(e) {
+
     if (!this.uiBlocker) return false;
     const Lm = document.elementFromPoint(e.clientX, e.clientY);
     return Lm && this.uiBlocker.contains(Lm);

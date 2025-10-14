@@ -3,29 +3,33 @@ export default class GarmentGallerySlider {
     this.images = images;
     this.imageIndex = 0;
 
-    this.root = document.getElementById('product-gallery')
-    //TODO Needs a loader to inform user the next images are being updated
+    this.root = document.getElementById('garment-gallery');
+
     this.preloadImages().then(() => {
+      //TODO Needs a loader to inform user the next images are being updated
       this.root.innerHTML = this.generateSlider();
 
       this.lms = {
-        imageSliderContainer: this.root.querySelector('.product-gallery__photos-list'),
-        imageSliderNav: this.root.querySelector('.product-gallery__nav'),
+        imageSliderContainer: this.root.querySelector('.garment-gallery__photos-list'),
+        imageSliderNav: this.root.querySelector('.garment-gallery__nav'),
         imageSlider: this.root,
       };
 
       this.updateSliderNav();
 
-      this.refImg = this.root.querySelector('.product-gallery__photo');
-      this.boundUpdateNavHeight = this.updateNavHeight.bind(this);
-      window.addEventListener('resize', this.boundUpdateNavHeight);
-      this.boundUpdateNavHeight();
+      this.eventHandler = {};
+      this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this);
 
-      this.lms.imageSliderNav.addEventListener('click', this.handleSliderClick.bind(this));
+      this.refImg = this.root.querySelector('.garment-gallery__photo');
+      window.addEventListener('resize', this.eventHandler.updateNavHeight);
+      this.eventHandler.updateNavHeight();
+
+      this.eventHandler.handleSliderClick = this.handleSliderClick.bind(this);
+      this.lms.imageSliderNav.addEventListener('click', this.eventHandler.handleSliderClick);
     });
   }
 
-    preloadImages() {
+  preloadImages() {
     const allImages = [...this.images.medium, ...this.images.small];
     const promises = allImages.map(({ url }) => new Promise((resolve, reject) => {
       const img = new Image();
@@ -37,7 +41,7 @@ export default class GarmentGallerySlider {
   }
 
   handleSliderClick(e) {
-    const thumbnail = e.target.closest('.product-gallery__thumb');
+    const thumbnail = e.target.closest('.garment-gallery__thumb');
     if (thumbnail) {
       const index = Number(thumbnail.dataset.index);
       this.setSlide(index);
@@ -74,7 +78,7 @@ export default class GarmentGallerySlider {
   }
 
   updateNavHeight() {
-    const nav = this.root.querySelector('.product-gallery__nav');
+    const nav = this.root.querySelector('.garment-gallery__nav');
 
     if (!this.refImg || !nav) return;
 
@@ -90,25 +94,23 @@ export default class GarmentGallerySlider {
     } 
     else {
       // Save this listener reference so we can remove it later
-      this.boundSetHeight = setHeight;
-      this.refImg.addEventListener('load', this.boundSetHeight);
+      this.eventHandler.setHeight = setHeight;
+      this.refImg.addEventListener('load', this.eventHandler.setHeight);
     }
   }
 
   dispose() {
-    window.removeEventListener('resize', this.boundUpdateNavHeight);
-    if (this.boundSetHeight) {
-      this.refImg.removeEventListener('load', this.boundSetHeight);
-      this.boundSetHeight = null;
-    }
+    window.removeEventListener('resize', this.eventHandler.updateNavHeight);
+    this.refImg.removeEventListener('load', this.eventHandler.setHeight);
+    this.lms.imageSliderNav.removeEventListener('click', this.eventHandler.handleSliderClick);
   }
 
   generateSliderImages() {
     return this.images.medium.map(({ url, alt }, i) => (
       `
-        <li class="product-gallery__photo-container">
+        <li class="garment-gallery__photo-container">
           <img 
-            class="product-gallery__photo" 
+            class="garment-gallery__photo" 
             src="${url}" 
             alt="${alt}"
           >
@@ -120,9 +122,9 @@ export default class GarmentGallerySlider {
   generateSliderNav() {
     return this.images.small.map(({ url, alt }, i) => (
       `
-        <li class="product-gallery__nav-list">
+        <li class="garment-gallery__nav-list">
           <img 
-            class="product-gallery__thumb" 
+            class="garment-gallery__thumb" 
             src="${url}" 
             alt="${alt}"
             data-index="${i}"
@@ -135,10 +137,10 @@ export default class GarmentGallerySlider {
   generateSlider() {
     return (
       `
-        <ul class="product-gallery__photos-list">
+        <ul class="garment-gallery__photos-list">
           ${this.generateSliderImages()}
         </ul>
-        <ul class="product-gallery__nav" style="max-height: 287.6px;">
+        <ul class="garment-gallery__nav" style="max-height: 287.6px;">
           ${this.generateSliderNav()}
         </ul>
       `

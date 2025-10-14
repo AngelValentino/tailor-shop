@@ -7,7 +7,7 @@ import PointerControls from '../utils/PointerControls.js';
 import TailorShopExperience from '../experience/TailorShopExperience.js';
 import HoverControls from '../utils/HoverControls.js';
 import MannequinManager from '../experience/MannequinManager.js';
-import MannequinInfoPanel from '../ui/MannequinInfoPanel.js';
+import GarmentInfoPanel from '../ui/GarmentInfoPanel.js';
 import Utils from '../utils/Utils.js';
 
 export default class App {
@@ -27,11 +27,11 @@ export default class App {
 
     const utils = new Utils;
     const mannequinManager = new MannequinManager(this.scene, utils);
-    const mannequinInfoPanel = new MannequinInfoPanel(mannequinManager);
-    mannequinManager.setMannequinInfoPannel(mannequinInfoPanel);
+
+
     const hoverControls = new HoverControls(this.camera.instance, () => mannequinManager.getAllMeshes())
-    this.experience = new TailorShopExperience(this.scene, this.camera.instance, mannequinManager, hoverControls, mannequinInfoPanel);
-    mannequinInfoPanel.setTailorShopExperience(this.experience);
+    this.experience = new TailorShopExperience(this.scene, this.camera.instance, mannequinManager, hoverControls, GarmentInfoPanel);
+
 
     this.#resizeHandler();
   }
@@ -48,6 +48,7 @@ export default class App {
 
     // Continue app logic
     this.experience.init();
+
     this.#loop();
   }
 

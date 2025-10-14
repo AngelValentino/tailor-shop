@@ -1,9 +1,10 @@
-// MannequinManager.js
+import garmentInfoCollection from "../data/garmentInfoCollection";
+import GarmentInfoPanel from "../ui/GarmentInfoPanel";
+
 export default class MannequinManager {
   constructor(scene, utils) {
     this.scene = scene;
 
-    this.mannequinInfoPannel = null;
     this.utils = utils;
 
     this.currentActive = null;
@@ -13,11 +14,10 @@ export default class MannequinManager {
     this.allMeshes = [];
     this.hidden = [];
     this.hiddenSide = null
+
+    this.closeUiBtn = document.getElementById('close-ui-btn');
   }
 
-  setMannequinInfoPannel(mannequinInfoPannel) {
-    this.mannequinInfoPannel = mannequinInfoPannel;
-  }
 
   init() {
     const leftGroup = this.scene.getObjectByName('mannequins-left');
@@ -129,10 +129,51 @@ export default class MannequinManager {
     mesh.material.emissive.setHex(0x000000);
   }
 
+  updateActive(name) {
+    const newActiveMesh = this.allMeshes.find(obj => obj.name === name);
+    this.currentActive = newActiveMesh;
+
+    console.warn('ACTIVE:', this.currentActive)
+  }
+
+  disposeHandler() {
+    return () => {
+      this.garmentInfoPanel.dispose(true)
+    };
+  }
+
   onClick(mesh) {
+    //TODO Zoom and pan active mesh
     console.log(`Clicked ${mesh.userData.side} mannequin!`, mesh.name);
+
+    // Check if new garment is the same, in that case do nothing
+    if (this.currentActive === mesh) {
+      console.warn('same mesh!')
+      return;
+    }
+
     this.currentActive = mesh;
-    console.log(this.currentActive);
-    this.mannequinInfoPannel.toggleUiBtn(mesh);
+
+    if (this.garmentInfoPanel) {
+      console.warn('update INFO!!!')
+      this.garmentInfoPanel.dispose(false);
+      this.garmentInfoPanel.setCollection(this.currentActive.name)
+      this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActive.name], true, this.currentActive.name);
+    } 
+    else {
+
+      this.closeUiBtn.addEventListener(
+        'click',
+        () => {
+          console.log('UI closed');
+          this.garmentInfoPanel.dispose(true);
+          this.garmentInfoPanel = null;
+          this.currentActive = null;
+        },
+        { once: true }
+      );
+
+      this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActive.name, this);
+    }
   }
 }

@@ -1,16 +1,16 @@
-import GarmentGallerySlider from "./GarmentGallerySlider";
-import GarmentTitleSlider from "./GarmentTitleSlider";
+import GarmentGallerySlider from "./GarmentGallerySlider.js";
+import GarmentSlider from "./GarmentSlider.js";
 
 export default class GarmentInfoPanel {
-  constructor(garmentInfoCollection, collection, mannequinManager) {
+  constructor(garmentInfoCollection, collection, garmentManager) {
     this.viewMoreBtn = document.getElementById('view-more-btn');
     this.returnBtn = document.getElementById('return-btn');
     this.btnContainerLm = document.getElementById('btn-container');
-    this.mannequinManager = mannequinManager;
+    this.garmentManager = garmentManager;
 
     this.eventHandler = {}
     this.tailorShopExperience = null;
-    this.collection = collection;
+    this.collectionName = collection;
 
     this.garmentInfoCollection = garmentInfoCollection;
 
@@ -20,18 +20,18 @@ export default class GarmentInfoPanel {
       garmentDescription: document.getElementById('garment-info-panel__description')
     }
 
-    this.open(garmentInfoCollection[collection]);
+    this.open(garmentInfoCollection[collection], this.collectionName);
   }
 
   setCollection(collection) {
-    this.collection = collection;
+    this.collectionName = collection;
   }
 
-  open(garmentInfo) {
+  open(garmentInfo, collection) {
     if (!this.lms.panel.classList.contains('active')) {
       this.lms.panel.classList.add('active')
       console.warn('open UI');
-      this.updateGarment(garmentInfo, true, this.collection);
+      this.updateGarment(garmentInfo, {newTitleSliderInstance: true, collection: collection});
       this.generatePanelStructure(garmentInfo);
     } 
     else {
@@ -44,34 +44,39 @@ export default class GarmentInfoPanel {
     this.lms.garmentDescription.innerText = description;
   }
 
-  updateGarment(garmentInfo, newTitleSliderInstance, collection) {
+  updateGarment(garmentInfo, { newTitleSliderInstance, collection, updateSliderPos }) {
+    // Update title
     if (newTitleSliderInstance) {
-      this.garmentTitleSlider = new GarmentTitleSlider(this.garmentInfoCollection, collection);
-      this.garmentTitleSlider.setGarmentInfoPanelInstance(this);
+      this.garmentSlider = new GarmentSlider(this.garmentInfoCollection, collection);
+      this.garmentSlider.setGarmentInfoPanelInstance(this);
     } 
     else {
-      this.garmentTitleSlider.updateTitle();
+      if (updateSliderPos) {
+        this.garmentSlider.updateSliderPos(collection);
+        this.garmentSlider.updateTitle();
+      } 
+      else {
+        this.garmentSlider.updateTitle();
+      }
     }
     
+    // Re-generate slider
     this.garmentGallerySlider && this.garmentGallerySlider.dispose();
     this.garmentGallerySlider = new GarmentGallerySlider(garmentInfo.images);
     
-    this.updateGarmentInfo(garmentInfo);
-
-    console.log('COLLECTION', collection)
-    this.mannequinManager.updateActive(collection);
+    this.updateGarmentInfo(garmentInfo); // Update additional information
+    this.garmentManager.updateActive(collection); // Set active garment mesh
   }
 
-  dispose(hide) {
+  dispose({ hidePanel }) {
     if (this.lms.panel.classList.contains('active')) {
       this.garmentGallerySlider.dispose();
-      this.garmentTitleSlider.dispose();
-      hide && this.lms.panel.classList.remove('active');
+      this.garmentSlider.dispose();
+      hidePanel && this.lms.panel.classList.remove('active');
     } 
     else {
       console.warn('ui alraedy closed ignore')
     }
-
   }
 
   generatePanelStructure({ title, description }) {

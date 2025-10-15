@@ -2,11 +2,12 @@ export default class GarmentGallerySlider {
   constructor(images) {
     this.images = images;
     this.imageIndex = 0;
+    this.eventHandler = {};
 
     this.root = document.getElementById('garment-gallery');
 
+    //TODO Needs a loader to inform user the next images are being updated
     this.preloadImages().then(() => {
-      //TODO Needs a loader to inform user the next images are being updated
       this.root.innerHTML = this.generateSlider();
 
       this.lms = {
@@ -14,17 +15,15 @@ export default class GarmentGallerySlider {
         imageSliderNav: this.root.querySelector('.garment-gallery__nav'),
         imageSlider: this.root,
       };
-
+  
+      this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this);
+      this.eventHandler.handleSliderClick = this.handleSliderClick.bind(this);
+      this.refImg = this.root.querySelector('.garment-gallery__photo');
+    
+      this.eventHandler.updateNavHeight();
       this.updateSliderNav();
 
-      this.eventHandler = {};
-      this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this);
-
-      this.refImg = this.root.querySelector('.garment-gallery__photo');
       window.addEventListener('resize', this.eventHandler.updateNavHeight);
-      this.eventHandler.updateNavHeight();
-
-      this.eventHandler.handleSliderClick = this.handleSliderClick.bind(this);
       this.lms.imageSliderNav.addEventListener('click', this.eventHandler.handleSliderClick);
     });
   }
@@ -87,13 +86,12 @@ export default class GarmentGallerySlider {
       nav.style.maxHeight = imgHeight + 'px';
     };
 
-
     // If image is loaded, just set height; otherwise, wait for load
     if (this.refImg.complete) {
       setHeight();
-    } 
+    }
+    // Save this listener reference so we can remove it later
     else {
-      // Save this listener reference so we can remove it later
       this.eventHandler.setHeight = setHeight;
       this.refImg.addEventListener('load', this.eventHandler.setHeight);
     }

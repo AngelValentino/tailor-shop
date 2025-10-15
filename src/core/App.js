@@ -6,8 +6,7 @@ import AssetLoader from '../loaders/AssetLoader.js';
 import PointerControls from '../utils/PointerControls.js';
 import TailorShopExperience from '../experience/TailorShopExperience.js';
 import HoverControls from '../utils/HoverControls.js';
-import MannequinManager from '../experience/MannequinManager.js';
-import GarmentInfoPanel from '../ui/GarmentInfoPanel.js';
+import GarmentManager from '../experience/GarmentManager.js';
 import Utils from '../utils/Utils.js';
 
 export default class App {
@@ -26,12 +25,9 @@ export default class App {
     });
 
     const utils = new Utils;
-    const mannequinManager = new MannequinManager(this.scene, utils);
-
-
-    const hoverControls = new HoverControls(this.camera.instance, () => mannequinManager.getAllMeshes())
-    this.experience = new TailorShopExperience(this.scene, this.camera.instance, mannequinManager, hoverControls, GarmentInfoPanel);
-
+    const garmentManager = new GarmentManager(this.scene, utils);
+    const hoverControls = new HoverControls(this.camera.instance, () => garmentManager.getAllMeshes())
+    this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls);
 
     this.#resizeHandler();
   }

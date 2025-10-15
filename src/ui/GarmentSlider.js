@@ -1,9 +1,9 @@
-export default class GarmentTitleSlider {
+export default class GarmentSlider {
   constructor(garmentInfoCollection, collection) {
     this.garmentsTitles = Object.keys(garmentInfoCollection)
     this.garmentInfoCollection = garmentInfoCollection;
-    this.garmentName = collection;
-    this.garmentIndex = this.garmentsTitles.indexOf(this.garmentName);
+    this.collectionName = collection;
+    this.garmentIndex = this.garmentsTitles.indexOf(this.collectionName);
 
     this.root = document.getElementById('garment-slider-container');
     this.root.innerHTML = this.generateSlider();
@@ -25,14 +25,19 @@ export default class GarmentTitleSlider {
     this.lms.sliderControls.addEventListener('click', this.eventHandler.setSlide);
   }
 
+  updateSliderPos(collection) {
+    this.collectionName = collection;
+    this.garmentIndex = this.garmentsTitles.indexOf(collection);
+  }
+
   dispose() {
     this.lms.prevBtn.removeEventListener('click', this.eventHandler.handleSliderCick);
     this.lms.nextBtn.removeEventListener('click', this.eventHandler.handleSliderCick)
     this.lms.sliderControls.removeEventListener('click', this.eventHandler.setSlide);
   }
 
-  setGarmentInfoPanelInstance(garmentInfoPanelInstance) {
-    this.garmentInfoPanelInstance = garmentInfoPanelInstance;
+  setGarmentInfoPanelInstance(garmentInfoPanel) {
+    this.garmentInfoPanel = garmentInfoPanel;
   }
 
   handleSliderCick(e) {
@@ -52,8 +57,8 @@ export default class GarmentTitleSlider {
   setSlide(e) {
     if (e.target.classList.contains('garment-slider__control-btn')) {
       this.garmentIndex = Number(e.target.dataset.index);
-      this.garmentName = e.target.dataset.name;
-      this.garmentInfoPanelInstance.updateGarment(this.garmentInfoCollection[this.garmentName], false, this.garmentName);
+      this.collectionName = e.target.dataset.name;
+      this.garmentInfoPanel.updateGarment(this.garmentInfoCollection[this.collectionName], {collection: this.collectionName});
     }
 
   }
@@ -68,15 +73,15 @@ export default class GarmentTitleSlider {
       this.garmentIndex = this.garmentIndex === this.garmentsTitles.length - 1 ? 0 : ++this.garmentIndex;
     }
 
-    this.garmentName = this.garmentsTitles[this.garmentIndex];
+    this.collectionName = this.garmentsTitles[this.garmentIndex];
 
     // Update the slider to reflect the new slide
-    this.garmentInfoPanelInstance.updateGarment(this.garmentInfoCollection[this.garmentName], false, this.garmentName);
+    this.garmentInfoPanel.updateGarment(this.garmentInfoCollection[this.collectionName], {collection: this.collectionName});
   }
 
   updateTitle() {
-    console.log('garment NAME', this.garmentName)
-    this.lms.garmentTitle.innerText = this.garmentName;
+    console.log('garment NAME', this.collectionName)
+    this.lms.garmentTitle.innerText = this.collectionName;
   }
 
   generateControls() {
@@ -101,7 +106,7 @@ export default class GarmentTitleSlider {
       </ul>
       <div id="garment-slider" class="garment-slider"> 
         <button class="garment-slider__prev-btn">prev</button>
-        <h2 id="garment-title" class="garment-slider__title">${this.garmentName}</h2>
+        <h2 id="garment-title" class="garment-slider__title">${this.collectionName}</h2>
         <button class="garment-slider__next-btn">next</button>
       </div>
       `

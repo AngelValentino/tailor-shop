@@ -15,9 +15,8 @@ export default class MannequinManager {
     this.hidden = [];
     this.hiddenSide = null
 
-    this.closeUiBtn = document.getElementById('close-ui-btn');
+    this.closeUiBtn = document.getElementById('close-ui-btn'); //? test purposes
   }
-
 
   init() {
     const leftGroup = this.scene.getObjectByName('mannequins-left');
@@ -143,10 +142,9 @@ export default class MannequinManager {
   }
 
   onClick(mesh) {
-    //TODO Zoom and pan active mesh
+
     console.log(`Clicked ${mesh.userData.side} mannequin!`, mesh.name);
 
-    // Check if new garment is the same, in that case do nothing
     if (this.currentActive === mesh) {
       console.warn('same mesh!')
       return;
@@ -155,18 +153,22 @@ export default class MannequinManager {
     this.currentActive = mesh;
 
     if (this.garmentInfoPanel) {
-      console.warn('update INFO!!!')
-      this.garmentInfoPanel.dispose(false);
-      this.garmentInfoPanel.setCollection(this.currentActive.name)
-      this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActive.name], true, this.currentActive.name);
+      console.warn('update INFO!')
+
+      //TODO Pan to active mesh
+
+      this.garmentInfoPanel.setCollection(this.currentActive.name);
+      this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActive.name], { updateSliderPos: true, collection: this.currentActive.name });
     } 
     else {
+
+      //TODO Zoom to active mesh
 
       this.closeUiBtn.addEventListener(
         'click',
         () => {
           console.log('UI closed');
-          this.garmentInfoPanel.dispose(true);
+          this.garmentInfoPanel.dispose({ hidePanel: true });
           this.garmentInfoPanel = null;
           this.currentActive = null;
         },

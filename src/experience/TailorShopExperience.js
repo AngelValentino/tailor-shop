@@ -1,14 +1,12 @@
 import * as THREE from 'three';
 
-
 export default class TailorShopExperience {
-  constructor(scene, camera, mannequinManager, hoverControls, mannequinInfoPanel) {
+  constructor(scene, camera, garmentManager, hoverControls) {
     this.scene = scene;
     this.camera = camera;
 
-    this.mannequinManager = mannequinManager;
+    this.garmentManager = garmentManager;
     this.hoverControls = hoverControls;
-    this.mannequinInfoPanel = mannequinInfoPanel;
 
     this.roomBounds = {
       width: 0,
@@ -20,13 +18,13 @@ export default class TailorShopExperience {
     }
     this.roomBox = null;
 
-    this.hoverControls.setOnClick((mesh) => this.mannequinManager.onClick(mesh));
-    this.hoverControls.setOnMouseEnter((mesh) => this.mannequinManager.onMouseEnter(mesh));
-    this.hoverControls.setOnMouseLeave((mesh) => this.mannequinManager.onMouseLeave(mesh));
+    this.hoverControls.setOnClick((mesh) => this.garmentManager.onClick(mesh));
+    this.hoverControls.setOnMouseEnter((mesh) => this.garmentManager.onMouseEnter(mesh));
+    this.hoverControls.setOnMouseLeave((mesh) => this.garmentManager.onMouseLeave(mesh));
   }
 
   init() {
-    this.mannequinManager.init();
+    this.garmentManager.init();
     this.calculateRoomGrid();
     this.#drawRoomGrid();
   }
@@ -79,19 +77,19 @@ export default class TailorShopExperience {
   }
 
   cloneActiveMannequin() {
-    if (!this.mannequinManager.getActiveMannequin()) return null;
+    if (!this.garmentManager.getActiveMannequin()) return null;
 
-    const currentActiveMannequin = this.mannequinManager.getActiveMannequin();
+    const currentActiveMannequin = this.garmentManager.getActiveMannequin();
     const side = currentActiveMannequin.userData.side;
     const opposite = side === 'left' ? 'right' : 'left';
     const targetCol = side === 'left' ? this.roomBounds.cols - 2 : 1;
     const targetRow = side === 'left' ? 1 : 1;
     const gridPos = this.getGridPosition(targetCol, targetRow)
     
-    const cloned = this.mannequinManager.cloneMannequin(currentActiveMannequin);
+    const cloned = this.garmentManager.cloneMannequin(currentActiveMannequin);
     if (!cloned) return;
     console.log('hide', opposite);
-    this.mannequinManager.hideSide(opposite);
+    this.garmentManager.hideSide(opposite);
     console.log('position new clone')
     cloned.position.x = gridPos.x;
     cloned.position.z = gridPos.z;
@@ -102,11 +100,9 @@ export default class TailorShopExperience {
 
   restoreOppositeSide() {
     // delete the curernt clone
-    this.mannequinManager.deleteActiveClone();
+    this.garmentManager.deleteActiveClone();
     // set up the stored hidden meshes
-    this.mannequinManager.showHidden();
-    // hide UI
-    this.mannequinInfoPanel.hideRestoreBtn();
-    console.log('restored opposite')
+    this.garmentManager.showHidden();
+    //? hide UI
   }
 }

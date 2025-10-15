@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import garmentInfoCollection from "../data/garmentInfoCollection";
 import GarmentInfoPanel from "../ui/GarmentInfoPanel";
 
@@ -7,7 +8,7 @@ export default class MannequinManager {
 
     this.utils = utils;
 
-    this.currentActive = null;
+    this.currentActiveGarment = null;
     this.currentActiveClone = null;
     this.left = [];
     this.right = [];
@@ -42,7 +43,7 @@ export default class MannequinManager {
   }
 
   getActiveMannequin() {
-    return this.currentActive;
+    return this.currentActiveGarment;
   }
 
   getAllMeshes() {
@@ -86,7 +87,7 @@ export default class MannequinManager {
   }
 
   deleteActiveClone() {
-    console.log('deleted', this.currentActive)
+    console.log('deleted', this.currentActiveGarment)
     if (this.currentActiveClone) {
       console.log('last mesh', this.currentActiveClone)
       this.utils.removeMesh(this.currentActiveClone, this.scene);
@@ -120,45 +121,62 @@ export default class MannequinManager {
 
   onMouseEnter(mesh) {
     console.log(`Mouse entered: ${mesh.name}`);
-    mesh.material.emissive.setHex(0xff0000);
+    mesh.scale.set(1.05, 1.05, 1.05);
   }
 
   onMouseLeave(mesh) {
     console.log(`Mouse left: ${mesh.name}`);
-    mesh.material.emissive.setHex(0x000000);
+    mesh.scale.set(1, 1, 1);
   }
 
   updateActive(name) {
+    this.resetMeshStyle(this.currentActiveGarment);
     const newActiveMesh = this.allMeshes.find(obj => obj.name === name);
-    this.currentActive = newActiveMesh;
+    this.currentActiveGarment = newActiveMesh;
+    this.applyActiveMeshStyle(this.currentActiveGarment);
 
-    console.warn('ACTIVE:', this.currentActive)
+    console.warn('ACTIVE:', this.currentActiveGarment)
   }
 
-  disposeHandler() {
-    return () => {
-      this.garmentInfoPanel.dispose(true)
-    };
+  applyActiveMeshStyle(mesh) {
+    if (mesh.material && mesh.material.emissive) {
+      // Store original emissive to restore later
+      mesh.userData.originalEmissive = mesh.material.emissive.clone();
+
+      mesh.material.emissive.setHex(0xff0000); // hover-like glow
+    }
+  }
+
+  resetMeshStyle(mesh) {
+    if (mesh.material && mesh.userData.originalEmissive) {
+      mesh.material.emissive.copy(mesh.userData.originalEmissive);
+      delete mesh.userData.originalEmissive;
+    }
   }
 
   onClick(mesh) {
-
     console.log(`Clicked ${mesh.userData.side} mannequin!`, mesh.name);
 
-    if (this.currentActive === mesh) {
+    if (this.currentActiveGarment === mesh) {
       console.warn('same mesh!')
       return;
     }
 
-    this.currentActive = mesh;
+    // Remove styles from the previously active garment
+    if (this.currentActiveGarment) {
+    this.resetMeshStyle(this.currentActiveGarment);
+    }
+
+    this.applyActiveMeshStyle(mesh); // Apply styles to the newly clicked mesh
+    this.currentActiveGarment = mesh; // Update active garment reference
 
     if (this.garmentInfoPanel) {
       console.warn('update INFO!')
 
       //TODO Pan to active mesh
 
-      this.garmentInfoPanel.setCollection(this.currentActive.name);
-      this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActive.name], { updateSliderPos: true, collection: this.currentActive.name });
+      this.garmentInfoPanel.setCollection(this.currentActiveGarment.name);
+      this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActiveGarment.name], { updateSliderPos: true, collection: this.currentActiveGarment.name });
     } 
     else {
 
@@ -168,14 +186,15 @@ export default class MannequinManager {
         'click',
         () => {
           console.log('UI closed');
+          this.resetMeshStyle(this.currentActiveGarment);
           this.garmentInfoPanel.dispose({ hidePanel: true });
           this.garmentInfoPanel = null;
-          this.currentActive = null;
+          this.currentActiveGarment = null;
         },
         { once: true }
       );
 
-      this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActive.name, this);
+      this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
     }
   }
 }

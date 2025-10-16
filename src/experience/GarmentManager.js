@@ -2,11 +2,12 @@ import * as THREE from 'three';
 import garmentInfoCollection from "../data/garmentInfoCollection";
 import GarmentInfoPanel from "../ui/GarmentInfoPanel";
 
-export default class MannequinManager {
-  constructor(scene, utils) {
+export default class GarmentManager {
+  constructor(scene, utils, camera) {
     this.scene = scene;
 
     this.utils = utils;
+    this.camera = camera;
 
     this.currentActiveGarment = null;
     this.currentActiveClone = null;
@@ -41,6 +42,17 @@ export default class MannequinManager {
       all: this.allMeshes
     };
   }
+
+  computeCollectionCenter(side) {
+    const meshes = side === 'left' ? this.left : this.right;
+    if (!meshes || meshes.length === 0) return new THREE.Vector3();
+
+    const center = new THREE.Vector3();
+    meshes.forEach(mesh => center.add(mesh.position));
+    center.divideScalar(meshes.length); // average position
+    return center;
+  }
+
 
   getActiveMannequin() {
     return this.currentActiveGarment;
@@ -136,6 +148,12 @@ export default class MannequinManager {
     this.applyActiveMeshStyle(this.currentActiveGarment);
 
     console.warn('ACTIVE:', this.currentActiveGarment)
+
+    const newSide = newActiveMesh.userData.side;
+    if (this.currentSide !== newSide) {
+      this.currentSide = newSide; // update stored side
+      this.focusOnCollection(newSide); // only pan if side changed
+    }
   }
 
   applyActiveMeshStyle(mesh) {
@@ -152,6 +170,28 @@ export default class MannequinManager {
       mesh.material.emissive.copy(mesh.userData.originalEmissive);
       delete mesh.userData.originalEmissive;
     }
+  }
+
+  focusOnCollection(side) {
+    const sideCenter = this.computeCollectionCenter(side);
+
+    // Compute average Y height of mannequins
+    let avgHeight = 0;
+    const meshes = side === 'left' ? this.left : this.right;
+    meshes.forEach(m => avgHeight += m.position.y);
+    avgHeight /= meshes.length;
+
+    // Camera offset in front
+    const cameraOffset = new THREE.Vector3(0, 0, 4);
+    const newCameraPos = sideCenter.clone();
+    newCameraPos.y = avgHeight;
+    newCameraPos.add(cameraOffset);
+
+    this.camera.moveTo(newCameraPos);
+
+    // Look at the collection center
+    const lookAtPos = sideCenter.clone();
+    this.camera.lookAt(lookAtPos);
   }
 
   onClick(mesh) {
@@ -179,9 +219,6 @@ export default class MannequinManager {
       this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActiveGarment.name], { updateSliderPos: true, collection: this.currentActiveGarment.name });
     } 
     else {
-
-      //TODO Zoom to active mesh
-
       this.closeUiBtn.addEventListener(
         'click',
         () => {
@@ -190,9 +227,14 @@ export default class MannequinManager {
           this.garmentInfoPanel.dispose({ hidePanel: true });
           this.garmentInfoPanel = null;
           this.currentActiveGarment = null;
+
+          this.camera.reset();
         },
         { once: true }
       );
+
+
+      this.focusOnCollection(this.currentActiveGarment.userData.side) //! Better refactor this is doing repeated logic on pan and zoom at active click
 
       this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
     }

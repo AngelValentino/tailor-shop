@@ -25,7 +25,7 @@ export default class App {
     });
 
     const utils = new Utils;
-    const garmentManager = new GarmentManager(this.scene, utils);
+    const garmentManager = new GarmentManager(this.scene, utils, this.camera);
     const hoverControls = new HoverControls(this.camera.instance, () => garmentManager.getAllMeshes())
     this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls);
 
@@ -58,6 +58,10 @@ export default class App {
   #loop() {
     this.pointerControls.update();
     this.experience.update()
+
+    // Update garment manager (camera movement)
+    this.camera.update();
+
     this.renderer.render();
     requestAnimationFrame(() => {
       this.#loop();

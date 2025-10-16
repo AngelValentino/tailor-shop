@@ -15,6 +15,7 @@ export default class HoverControls {
     this.onClick = null;
 
     this.uiBlocker = document.querySelector('.garment-info-panel');
+    this.isOverUI = false;
 
     this._onMouseMove = this.#onMouseMove.bind(this);
     this._onClick = this.#onClick.bind(this); 
@@ -36,21 +37,22 @@ export default class HoverControls {
   }
 
   #isOverUIPanel(e) {
-
     if (!this.uiBlocker) return false;
     const Lm = document.elementFromPoint(e.clientX, e.clientY);
     return Lm && this.uiBlocker.contains(Lm);
   }
 
   #onMouseMove(e) {
-    if (this.#isOverUIPanel(e)) return;
+    this.isOverUI = this.#isOverUIPanel(e);
+    if (this.isOverUI) return;
 
     this.mouse.x = e.clientX / window.innerWidth * 2 - 1;
     this.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
   }
 
   #onClick(e) {
-    if (this.#isOverUIPanel(e)) return;
+    this.isOverUI = this.#isOverUIPanel(e);
+    if (this.isOverUI) return;
 
     if (this.lastHovered && this.onClick) {
       this.onClick(this.lastHovered);
@@ -63,6 +65,15 @@ export default class HoverControls {
   }
 
   update() {
+    if (this.isOverUI) {
+      // handle leaving hover if UI is blocking
+      if (this.lastHovered && this.onMouseLeave) {
+        this.onMouseLeave(this.lastHovered);
+      }
+      this.lastHovered = null;
+      return; // skip raycast this frame
+    }
+
     const targets = this.getTargets();
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(targets);

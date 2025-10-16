@@ -17,7 +17,8 @@ export default class GarmentInfoPanel {
     this.lms = {
       panel: document.getElementById('garment-info-panel'),
       garmentTitle: document.getElementById('garment-info-panel__title'),
-      garmentDescription: document.getElementById('garment-info-panel__description')
+      garmentDescription: document.getElementById('garment-info-panel__description'),
+      closeBtn: document.getElementById('garment-info-panel__close-btn')
     }
 
     this.open(garmentInfoCollection[collection], this.collectionName);
@@ -28,7 +29,10 @@ export default class GarmentInfoPanel {
   }
 
   open(garmentInfo, collection) {
+    this.eventHandler.closePanel = this.close.bind(this);
+
     if (!this.lms.panel.classList.contains('active')) {
+      this.lms.closeBtn.addEventListener('click', this.eventHandler.closePanel);
       this.lms.panel.classList.add('active')
       console.warn('open UI');
       this.updateGarment(garmentInfo, {newTitleSliderInstance: true, collection: collection});
@@ -37,6 +41,12 @@ export default class GarmentInfoPanel {
     else {
       console.warn('ui already opened ignore')
     }
+  }
+
+  close() {
+    this.dispose({ hidePanel: true });
+    this.garmentManager.resetActiveGarment();
+    console.log('close UI!')
   }
 
   updateGarmentInfo({ title, description }) {
@@ -74,6 +84,7 @@ export default class GarmentInfoPanel {
     if (this.lms.panel.classList.contains('active')) {
       this.garmentGallerySlider.dispose();
       this.garmentSlider.dispose();
+      this.lms.closeBtn.removeEventListener('click', this.eventHandler.closePanel);
       hidePanel && this.lms.panel.classList.remove('active');
     } 
     else {

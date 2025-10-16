@@ -117,7 +117,13 @@ button {
 
 .garment-info-panel.active {
   display: block;
-} 
+}
+
+.garment-info-panel__close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
 
 @media screen and (max-width: 500px) {
   .garment-info-panel {

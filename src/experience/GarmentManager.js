@@ -17,8 +17,6 @@ export default class GarmentManager {
     this.hidden = [];
     this.hiddenSide = null;
     this.currentSide = null;
-
-    this.closeUiBtn = document.getElementById('close-ui-btn'); //? test purposes
   }
 
   init() {
@@ -196,6 +194,14 @@ export default class GarmentManager {
     }
   }
 
+  resetActiveGarment() {
+    this.garmentInfoPanel = null;
+    this.resetMeshStyle(this.currentActiveGarment);
+    this.currentActiveGarment = null;
+    this.camera.reset();
+    this.currentSide = null;
+  }
+
   onClick(mesh) {
     console.log(`Clicked ${mesh.userData.side} mannequin!`, mesh.name);
 
@@ -214,30 +220,19 @@ export default class GarmentManager {
 
     // If panel is open just update the UI
     if (this.garmentInfoPanel) {
+      console.warn('update garment info panel instance')
       // Update garment information and set up a new active garment
       this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActiveGarment.name], { updateSliderPos: true, collection: this.currentActiveGarment.name });
     }
     // Create a new UI instance
     else {
+      console.warn('new garment info panel instance')
       // Update garment information and set up a new active garment
       this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
 
-      // TODO Refactor adding the close event
       // TODO Add view enhanced view listener
-      this.closeUiBtn.addEventListener(
-        'click',
-        () => {
-          console.log('UI closed');
-          this.resetMeshStyle(this.currentActiveGarment);
-          this.garmentInfoPanel.dispose({ hidePanel: true });
-          this.garmentInfoPanel = null;
-          this.currentActiveGarment = null;
-
-          this.camera.reset();
-          this.currentSide = null;
-        },
-        { once: true }
-      );
+      // TODO Integrate camera logic to cloning
+      // TODO Return from cloning view to before side, then go back to inital camera position
     }
   }
 }

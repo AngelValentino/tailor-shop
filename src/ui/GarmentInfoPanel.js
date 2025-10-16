@@ -45,6 +45,8 @@ export default class GarmentInfoPanel {
   }
 
   updateGarment(garmentInfo, { newTitleSliderInstance, collection, updateSliderPos }) {
+    this.setCollection(collection);
+
     // Update title
     if (newTitleSliderInstance) {
       this.garmentSlider = new GarmentSlider(this.garmentInfoCollection, collection);

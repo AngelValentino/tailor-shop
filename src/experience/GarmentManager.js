@@ -15,7 +15,8 @@ export default class GarmentManager {
     this.right = [];
     this.allMeshes = [];
     this.hidden = [];
-    this.hiddenSide = null
+    this.hiddenSide = null;
+    this.currentSide = null;
 
     this.closeUiBtn = document.getElementById('close-ui-btn'); //? test purposes
   }
@@ -51,6 +52,15 @@ export default class GarmentManager {
     meshes.forEach(mesh => center.add(mesh.position));
     center.divideScalar(meshes.length); // average position
     return center;
+  }
+
+  computeCollectionAvgHeight(side) {
+    const meshes = side === 'left' ? this.left : this.right;
+    if (!meshes || meshes.length === 0) return 0;
+
+    let sum = 0;
+    meshes.forEach(m => sum += m.position.y);
+    return sum / meshes.length;
   }
 
 
@@ -141,6 +151,22 @@ export default class GarmentManager {
     mesh.scale.set(1, 1, 1);
   }
 
+  focusOnCollection(side) {
+    const center = this.computeCollectionCenter(side);
+    const avgHeight = this.computeCollectionAvgHeight(side);
+
+    // Offset in front of collection
+    const cameraOffset = new THREE.Vector3(0, 0, 4);
+    const targetPos = center.clone();
+    targetPos.y = avgHeight;
+    targetPos.add(cameraOffset);
+
+    this.camera.moveTo(targetPos);
+    this.camera.lookAt(center);
+
+    this.currentSide = side; // track currently focused side
+  }
+
   updateActive(name) {
     this.resetMeshStyle(this.currentActiveGarment);
     const newActiveMesh = this.allMeshes.find(obj => obj.name === name);
@@ -149,10 +175,9 @@ export default class GarmentManager {
 
     console.warn('ACTIVE:', this.currentActiveGarment)
 
-    const newSide = newActiveMesh.userData.side;
-    if (this.currentSide !== newSide) {
-      this.currentSide = newSide; // update stored side
-      this.focusOnCollection(newSide); // only pan if side changed
+    // Focus camera only if side changes
+    if (newActiveMesh.userData.side !== this.currentSide) {
+      this.focusOnCollection(newActiveMesh.userData.side);
     }
   }
 
@@ -160,7 +185,6 @@ export default class GarmentManager {
     if (mesh.material && mesh.material.emissive) {
       // Store original emissive to restore later
       mesh.userData.originalEmissive = mesh.material.emissive.clone();
-
       mesh.material.emissive.setHex(0xff0000); // hover-like glow
     }
   }
@@ -170,28 +194,6 @@ export default class GarmentManager {
       mesh.material.emissive.copy(mesh.userData.originalEmissive);
       delete mesh.userData.originalEmissive;
     }
-  }
-
-  focusOnCollection(side) {
-    const sideCenter = this.computeCollectionCenter(side);
-
-    // Compute average Y height of mannequins
-    let avgHeight = 0;
-    const meshes = side === 'left' ? this.left : this.right;
-    meshes.forEach(m => avgHeight += m.position.y);
-    avgHeight /= meshes.length;
-
-    // Camera offset in front
-    const cameraOffset = new THREE.Vector3(0, 0, 4);
-    const newCameraPos = sideCenter.clone();
-    newCameraPos.y = avgHeight;
-    newCameraPos.add(cameraOffset);
-
-    this.camera.moveTo(newCameraPos);
-
-    // Look at the collection center
-    const lookAtPos = sideCenter.clone();
-    this.camera.lookAt(lookAtPos);
   }
 
   onClick(mesh) {
@@ -204,21 +206,24 @@ export default class GarmentManager {
 
     // Remove styles from the previously active garment
     if (this.currentActiveGarment) {
-    this.resetMeshStyle(this.currentActiveGarment);
+      this.resetMeshStyle(this.currentActiveGarment);
     }
 
     this.applyActiveMeshStyle(mesh); // Apply styles to the newly clicked mesh
     this.currentActiveGarment = mesh; // Update active garment reference
 
+    // If panel is open just update the UI
     if (this.garmentInfoPanel) {
-      console.warn('update INFO!')
-
-      //TODO Pan to active mesh
-
-      this.garmentInfoPanel.setCollection(this.currentActiveGarment.name);
+      // Update garment information and set up a new active garment
       this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActiveGarment.name], { updateSliderPos: true, collection: this.currentActiveGarment.name });
-    } 
+    }
+    // Create a new UI instance
     else {
+      // Update garment information and set up a new active garment
+      this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
+
+      // TODO Refactor adding the close event
+      // TODO Add view enhanced view listener
       this.closeUiBtn.addEventListener(
         'click',
         () => {
@@ -229,14 +234,10 @@ export default class GarmentManager {
           this.currentActiveGarment = null;
 
           this.camera.reset();
+          this.currentSide = null;
         },
         { once: true }
       );
-
-
-      this.focusOnCollection(this.currentActiveGarment.userData.side) //! Better refactor this is doing repeated logic on pan and zoom at active click
-
-      this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
     }
   }
 }

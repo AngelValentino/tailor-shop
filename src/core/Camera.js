@@ -25,9 +25,9 @@ export default class Camera {
     this.instance.updateProjectionMatrix();
   }
 
-    reset() {
-  this.targetPosition.copy(this.defaultPosition);
-  this.lookAtTarget.copy(this.defaultLookAt);
+  reset() {
+    this.targetPosition.copy(this.defaultPosition);
+    this.lookAtTarget.copy(this.defaultLookAt);
   }
 
   moveTo(position) {
@@ -46,6 +46,12 @@ export default class Camera {
     if (this.lookAtTarget) {
       this.currentLookAt.lerp(this.lookAtTarget, lerpFactor);
       this.instance.lookAt(this.currentLookAt);
+
+      const threshold = lerpFactor * 0.2;
+      if (this.instance.position.distanceTo(this.defaultPosition) < threshold) {
+          console.warn('RESET LOOK AT TARGET!');
+          this.lookAtTarget = null;
+      }
     }
   }
 }

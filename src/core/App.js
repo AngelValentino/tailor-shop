@@ -28,6 +28,7 @@ export default class App {
     const garmentManager = new GarmentManager(this.scene, utils, this.camera);
     const hoverControls = new HoverControls(this.camera.instance, () => garmentManager.getAllMeshes())
     this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls);
+    garmentManager.setTailorShopExperienceInstance(this.experience);
 
     this.#resizeHandler();
   }

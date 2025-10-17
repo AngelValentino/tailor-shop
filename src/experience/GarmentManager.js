@@ -8,6 +8,7 @@ export default class GarmentManager {
 
     this.utils = utils;
     this.camera = camera;
+    this.tailorShopExperience = null;
 
     this.currentActiveGarment = null;
     this.currentActiveClone = null;
@@ -17,6 +18,10 @@ export default class GarmentManager {
     this.hidden = [];
     this.hiddenSide = null;
     this.currentSide = null;
+  }
+
+  setTailorShopExperienceInstance(tailorShopExperience) {
+    this.tailorShopExperience = tailorShopExperience;
   }
 
   init() {
@@ -42,8 +47,17 @@ export default class GarmentManager {
     };
   }
 
-  computeCollectionCenter(side) {
-    const meshes = side === 'left' ? this.left : this.right;
+  computeCollectionCenter(side, mesh) {
+    const meshes = [];
+    
+    if (mesh) {
+      meshes.push(mesh);
+    } 
+    else {
+      const sideMeshes = side === 'left' ? this.left : this.right
+      meshes.push(...sideMeshes);
+    }
+
     if (!meshes || meshes.length === 0) return new THREE.Vector3();
 
     const center = new THREE.Vector3();
@@ -52,13 +66,70 @@ export default class GarmentManager {
     return center;
   }
 
-  computeCollectionAvgHeight(side) {
-    const meshes = side === 'left' ? this.left : this.right;
+  computeCollectionAvgHeight(side, mesh) {
+    const meshes = [];
+
+    if (mesh) {
+      meshes.push(mesh)
+    } 
+    else {
+      const sideMeshes = side === 'left' ? this.left : this.right;
+      meshes.push(...sideMeshes);
+    }
+
     if (!meshes || meshes.length === 0) return 0;
 
     let sum = 0;
     meshes.forEach(m => sum += m.position.y);
     return sum / meshes.length;
+  }
+
+  cloneActiveMannequin() {
+    if (!this.getActiveMannequin()) return null;
+
+    const currentActiveMannequin = this.getActiveMannequin();
+    const side = currentActiveMannequin.userData.side;
+    const opposite = side === 'left' ? 'right' : 'left';
+    const targetCol = side === 'left' ? this.tailorShopExperience.roomBounds.cols - 2 : 1;
+    const targetRow = side === 'left' ? 1 : 1;
+    const gridPos = this.tailorShopExperience.getGridPosition(targetCol, targetRow)
+    
+    const cloned = this.cloneMannequin(currentActiveMannequin);
+    if (!cloned) return;
+    console.log('hide', opposite);
+    this.hideSide(opposite);
+    console.log('position new clone')
+    cloned.position.x = gridPos.x;
+    cloned.position.z = gridPos.z;
+    cloned.rotation.set(0, 0, 0); 
+
+    cloned.updateMatrixWorld(true);
+
+    console.log('Cloning side:', side);
+    console.log('Opposite hidden:', opposite);
+    console.log('Clone position:', cloned.position);
+    console.log('Clone visible:', cloned.visible);
+
+    console.log('roomBox:', this.tailorShopExperience.roomBox);
+    console.log('cellWidth:', this.tailorShopExperience.roomBounds.cellWidth);
+    console.log('gridPos:', gridPos);
+  }
+
+  restoreOppositeSide() {
+    // delete the curernt clone
+    this.deleteActiveClone();
+    // set up the stored hidden meshes
+    this.showHidden();
+    //? hide UI
+    //? restore camera position
+  }
+
+  handleCloneInteraction() {
+    this.cloneActiveMannequin();
+    console.log(this.currentActiveClone)
+    this.focusOnCollection(null, this.currentActiveClone);
+    this.garmentInfoPanel.close({ resetCamera: false });
+    // store position in camera to resotre back again
   }
 
 
@@ -149,9 +220,9 @@ export default class GarmentManager {
     mesh.scale.set(1, 1, 1);
   }
 
-  focusOnCollection(side) {
-    const center = this.computeCollectionCenter(side);
-    const avgHeight = this.computeCollectionAvgHeight(side);
+  focusOnCollection(side, mesh) {
+    const center = this.computeCollectionCenter(side, mesh);
+    const avgHeight = this.computeCollectionAvgHeight(side, mesh);
 
     // Offset in front of collection
     const cameraOffset = new THREE.Vector3(0, 0, 4);
@@ -194,11 +265,11 @@ export default class GarmentManager {
     }
   }
 
-  resetActiveGarment() {
+  resetActiveGarment({ resetCamera = true } = {}) {
     this.garmentInfoPanel = null;
     this.resetMeshStyle(this.currentActiveGarment);
     this.currentActiveGarment = null;
-    this.camera.reset();
+    resetCamera && this.camera.reset();
     this.currentSide = null;
   }
 
@@ -230,9 +301,8 @@ export default class GarmentManager {
       // Update garment information and set up a new active garment
       this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
 
-      // TODO Add view enhanced view listener
-      // TODO Integrate camera logic to cloning
-      // TODO Return from cloning view to before side, then go back to inital camera position
+      // TODO Move to clone and close UI
+      // TODO Return from cloning view to former side before stored, and open the UI again
     }
   }
 }

@@ -9,7 +9,6 @@ export default class GarmentInfoPanel {
     this.garmentManager = garmentManager;
 
     this.eventHandler = {}
-    this.tailorShopExperience = null;
     this.collectionName = collection;
 
     this.garmentInfoCollection = garmentInfoCollection;
@@ -18,7 +17,8 @@ export default class GarmentInfoPanel {
       panel: document.getElementById('garment-info-panel'),
       garmentTitle: document.getElementById('garment-info-panel__title'),
       garmentDescription: document.getElementById('garment-info-panel__description'),
-      closeBtn: document.getElementById('garment-info-panel__close-btn')
+      closeBtn: document.getElementById('garment-info-panel__close-btn'),
+      viewMoreBtn: document.getElementById('garment-info-panel__view-more-btn')
     }
 
     this.open(garmentInfoCollection[collection], this.collectionName);
@@ -30,9 +30,12 @@ export default class GarmentInfoPanel {
 
   open(garmentInfo, collection) {
     this.eventHandler.closePanel = this.close.bind(this);
+    this.eventHandler.moveToClone = this.garmentManager.handleCloneInteraction.bind(this.garmentManager);
 
     if (!this.lms.panel.classList.contains('active')) {
       this.lms.closeBtn.addEventListener('click', this.eventHandler.closePanel);
+      this.lms.viewMoreBtn.addEventListener('click', this.eventHandler.moveToClone)
+
       this.lms.panel.classList.add('active')
       console.warn('open UI');
       this.updateGarment(garmentInfo, {newTitleSliderInstance: true, collection: collection});
@@ -43,9 +46,10 @@ export default class GarmentInfoPanel {
     }
   }
 
-  close() {
+  close({ resetCamera = true } = {}) {
+    console.log(resetCamera)
     this.dispose({ hidePanel: true });
-    this.garmentManager.resetActiveGarment();
+    this.garmentManager.resetActiveGarment({ resetCamera });
     console.log('close UI!')
   }
 
@@ -84,8 +88,10 @@ export default class GarmentInfoPanel {
     if (this.lms.panel.classList.contains('active')) {
       this.garmentGallerySlider.dispose();
       this.garmentSlider.dispose();
-      this.lms.closeBtn.removeEventListener('click', this.eventHandler.closePanel);
       hidePanel && this.lms.panel.classList.remove('active');
+
+      this.lms.closeBtn.removeEventListener('click', this.eventHandler.closePanel);
+      this.lms.viewMoreBtn.removeEventListener('click', this.eventHandler.moveToClone)
     } 
     else {
       console.warn('ui alraedy closed ignore')

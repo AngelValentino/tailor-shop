@@ -4,7 +4,6 @@ export default class TailorShopExperience {
   constructor(scene, camera, garmentManager, hoverControls) {
     this.scene = scene;
     this.camera = camera;
-
     this.garmentManager = garmentManager;
     this.hoverControls = hoverControls;
 
@@ -24,9 +23,9 @@ export default class TailorShopExperience {
   }
 
   init() {
-    this.garmentManager.init();
     this.calculateRoomGrid();
     this.#drawRoomGrid();
+    this.garmentManager.init();
   }
 
   disposeHoverControls() {
@@ -74,35 +73,5 @@ export default class TailorShopExperience {
       (this.roomBox.min.z + this.roomBox.max.z) / 2
     );
     this.scene.add(gridHelper);
-  }
-
-  cloneActiveMannequin() {
-    if (!this.garmentManager.getActiveMannequin()) return null;
-
-    const currentActiveMannequin = this.garmentManager.getActiveMannequin();
-    const side = currentActiveMannequin.userData.side;
-    const opposite = side === 'left' ? 'right' : 'left';
-    const targetCol = side === 'left' ? this.roomBounds.cols - 2 : 1;
-    const targetRow = side === 'left' ? 1 : 1;
-    const gridPos = this.getGridPosition(targetCol, targetRow)
-    
-    const cloned = this.garmentManager.cloneMannequin(currentActiveMannequin);
-    if (!cloned) return;
-    console.log('hide', opposite);
-    this.garmentManager.hideSide(opposite);
-    console.log('position new clone')
-    cloned.position.x = gridPos.x;
-    cloned.position.z = gridPos.z;
-    cloned.rotation.set(0, 0, 0); 
-
-    cloned.updateMatrixWorld(true);
-  }
-
-  restoreOppositeSide() {
-    // delete the curernt clone
-    this.garmentManager.deleteActiveClone();
-    // set up the stored hidden meshes
-    this.garmentManager.showHidden();
-    //? hide UI
   }
 }

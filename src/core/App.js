@@ -8,6 +8,8 @@ import TailorShopExperience from '../experience/TailorShopExperience.js';
 import HoverControls from '../utils/HoverControls.js';
 import GarmentManager from '../experience/GarmentManager.js';
 import Utils from '../utils/Utils.js';
+import CloneManager from '../experience/CloneManager.js';
+import RoomGrid from '../experience/RoomGrid.js';
 
 export default class App {
   constructor(canvas) {
@@ -25,10 +27,13 @@ export default class App {
     });
 
     const utils = new Utils;
-    const garmentManager = new GarmentManager(this.scene, utils, this.camera);
+    const roomGrid = new RoomGrid(this.scene);
+    const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid);
+    const garmentManager = new GarmentManager(this.scene, utils, this.camera, cloneManager);
     const hoverControls = new HoverControls(this.camera.instance, () => garmentManager.getAllMeshes())
-    this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls);
+    this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls, roomGrid);
     garmentManager.setTailorShopExperienceInstance(this.experience);
+    cloneManager.setGarmentManagerInstance(garmentManager);
 
     this.#resizeHandler();
   }

@@ -3,19 +3,22 @@ import garmentInfoCollection from "../data/garmentInfoCollection";
 import GarmentInfoPanel from "../ui/GarmentInfoPanel";
 
 export default class GarmentManager {
-  constructor(scene, utils, camera, cloneManager) {
+  constructor(scene, utils, camera, cloneManager, garmentInfoPanel) {
     this.scene = scene;
 
     this.utils = utils;
     this.camera = camera;
     this.tailorShopExperience = null;
     this.cloneManager = cloneManager;
+    this.garmentInfoPanel = garmentInfoPanel;
 
     this.currentActiveGarment = null;
     this.left = [];
     this.right = [];
     this.allMeshes = [];
     this.currentSide = null;
+
+    this.returnToGarmentPanelBtn = document.getElementById('return-to-garment-panel-btn'); //? test element
   }
 
   setTailorShopExperienceInstance(tailorShopExperience) {
@@ -49,12 +52,21 @@ export default class GarmentManager {
     return this.allMeshes;
   }
 
-  getActiveMannequin() {
-    return this.currentActiveGarment;
+  setAllMeshes(meshes) {
+    // If it's an array, push all elements
+    if (Array.isArray(meshes)) {
+      this.allMeshes.length = 0;
+      this.allMeshes.push(...meshes);
+    } 
+    // If it's a single mesh, push it directly
+    else {
+      this.allMeshes.push(meshes);
+    }
   }
 
-  getAllMeshes() {
-    return this.allMeshes;
+
+  getActiveMannequin() {
+    return this.currentActiveGarment;
   }
 
   computeCollectionCenter(side, mesh) {
@@ -95,19 +107,33 @@ export default class GarmentManager {
   }
 
   restoreOppositeSide() {
-    // delete the curernt clone
-    this.deleteActiveClone();
-    // set up the stored hidden meshes
-    this.showHidden();
-    //? hide UI
-    //? restore camera position
+    console.warn('restore back to garment panel')
+    // Delete the current clone and show hidden
+    this.cloneManager.deleteActiveClone();
+    this.cloneManager.showHidden();
+   
+    // Show UI
+    this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
+    
+    // Restore camera position
+    this.camera.moveBack();
+    
+    this.returnToGarmentPanelBtn.classList.remove('active');
+    this.returnToGarmentPanelBtn.removeEventListener('click', this.restoreBind);
   }
 
-  handleCloneInteraction() {
+  enterCloneView() {
+    // Bind restore button for exiting clone view
+    this.restoreBind = this.restoreOppositeSide.bind(this);
+    this.returnToGarmentPanelBtn.classList.add('active');
+    this.returnToGarmentPanelBtn.addEventListener('click', this.restoreBind)
+
+    // Clone the active mannequin and focus camera
     this.cloneManager.cloneActiveMannequin();
     this.focusOnCollection(null, this.cloneManager.getActiveClone());
-    this.garmentInfoPanel.close({ resetCamera: false });
-    // TODO store position in camera to resotre back again
+
+    // Close garment info panel without resetting camera or active garment
+    this.garmentInfoPanel.close({ resetCamera: false, deleteActiveGarmentRef: false });
   }
 
   onMouseEnter(mesh) {
@@ -165,12 +191,12 @@ export default class GarmentManager {
     }
   }
 
-  resetActiveGarment({ resetCamera = true } = {}) {
+  resetActiveGarment({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
     this.garmentInfoPanel = null;
     this.resetMeshStyle(this.currentActiveGarment);
-    this.currentActiveGarment = null;
+    deleteActiveGarmentRef && (this.currentActiveGarment = null);
     resetCamera && this.camera.reset();
-    this.currentSide = null;
+    deleteActiveGarmentRef && (this.currentSide = null);
   }
 
   onClick(mesh) {

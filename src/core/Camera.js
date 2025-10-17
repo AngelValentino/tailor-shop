@@ -18,6 +18,9 @@ export default class Camera {
     this.targetPosition = this.instance.position.clone();
     this.lookAtTarget = null;
     this.currentLookAt = new THREE.Vector3(0, 1, 0);
+
+    this.lastPosition = this.instance.position.clone();
+    this.lastLookAt = this.defaultLookAt.clone();
   }
 
   onResize() {
@@ -31,10 +34,17 @@ export default class Camera {
   }
 
   moveTo(position) {
+    this.lastPosition.copy(position);
     this.targetPosition.copy(position);
   }
 
+  moveBack() {
+    this.targetPosition.copy(this.lastPosition);
+    this.lookAtTarget.copy(this.lastLookAt);
+  }
+
   lookAt(position) {
+    this.lastLookAt.copy(position);
     this.lookAtTarget = position.clone();
     this.instance.lookAt(this.lookAtTarget);
   }

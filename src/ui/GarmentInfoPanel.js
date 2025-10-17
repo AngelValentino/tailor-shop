@@ -30,7 +30,7 @@ export default class GarmentInfoPanel {
 
   open(garmentInfo, collection) {
     this.eventHandler.closePanel = this.close.bind(this);
-    this.eventHandler.moveToClone = this.garmentManager.handleCloneInteraction.bind(this.garmentManager);
+    this.eventHandler.moveToClone = this.garmentManager.enterCloneView.bind(this.garmentManager);
 
     if (!this.lms.panel.classList.contains('active')) {
       this.lms.closeBtn.addEventListener('click', this.eventHandler.closePanel);
@@ -46,10 +46,10 @@ export default class GarmentInfoPanel {
     }
   }
 
-  close({ resetCamera = true } = {}) {
+  close({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
     console.log(resetCamera)
     this.dispose({ hidePanel: true });
-    this.garmentManager.resetActiveGarment({ resetCamera });
+    this.garmentManager.resetActiveGarment({ resetCamera, deleteActiveGarmentRef });
     console.log('close UI!')
   }
 

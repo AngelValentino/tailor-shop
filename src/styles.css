@@ -89,17 +89,12 @@ button {
   color: black;
 }
 
-.btn-container {
-  position: absolute;
-  right: 5%;
-  bottom: 5%;
-  border: 2px solid green;
-  padding: 5px;
+.return-to-garment-panel-btn {
   display: none;
 }
 
-.btn-container.visible {
-  display: block;
+.return-to-garment-panel-btn.active {
+  display: inline-block;
 }
 
 .garment-info-panel {

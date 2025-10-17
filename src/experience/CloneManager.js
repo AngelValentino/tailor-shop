@@ -7,7 +7,7 @@ export default class CloneManager {
     this.roomGrid = roomGrid;
 
     this.currentActiveClone = null;
-    this.hidden = [];
+    this.hiddenCurrentSide = [];
     this.hiddenSide = null;
   }
 
@@ -58,33 +58,35 @@ export default class CloneManager {
       return;
     }
 
-    this.hidden.length = 0
-    this.allMeshes = this.garmentManager.getAllMeshes().filter(mesh => {
+    this.hiddenCurrentSide.length = 0
+    const filterCurrentSideMeshes = this.garmentManager.getAllMeshes().filter(mesh => {
       if (mesh.userData.side === side) {
         mesh.visible = false;
-        this.hidden.push(mesh);
+        this.hiddenCurrentSide.push(mesh);
         return false; // remove from allMeshes
       }
       return true; // keep in allMeshes
     });
 
+    this.garmentManager.setAllMeshes(filterCurrentSideMeshes);
+
     this.hiddenSide = side;
-    console.log(`Hid ${this.hidden.length} meshes on side '${side}'`);
+    console.log(`Hid ${this.hiddenCurrentSide.length} meshes on side '${side}'`);
   }
 
   showHidden() {
-    if (!this.hiddenSide || this.hidden.length === 0) {
+    if (!this.hiddenSide || this.hiddenCurrentSide.length === 0) {
       console.warn('showHidden() called but nothing is hidden — skipping.');
       return;
     }
-    console.log(this.hidden)
-    this.hidden.forEach(mesh => {
+    console.log(this.hiddenCurrentSide)
+    this.hiddenCurrentSide.forEach(mesh => {
       mesh.visible = true;
-      this.allMeshes.push(mesh);
+      this.garmentManager.setAllMeshes(mesh);
     });
 
-    console.log(`Restored ${this.hidden.length} meshes from side '${this.hiddenSide}'`);
-    this.hidden.length = 0;
+    console.log(`Restored ${this.hiddenCurrentSide.length} meshes from side '${this.hiddenSide}'`);
+    this.hiddenCurrentSide.length = 0;
     this.hiddenSide = null;
   }
 

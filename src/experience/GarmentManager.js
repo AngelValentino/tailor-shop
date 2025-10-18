@@ -1,16 +1,16 @@
 import * as THREE from 'three';
-import garmentInfoCollection from "../data/garmentInfoCollection";
-import GarmentInfoPanel from "../ui/GarmentInfoPanel";
+import garmentInfoCollection from "../data/garmentInfoCollection.js";
+import GarmentInfoPanel from "../ui/GarmentInfoPanel.js";
 
 export default class GarmentManager {
-  constructor(scene, utils, camera, cloneManager, garmentInfoPanel) {
+  constructor(scene, utils, camera, cloneManager) {
     this.scene = scene;
 
     this.utils = utils;
     this.camera = camera;
     this.tailorShopExperience = null;
     this.cloneManager = cloneManager;
-    this.garmentInfoPanel = garmentInfoPanel;
+    this.garmentInfoPanel = null;
 
     this.currentActiveGarment = null;
     this.left = [];
@@ -107,6 +107,8 @@ export default class GarmentManager {
   }
 
   restoreOppositeSide() {
+    //TODO remove rotation controls for active clone
+    
     console.warn('restore back to garment panel')
     // Delete the current clone and show hidden
     this.cloneManager.deleteActiveClone();
@@ -123,6 +125,8 @@ export default class GarmentManager {
   }
 
   enterCloneView() {
+    //TODO add rotation controls for active clone
+
     // Bind restore button for exiting clone view
     this.restoreBind = this.restoreOppositeSide.bind(this);
     this.returnToGarmentPanelBtn.classList.add('active');

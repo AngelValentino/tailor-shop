@@ -21,8 +21,6 @@ export default class AssetLoader {
         (gltf) => {
           gltf.scene.traverse((child) => {
             if (child.isGroup && (child.name.startsWith('prop__decor') || child.name.startsWith('prop__interactive'))) {
-                console.log('Main prop group:', child.name);
-
                 child.traverse((mesh) => {
                   if (mesh.isMesh) {
                     mesh.castShadow = true;
@@ -50,7 +48,6 @@ export default class AssetLoader {
 
               this.scene.add(dirLight);
               this.scene.add(dirLight.target);
-              console.log('Directional light recreated:', dirLight);
             }
 
             if (child.isLight) {
@@ -67,7 +64,7 @@ export default class AssetLoader {
               child.shadow.camera.far = 20;
 
               if (child.name === 'light__ceiling__point-light') {
-                child.intensity = lightIntensity * 2;
+                child.intensity = lightIntensity * 1.8;
                 child.castShadow = true;
               }
 

@@ -26,14 +26,32 @@ export default class GarmentManager {
   }
 
   init() {
-    const leftGroup = this.scene.getObjectByName('mannequins-left');
-    const rightGroup = this.scene.getObjectByName('mannequins-right');
+    const regex = /^prop__interactive__(.*)__(left|right)$/;
 
-    console.log(leftGroup)
+    this.scene.traverse(obj => {
+      const match = obj.name.match(regex);
 
-    this.left = leftGroup ? leftGroup.children : [];
-    this.right = rightGroup ? rightGroup.children : [];
+      if (match) {
+        console.log(match)
 
+        
+        console.log(obj)
+        const name = match[1];
+        const side = match[2];
+
+        obj.userData.garmentKey = name;
+
+        console.log(side)
+
+        if (side === 'left') {
+          this.left.push(obj);
+        } 
+        else if (side === 'right') {
+          this.right.push(obj);
+        }
+      }
+
+    })
     // tag userData and create global list
     this.left.forEach(m => (m.userData.side = 'left'));
     this.right.forEach(m => (m.userData.side = 'right'));
@@ -179,20 +197,26 @@ export default class GarmentManager {
       this.focusOnCollection(newActiveMesh.userData.side);
     }
   }
-
-  applyActiveMeshStyle(mesh) {
-    if (mesh.material && mesh.material.emissive) {
-      // Store original emissive to restore later
-      mesh.userData.originalEmissive = mesh.material.emissive.clone();
-      mesh.material.emissive.setHex(0xff0000); // hover-like glow
-    }
+  
+  applyActiveMeshStyle(group) {
+    group.traverse((child) => {
+      if (child.isMesh && child.material && child.material.emissive) {
+        // Store original emissive if not already stored
+        if (!child.userData.originalEmissive) {
+          child.userData.originalEmissive = child.material.emissive.clone();
+        }
+        child.material.emissive.setHex(0xff0000);
+      }
+    });
   }
 
-  resetMeshStyle(mesh) {
-    if (mesh.material && mesh.userData.originalEmissive) {
-      mesh.material.emissive.copy(mesh.userData.originalEmissive);
-      delete mesh.userData.originalEmissive;
-    }
+  resetMeshStyle(group) {
+    group.traverse((child) => {
+      if (child.isMesh && child.material && child.userData.originalEmissive) {
+        child.material.emissive.copy(child.userData.originalEmissive);
+        delete child.userData.originalEmissive;
+      }
+    });
   }
 
   resetActiveGarment({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
@@ -230,9 +254,6 @@ export default class GarmentManager {
       console.warn('new garment info panel instance')
       // Update garment information and set up a new active garment
       this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
-
-      // TODO Move to clone and close UI
-      // TODO Return from cloning view to former side before stored, and open the UI again
     }
   }
 }

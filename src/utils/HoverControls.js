@@ -75,11 +75,14 @@ export default class HoverControls {
     }
 
     const targets = this.getTargets();
+    //console.log(targets);
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(targets);
 
+    //console.log(intersects)
+
     if (intersects.length) {
-      const hit = intersects[0].object;
+      const hit = intersects[0].object.parent;
 
       if (hit !== this.lastHovered) {
         // If there was a previously hovered object, trigger "mouse leave" logic

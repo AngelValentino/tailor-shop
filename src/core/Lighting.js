@@ -4,7 +4,7 @@ export default class Lighting {
   constructor(scene) {
     this.params = {
       ambientColor: 0xbfdfff,
-      ambientIntensity: 2,
+      ambientIntensity: 0.25,
       pointColor: 0xffe0b0,
       pointIntensity: 10
     }
@@ -15,7 +15,7 @@ export default class Lighting {
     this.#setupPointLight(this.point);
 
     scene.add(this.ambient);
-    scene.add(this.point);
+    //scene.add(this.point);
   }
 
   #setupPointLight(light) {

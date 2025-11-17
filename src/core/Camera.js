@@ -3,14 +3,15 @@ import * as THREE from 'three';
 export default class Camera {
   constructor(scene) {
     this.instance = new THREE.PerspectiveCamera(
-      35, 
+      30, 
       window.innerWidth / window.innerHeight, 
       0.1, 
       100
     );
 
-    this.instance.position.set(0, 1, 4);
+    this.instance.position.set(0, 1.5, 4);
     scene.add(this.instance);
+    this.instance.lookAt(0, 1.3, 0)
 
     this.defaultPosition = this.instance.position.clone();
     this.defaultLookAt = new THREE.Vector3(0, 1, 0);

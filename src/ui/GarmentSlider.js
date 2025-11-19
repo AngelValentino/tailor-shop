@@ -60,7 +60,6 @@ export default class GarmentSlider {
       this.collectionName = e.target.dataset.name;
       this.garmentInfoPanel.updateGarment(this.garmentInfoCollection[this.collectionName], {collection: this.collectionName});
     }
-
   }
 
   slide(direction) {

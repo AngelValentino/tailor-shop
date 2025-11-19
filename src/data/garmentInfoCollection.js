@@ -1,5 +1,5 @@
 const garmentInfoCollection = {
-  'prop__interactive__built-jacket__left': {
+  'built-jacket': {
     title: 'Indigo Denim Built Biker Jacket',
     description: 'This biker jacket was made in Japan from medium weight leather and features hand finished details for a vintage inspired look.',
     images: {
@@ -71,7 +71,7 @@ const garmentInfoCollection = {
       ]
     }
   },
-  'prop__interactive__pleated-trousers__left': {
+  'pleated-trousers': {
     title: 'High waisted pleated trousers',
     description: 'Vintage modern looking denim inspired high waisted pleated trousers with side belts and 5 pockets,',
     images: {
@@ -143,7 +143,7 @@ const garmentInfoCollection = {
       ]
     }
   },
-  'prop__interactive__built-jacket-outfit__right': {
+  'built-jacket-outfit': {
     title: 'Bomber and mid waisted trousers outfit',
     description: 'Complet outfit bomber flight jacket casual formal style combined with a proper mid waisted trousers.',
     images: {

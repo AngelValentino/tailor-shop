@@ -39,7 +39,7 @@ export default class GarmentManager {
         const name = match[1];
         const side = match[2];
 
-        obj.userData.garmentKey = name;
+        obj.userData.garmentInfoKey = name;
 
         console.log(side)
 
@@ -133,7 +133,7 @@ export default class GarmentManager {
     this.cloneManager.showHidden();
    
     // Show UI
-    this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
+    this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.userData.garmentInfoKey, this);
     
     // Restore camera position
     this.camera.moveBack();
@@ -159,12 +159,12 @@ export default class GarmentManager {
   }
 
   onMouseEnter(mesh) {
-    console.log(`Mouse entered: ${mesh.name}`);
+    console.log(`Mouse entered: ${mesh.userData.garmentInfoKey}`);
     mesh.scale.set(1.05, 1.05, 1.05);
   }
 
   onMouseLeave(mesh) {
-    console.log(`Mouse left: ${mesh.name}`);
+    console.log(`Mouse left: ${mesh.userData.garmentInfoKey}`);
     mesh.scale.set(1, 1, 1);
   }
 
@@ -186,7 +186,7 @@ export default class GarmentManager {
 
   updateActive(name) {
     this.resetMeshStyle(this.currentActiveGarment);
-    const newActiveMesh = this.allMeshes.find(obj => obj.name === name);
+    const newActiveMesh = this.allMeshes.find(obj => obj.userData.garmentInfoKey === name);
     this.currentActiveGarment = newActiveMesh;
     this.applyActiveMeshStyle(this.currentActiveGarment);
 
@@ -228,7 +228,7 @@ export default class GarmentManager {
   }
 
   onClick(mesh) {
-    console.log(`Clicked ${mesh.userData.side} mannequin!`, mesh.name);
+    console.log(`Clicked ${mesh.userData.side} mannequin!`, mesh.userData.garmentInfoKey);
 
     if (this.currentActiveGarment === mesh) {
       console.warn('same mesh!')
@@ -247,13 +247,13 @@ export default class GarmentManager {
     if (this.garmentInfoPanel) {
       console.warn('update garment info panel instance')
       // Update garment information and set up a new active garment
-      this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActiveGarment.name], { updateSliderPos: true, collection: this.currentActiveGarment.name });
+      this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActiveGarment.userData.garmentInfoKey], { updateSliderPos: true, collection: this.currentActiveGarment.userData.garmentInfoKey });
     }
     // Create a new UI instance
     else {
       console.warn('new garment info panel instance')
       // Update garment information and set up a new active garment
-      this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.name, this);
+      this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.userData.garmentInfoKey, this);
     }
   }
 }

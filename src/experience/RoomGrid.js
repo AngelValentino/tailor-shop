@@ -21,7 +21,7 @@ export default class RoomGrid {
   }
 
   calculateRoomGrid() {
-    const roomMesh = this.scene.getObjectByName('room');
+    const roomMesh = this.scene.getObjectByName('room__main__atelier');
     if (roomMesh) {
       this.roomBox = new THREE.Box3().setFromObject(roomMesh);
       this.roomBounds.width = this.roomBox.max.x - this.roomBox.min.x;

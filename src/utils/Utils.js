@@ -6,7 +6,9 @@ export default class Utils {
     if (scene && mesh.parent === scene) scene.remove(mesh);
 
     // Recursively dispose children
-    mesh.children.forEach(child => removeMesh(child));
+    mesh.children.forEach(child => {
+      this.removeMesh(child);
+    });
 
     // Dispose geometry
     mesh.geometry?.dispose();
@@ -19,5 +21,5 @@ export default class Utils {
         mat.dispose();
       });
     }
-}
+  }
 }

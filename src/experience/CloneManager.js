@@ -94,6 +94,7 @@ export default class CloneManager {
     if (!this.garmentManager.getActiveMannequin()) return null;
 
     const currentActiveMannequin = this.garmentManager.getActiveMannequin();
+
     const side = currentActiveMannequin.userData.side;
     const opposite = side === 'left' ? 'right' : 'left';
     const targetCol = side === 'left' ? this.roomGrid.roomBounds.cols - 2 : 1;

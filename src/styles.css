@@ -51,7 +51,7 @@ html {
 }
 
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
   min-width: 360px;
 }
 
@@ -84,11 +84,6 @@ main {
   z-index: 0;
 }
 
-button {
-  background-color: greenyellow;
-  color: black;
-}
-
 .return-to-garment-panel-btn {
   display: none;
 }
@@ -97,17 +92,23 @@ button {
   display: inline-block;
 }
 
+/* Garment info panel */
+
 .garment-info-panel {
   position: absolute;
-  right: 3%;
-  bottom: 5%;
+  right: 0;
+  bottom: 0;
   max-width: 500px;
   background-color: rgb(0, 0, 0, 0.43);
   color: #fff;
   padding: 20px;
-  border-radius: 2px;
-  font-size: 1.1rem;
+  border-radius: 3px;
   display: none;
+  max-height: 90vh;
+  scrollbar-width: thin;
+  overflow: auto;
+  scrollbar-color: rgba(0, 0, 0, 0.5) transparent;
+  margin: 30px;
 }
 
 .garment-info-panel.active {
@@ -116,15 +117,44 @@ button {
 
 .garment-info-panel__close-btn {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 12px;
+  right: 15px;
+  color: inherit;
+    opacity: 0.7;
 }
 
-@media screen and (max-width: 500px) {
-  .garment-info-panel {
-    right: 0;
-  }
+.garment-info-panel__close-btn:is(:hover, :focus-visible) {
+  opacity: 1;
 }
+
+.garment-info-panel__close-btn-svg {
+  width: 1.15rem;
+  display: block;
+}
+
+.garment-info-panel__title {
+  margin-bottom: 20px;
+  font-size: 2.25rem;
+  line-height: 1.25;
+}
+
+.garment-info-panel__description {
+  line-height: 1.4;
+  margin-bottom: 30px;
+  font-size: 1.125rem;
+}
+
+.garment-info-panel__view-more-btn {
+  background-color: rgb(0, 0, 0, 0.5);
+  padding: 12px 25px;
+  border-radius: 3px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* End of garment info panel */
+
+/* Garment slider */
 
 .garment-slider__controls {
   margin-bottom: 5px;
@@ -132,29 +162,61 @@ button {
   gap: 5px;
 }
 
+.garment-slider__control-btn {
+  color: inherit;
+  opacity: 0.6;
+}
+
+.garment-slider__control-btn:is(:hover, :focus-visible) {
+  opacity: 1;
+}
+
+.garment-slider__control-btn.active {
+  opacity: 1;
+}
+
+.garment-slider__control-btn-svg {
+  width: 1.5rem;
+  display: block;
+}
+
 .garment-slider {
   display: flex;
-  border: 2px solid palegoldenrod;
   margin-bottom: 30px;
+  align-items: center;
 }
 
 .garment-slider__title {
   width: 100%;
   display: block;
   text-align: center;
+  background-color: rgb(0, 0, 0, 0.5);
+  border-radius: 3px;
+  padding: 5px;
+  font-size: 1.6rem;
+  font-weight: 600;
 }
 
+.garment-slider__prev-btn,
+.garment-slider__next-btn {
+  color: inherit;
+}
 
+.garment-slider__prev-btn-svg,
+.garment-slider__next-btn-svg {
+  width: 2.5rem;
+  display: block;
+}
+
+/* End of garment slider */
+
+/* Garment gallery */
 
 .garment-gallery {
   display: flex;
   gap: 16px;
   overflow: hidden;
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: rgb(0, 0, 0, .5);
-  border-radius: 2px;
-  border: 2px solid red;
+  margin-bottom: 15px;
 }
 
 .garment-gallery__photos-list {
@@ -163,8 +225,9 @@ button {
   overflow: hidden;
   height: 100%;
   width: 100%;
+  border-radius: 3px;
+  border: 2px solid white;
 }
-
 
 .garment-gallery__photo-container {
   width: 100%;
@@ -182,7 +245,6 @@ button {
   overflow-y: auto;
   scrollbar-width: none;  /* Firefox */
   /* border: 2px solid red; */
-
 }
 
 .garment-gallery__nav::-webkit-scrollbar {
@@ -197,22 +259,54 @@ button {
 
 .garment-gallery__thumb {
   border: 2px solid transparent;
+  border-radius: 3px;
 }
 
 .garment-gallery__thumb.active {
-  border: 2px solid darkorchid;
+  border: 2px solid white;
 }
 
-.garment-info-panel__title {
-  margin-bottom: 20px;
+/* End of garment gallery */
+
+/* Hover capable devices */
+
+@media screen and (pointer: fine) and (hover: hover) {
+  .garment-slider__prev-btn:is(:hover, :focus-visible),
+  .garment-slider__next-btn:is(:hover, :focus-visible) {
+    transform: scale(1.1);
+  }
+
+  .garment-slider__prev-btn:active,
+  .garment-slider__next-btn:active {
+    transform: scale(1);
+  }
 }
 
-.garment-info-panel__description {
-  line-height: 1.35;
-  margin-bottom: 30px;
+/* End of hover capable diveces */
+
+/* Media queries */
+
+@media screen and (max-width: 500px) {
+  .garment-info-panel {
+    margin: 15px;
+  }
+
+  html {
+    font-size: 15px;
+  }
 }
 
-.garment-info-panel__view-more-btn {
-  padding: 10px 20px;
+@media screen and (max-height: 800px) and (min-width: 600px) {
+  .garment-info-panel {
+    max-height: 85vh;
+  }
+
+  .garment-info-panel.active {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 30px;
+    max-width: 800px;
+  }
 }
 
+/* End of media queries */

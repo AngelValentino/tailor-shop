@@ -39,7 +39,6 @@ export default class GarmentInfoPanel {
       this.lms.panel.classList.add('active')
       console.warn('open UI');
       this.updateGarment(garmentInfo, {newTitleSliderInstance: true, collection: collection});
-      this.generatePanelStructure(garmentInfo);
     } 
     else {
       console.warn('ui already opened ignore')
@@ -75,6 +74,8 @@ export default class GarmentInfoPanel {
         this.garmentSlider.updateTitle();
       }
     }
+
+    this.garmentSlider.updateSliderControls();
     
     // Re-generate slider
     this.garmentGallerySlider && this.garmentGallerySlider.dispose();

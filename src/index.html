@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tailorshop</title>
   <link rel="stylesheet" href="./styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <canvas class="webgl"></canvas>
@@ -15,54 +18,62 @@
     <div class="ui-container">
       <button id="return-to-garment-panel-btn" class="return-to-garment-panel-btn">Return to garment panel</button>
       <div id="garment-info-panel" class="garment-info-panel">
-        <button class="garment-info-panel__close-btn" id="garment-info-panel__close-btn">close</button>
-        <div id="garment-slider-container" class="garment-slider-container">
-          <ul class="garment-slider__controls"><li><button>1</button></li><li><button>2</button></li></ul>
-          <div id="garment-slider" class="garment-slider"> 
-            <button class="garment-slider__prev-btn">prev</button>
-            <h2 id="garment-slider__title" class="garment-slider__title">jacket2</h2>
-            <button class="garment-slider__next-btn">next</button>
+        <button class="garment-info-panel__close-btn" id="garment-info-panel__close-btn">
+          <svg class="garment-info-panel__close-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+            <path fill="currentColor" d="M55.1 73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L147.2 256L9.9 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l137.3-137.4l137.4 137.3c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.8 256l137.3-137.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192.5 210.7z" />
+          </svg>
+        </button>
+        <div>
+          <div id="garment-slider-container" class="garment-slider-container">
+            <ul class="garment-slider__controls"><li><button>1</button></li><li><button>2</button></li></ul>
+            <div id="garment-slider" class="garment-slider"> 
+              <button class="garment-slider__prev-btn">prev</button>
+              <h2 id="garment-slider__title" class="garment-slider__title">jacket2</h2>
+              <button class="garment-slider__next-btn">next</button>
+            </div>
+          </div>
+          <div id="garment-gallery" class="garment-gallery">
+            <ul class="garment-gallery__photos-list">
+              <li class="garment-gallery__photo-container">
+                <img class="garment-gallery__photo" src="/images/jacket2/1-regular.jpg" alt="">
+              </li>
+              <li class="garment-gallery__photo-container">
+                <img class="garment-gallery__photo" src="/images/jacket2/2-regular.jpg" alt="">
+              </li>
+              <li class="garment-gallery__photo-container">
+                <img class="garment-gallery__photo" src="/images/jacket2/3-regular.jpg" alt="">
+              </li>
+              <li class="garment-gallery__photo-container">
+                <img class="garment-gallery__photo" src="/images/jacket2/4-regular.jpg" alt="">
+              </li>
+              <li class="garment-gallery__photo-container">
+                <img class="garment-gallery__photo" src="/images/jacket2/5-regular.jpg" alt="">
+              </li>
+            </ul>
+            <ul class="garment-gallery__nav">
+              <li class="garment-gallery__nav-list">
+                <img class="garment-gallery__thumb active" src="/images/jacket2/1-small.jpg" alt="" data-index="0">
+              </li>
+              <li class="garment-gallery__nav-list">
+                <img class="garment-gallery__thumb" src="/images/jacket2/2-small.jpg" alt="" data-index="1">
+              </li>
+              <li class="garment-gallery__nav-list">
+                <img class="garment-gallery__thumb" src="/images/jacket2/3-small.jpg" alt="" data-index="2">
+              </li>
+              <li class="garment-gallery__nav-list">
+                <img class="garment-gallery__thumb" src="/images/jacket2/4-small.jpg" alt="" data-index="3">
+              </li>
+              <li class="garment-gallery__nav-list">
+                <img class="garment-gallery__thumb" src="/images/jacket2/5-small.jpg" alt="" data-index="4">
+              </li>
+            </ul>
           </div>
         </div>
-        <div id="garment-gallery" class="garment-gallery">
-          <ul class="garment-gallery__photos-list">
-            <li class="garment-gallery__photo-container">
-              <img class="garment-gallery__photo" src="/images/jacket2/1-regular.jpg" alt="">
-            </li>
-            <li class="garment-gallery__photo-container">
-              <img class="garment-gallery__photo" src="/images/jacket2/2-regular.jpg" alt="">
-            </li>
-            <li class="garment-gallery__photo-container">
-              <img class="garment-gallery__photo" src="/images/jacket2/3-regular.jpg" alt="">
-            </li>
-            <li class="garment-gallery__photo-container">
-              <img class="garment-gallery__photo" src="/images/jacket2/4-regular.jpg" alt="">
-            </li>
-            <li class="garment-gallery__photo-container">
-              <img class="garment-gallery__photo" src="/images/jacket2/5-regular.jpg" alt="">
-            </li>
-          </ul>
-          <ul class="garment-gallery__nav">
-            <li class="garment-gallery__nav-list">
-              <img class="garment-gallery__thumb active" src="/images/jacket2/1-small.jpg" alt="" data-index="0">
-            </li>
-            <li class="garment-gallery__nav-list">
-              <img class="garment-gallery__thumb" src="/images/jacket2/2-small.jpg" alt="" data-index="1">
-            </li>
-            <li class="garment-gallery__nav-list">
-              <img class="garment-gallery__thumb" src="/images/jacket2/3-small.jpg" alt="" data-index="2">
-            </li>
-            <li class="garment-gallery__nav-list">
-              <img class="garment-gallery__thumb" src="/images/jacket2/4-small.jpg" alt="" data-index="3">
-            </li>
-            <li class="garment-gallery__nav-list">
-              <img class="garment-gallery__thumb" src="/images/jacket2/5-small.jpg" alt="" data-index="4">
-            </li>
-          </ul>
-        </div>
-        <h1 id="garment-info-panel__title" class="garment-info-panel__title">Indigo Denim Built Biker Jacket</h1>
-        <p id="garment-info-panel__description" class="garment-info-panel__description">This biker jacket was made in Japan from medium weight leather and features hand finished details for a vintage inspired look.</p>
-        <button class="garment-info-panel__view-more-btn" id="garment-info-panel__view-more-btn">Go to enhanced view!</button>
+        <div>
+          <h1 id="garment-info-panel__title" class="garment-info-panel__title">Indigo Denim Built Biker Jacket</h1>
+          <p id="garment-info-panel__description" class="garment-info-panel__description">This biker jacket was made in Japan from medium weight leather and features hand finished details for a vintage inspired look.</p>
+          <button class="garment-info-panel__view-more-btn" id="garment-info-panel__view-more-btn">Explore garment</button>
+        </div>       
       </div>
     </div>
   </main>

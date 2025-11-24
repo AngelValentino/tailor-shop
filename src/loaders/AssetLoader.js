@@ -3,8 +3,9 @@ import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { DRACOLoader } from 'three/examples/jsm/Addons.js';
 
 export default class AssetLoader {
-    constructor(scene) {
+    constructor(scene, camera) {
     this.scene = scene;
+    this.camera = camera;
 
     this.gltfLoader = new GLTFLoader();
     this.dracoLoader = new DRACOLoader();
@@ -19,9 +20,9 @@ export default class AssetLoader {
       this.gltfLoader.load(
         '/models/tailorshop.glb',
         (gltf) => {
-          gltf.scene.traverse((child) => {
-            if (child.isGroup && (child.name.startsWith('prop__decor') || child.name.startsWith('prop__interactive'))) {
-                child.traverse((mesh) => {
+          gltf.scene.traverse((obj) => {
+            if (obj.isGroup && (obj.name.startsWith('prop__decor') || obj.name.startsWith('prop__interactive'))) {
+                obj.traverse((mesh) => {
                   if (mesh.isMesh) {
                     mesh.castShadow = true;
                     mesh.receiveShadow = true;
@@ -30,8 +31,37 @@ export default class AssetLoader {
                 });
               }
 
-              if (child.name === 'room__main__atelier') {
-                  child.traverse((mesh) => {
+
+              if (obj.name.startsWith('prop__interactive')) {
+                console.warn(obj)
+
+                const indicator = new THREE.Mesh(
+                  new THREE.CircleGeometry(0.05, 32),
+                  new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    transparent: true,
+                    opacity: 0.6,
+                    depthTest: false
+                  })
+                );
+
+
+                console.warn(indicator)
+
+                const box = new THREE.Box3().setFromObject(obj);
+                const center = new THREE.Vector3();
+                box.getCenter(center);
+
+                obj.worldToLocal(center);
+
+                obj.add(indicator);
+                indicator.position.copy(center);
+                indicator.lookAt(this.camera.position);
+                obj.userData.indicator = indicator;
+              }
+
+              if (obj.name === 'room__main__atelier') {
+                  obj.traverse((mesh) => {
                   if (mesh.isMesh) {
                     //mesh.castShadow = true;
                     mesh.receiveShadow = true;
@@ -40,9 +70,9 @@ export default class AssetLoader {
                 });
               }
 
-            if (child.name === 'light__window__area-light') {
+            if (obj.name === 'light__window__area-light') {
               const dirLight = new THREE.DirectionalLight(0xffffff, 1); // color, intensity
-              dirLight.position.copy(child.position);
+              dirLight.position.copy(obj.position);
               dirLight.target.position.set(0, 0, 0);
               dirLight.castShadow = true;
 
@@ -50,28 +80,27 @@ export default class AssetLoader {
               this.scene.add(dirLight.target);
             }
 
-            if (child.isLight) {
+            if (obj.isLight) {
               const blenderToThreeScale = 1000; // adjust as needed
-              const lightIntensity = child.intensity / blenderToThreeScale;
+              const lightIntensity = obj.intensity / blenderToThreeScale;
               
               const regex = /^light__wall/;
 
-              child.shadow.mapSize.width = 1024;
-              child.shadow.mapSize.height = 1024;
-              // child.shadow.bias = -0.001; // reduce shadow acne
-              // child.shadow.normalBias = 0.05; // helps on glancing angles
-              child.shadow.camera.near = 0.5;
-              child.shadow.camera.far = 20;
+              obj.shadow.mapSize.width = 1024;
+              obj.shadow.mapSize.height = 1024;
+              // obj.shadow.bias = -0.001; // reduce shadow acne
+              // obj.shadow.normalBias = 0.05; // helps on glancing angles
+              obj.shadow.camera.near = 0.5;
+              obj.shadow.camera.far = 20;
 
-              if (child.name === 'light__ceiling__point-light') {
-                child.intensity = lightIntensity * 1.8;
-                child.castShadow = true;
+              if (obj.name === 'light__ceiling__point-light') {
+                obj.intensity = lightIntensity * 1.8;
+                obj.castShadow = true;
               }
 
-              if (regex.test(child.name)) {
-                child.intensity = lightIntensity * 0.2;
+              if (regex.test(obj.name)) {
+                obj.intensity = lightIntensity * 0.2;
               }
-
             }
           });
 

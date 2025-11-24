@@ -32,10 +32,6 @@ export default class GarmentManager {
       const match = obj.name.match(regex);
 
       if (match) {
-        console.log(match)
-
-        
-        console.log(obj)
         const name = match[1];
         const side = match[2];
 
@@ -160,12 +156,12 @@ export default class GarmentManager {
 
   onMouseEnter(mesh) {
     console.log(`Mouse entered: ${mesh.userData.garmentInfoKey}`);
-    mesh.scale.set(1.05, 1.05, 1.05);
+    mesh.userData.indicator.scale.set(1.3, 1.3, 1.3);
   }
 
   onMouseLeave(mesh) {
     console.log(`Mouse left: ${mesh.userData.garmentInfoKey}`);
-    mesh.scale.set(1, 1, 1);
+    mesh.userData.indicator.scale.set(1, 1, 1);
   }
 
   focusOnCollection(side, mesh) {
@@ -199,24 +195,11 @@ export default class GarmentManager {
   }
   
   applyActiveMeshStyle(group) {
-    group.traverse((child) => {
-      if (child.isMesh && child.material && child.material.emissive) {
-        // Store original emissive if not already stored
-        if (!child.userData.originalEmissive) {
-          child.userData.originalEmissive = child.material.emissive.clone();
-        }
-        child.material.emissive.setHex(0xff0000);
-      }
-    });
+    group.userData.indicator.visible = false;
   }
 
   resetMeshStyle(group) {
-    group.traverse((child) => {
-      if (child.isMesh && child.material && child.userData.originalEmissive) {
-        child.material.emissive.copy(child.userData.originalEmissive);
-        delete child.userData.originalEmissive;
-      }
-    });
+    group.userData.indicator.visible = true;
   }
 
   resetActiveGarment({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {

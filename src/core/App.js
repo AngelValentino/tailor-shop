@@ -18,7 +18,7 @@ export default class App {
     this.camera = new Camera(this.scene);
     this.renderer = new Renderer(canvas, this.scene, this.camera.instance);
     this.lighting = new Lighting(this.scene);
-    this.assetLoader = new AssetLoader(this.scene);
+    this.assetLoader = new AssetLoader(this.scene, this.camera.instance);
     
     this.pointerControls = new PointerControls(this.camera.instance, { 
       maxOffset: { x: 0.1, y: 0.05 },

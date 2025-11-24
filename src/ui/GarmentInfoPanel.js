@@ -2,7 +2,7 @@ import GarmentGallerySlider from "./GarmentGallerySlider.js";
 import GarmentSlider from "./GarmentSlider.js";
 
 export default class GarmentInfoPanel {
-  constructor(garmentInfoCollection, collection, garmentManager) {
+  constructor(garmentInfoCollection, collection, garmentManager, saveHistory = true) {
     this.viewMoreBtn = document.getElementById('view-more-btn');
     this.returnBtn = document.getElementById('return-btn');
     this.btnContainerLm = document.getElementById('btn-container');
@@ -21,14 +21,14 @@ export default class GarmentInfoPanel {
       viewMoreBtn: document.getElementById('garment-info-panel__view-more-btn')
     }
 
-    this.open(garmentInfoCollection[collection], this.collectionName);
+    this.open(garmentInfoCollection[collection], this.collectionName, saveHistory);
   }
 
   setCollection(collection) {
     this.collectionName = collection;
   }
 
-  open(garmentInfo, collection) {
+  open(garmentInfo, collection, saveHistory = true) {
     this.eventHandler.closePanel = this.close.bind(this);
     this.eventHandler.moveToClone = this.garmentManager.enterCloneView.bind(this.garmentManager);
 
@@ -38,7 +38,7 @@ export default class GarmentInfoPanel {
 
       this.lms.panel.classList.add('active')
       console.warn('open UI');
-      this.updateGarment(garmentInfo, {newTitleSliderInstance: true, collection: collection});
+      this.updateGarment(garmentInfo, {newTitleSliderInstance: true, collection: collection}, saveHistory);
     } 
     else {
       console.warn('ui already opened ignore')
@@ -57,7 +57,7 @@ export default class GarmentInfoPanel {
     this.lms.garmentDescription.innerText = description;
   }
 
-  updateGarment(garmentInfo, { newTitleSliderInstance, collection, updateSliderPos }) {
+  updateGarment(garmentInfo, { newTitleSliderInstance, collection, updateSliderPos }, saveHistory = false) {
     this.setCollection(collection);
 
     // Update title
@@ -82,7 +82,7 @@ export default class GarmentInfoPanel {
     this.garmentGallerySlider = new GarmentGallerySlider(garmentInfo.images);
     
     this.updateGarmentInfo(garmentInfo); // Update additional information
-    this.garmentManager.updateActive(collection); // Set active garment mesh
+    this.garmentManager.updateActive(collection, saveHistory); // Set active garment mesh
   }
 
   dispose({ hidePanel }) {

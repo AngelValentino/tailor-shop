@@ -26,6 +26,8 @@ export default class App {
       smoothing: 0.05
     });
 
+    this.camera.setPointerControlsInstace(this.pointerControls);
+
     const utils = new Utils;
     const roomGrid = new RoomGrid(this.scene);
     const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid);

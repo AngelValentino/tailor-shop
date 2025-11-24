@@ -33,8 +33,6 @@ export default class AssetLoader {
 
 
               if (obj.name.startsWith('prop__interactive')) {
-                console.warn(obj)
-
                 const indicator = new THREE.Mesh(
                   new THREE.CircleGeometry(0.05, 32),
                   new THREE.MeshBasicMaterial({
@@ -44,9 +42,6 @@ export default class AssetLoader {
                     depthTest: false
                   })
                 );
-
-
-                console.warn(indicator)
 
                 const box = new THREE.Box3().setFromObject(obj);
                 const center = new THREE.Vector3();

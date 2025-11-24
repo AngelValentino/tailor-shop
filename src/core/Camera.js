@@ -1,3 +1,4 @@
+import gsap from 'gsap';
 import * as THREE from 'three';
 
 export default class Camera {
@@ -11,17 +12,15 @@ export default class Camera {
 
     this.instance.position.set(0, 1.5, 4);
     scene.add(this.instance);
-    this.instance.lookAt(0, 1.3, 0)
 
-    this.defaultPosition = this.instance.position.clone();
-    this.defaultLookAt = new THREE.Vector3(0, 1, 0);
+    this.lookAtTarget = new THREE.Vector3(0, 1.3, 0);
+    this.instance.lookAt(this.lookAtTarget);
 
-    this.targetPosition = this.instance.position.clone();
-    this.lookAtTarget = null;
-    this.currentLookAt = new THREE.Vector3(0, 1, 0);
+    this.history = [];
+  }
 
-    this.lastPosition = this.instance.position.clone();
-    this.lastLookAt = this.defaultLookAt.clone();
+  setPointerControlsInstace(pointerControls) {
+    this.pointerControls = pointerControls;
   }
 
   onResize() {
@@ -30,39 +29,71 @@ export default class Camera {
   }
 
   reset() {
-    this.targetPosition.copy(this.defaultPosition);
-    this.lookAtTarget.copy(this.defaultLookAt);
+    //console.warn('resresr')
   }
 
-  moveTo(position) {
-    this.lastPosition.copy(position);
-    this.targetPosition.copy(position);
+  pushCurrentStateToHistory() {
+    this.history.push({
+      position: this.instance.position.clone(),
+      lookAt: this.lookAtTarget.clone()
+    });
+
   }
 
-  moveBack() {
-    this.targetPosition.copy(this.lastPosition);
-    this.lookAtTarget.copy(this.lastLookAt);
+  moveTo(position, lookAt = null, saveHistory = true, duration = 1) {
+    console.warn('CAMERA HOSTORY BEFORE MOVE TO: ', this.history)
+    
+    if (saveHistory) this.pushCurrentStateToHistory();
+
+    console.warn('CAMERA HOSTORY AFTER MOVE TO: ', this.history)
+
+    // Animate camera position
+    gsap.to(this.instance.position, {
+      x: position.x,
+      y: position.y,
+      z: position.z,
+      duration: duration,
+      ease: "power2.out"
+    });
+
+    // Animate lookAt target
+    if (lookAt) {
+      gsap.to(this.lookAtTarget, {
+        x: lookAt.x,
+        y: lookAt.y,
+        z: lookAt.z,
+        duration: duration,
+        ease: "power2.out",
+        onUpdate: () => {
+          this.instance.lookAt(this.lookAtTarget);
+        }
+      });
+    }
   }
 
-  lookAt(position) {
-    this.lastLookAt.copy(position);
-    this.lookAtTarget = position.clone();
-    this.instance.lookAt(this.lookAtTarget);
+  moveBack(duration = 1) {
+    if (this.history.length === 0) {
+      console.warn('no history');
+      return;
+    }
+
+    const lastState = this.history.pop();
+    this.moveTo(lastState.position, lastState.lookAt, duration);
+  }
+
+  lookAt(position, duration = 1) {
+    this.pushCurrentStateToHistory();
+    gsap.to(this.lookAtTarget, {
+      x: position.x,
+      y: position.y,
+      z: position.z,
+      duration: duration,
+      ease: "power2.out",
+      onUpdate: () => this.instance.lookAt(this.lookAtTarget)
+    });
   }
 
   update() {
-    const lerpFactor = 0.1; // adjust speed here
-    this.instance.position.lerp(this.targetPosition, lerpFactor);
 
-    if (this.lookAtTarget) {
-      this.currentLookAt.lerp(this.lookAtTarget, lerpFactor);
-      this.instance.lookAt(this.currentLookAt);
-
-      const threshold = lerpFactor * 0.2;
-      if (this.instance.position.distanceTo(this.defaultPosition) < threshold) {
-          console.warn('RESET LOOK AT TARGET!');
-          this.lookAtTarget = null;
-      }
-    }
   }
 }

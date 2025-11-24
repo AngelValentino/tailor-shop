@@ -85,7 +85,8 @@ export default class GarmentManager {
 
   computeCollectionCenter(side, mesh) {
     const meshes = [];
-    
+
+
     if (mesh) {
       meshes.push(mesh);
     } 
@@ -129,10 +130,8 @@ export default class GarmentManager {
     this.cloneManager.showHidden();
    
     // Show UI
-    this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.userData.garmentInfoKey, this);
-    
-    // Restore camera position
-    this.camera.moveBack();
+    this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.userData.garmentInfoKey, this, false);
+  
     
     this.returnToGarmentPanelBtn.classList.remove('active');
     this.returnToGarmentPanelBtn.removeEventListener('click', this.restoreBind);
@@ -140,6 +139,7 @@ export default class GarmentManager {
 
   enterCloneView() {
     //TODO add rotation controls for active clone
+    console.warn('enter clone view')
 
     // Bind restore button for exiting clone view
     this.restoreBind = this.restoreOppositeSide.bind(this);
@@ -148,7 +148,11 @@ export default class GarmentManager {
 
     // Clone the active mannequin and focus camera
     this.cloneManager.cloneActiveMannequin();
-    this.focusOnCollection(null, this.cloneManager.getActiveClone());
+    const side = this.cloneManager.getActiveClone().userData.side === 'left' ? 'right' : 'left';
+
+    this.focusOnCollection(side, this.cloneManager.getActiveClone(), false);
+
+    console.warn(this.camera.history)
 
     // Close garment info panel without resetting camera or active garment
     this.garmentInfoPanel.close({ resetCamera: false, deleteActiveGarmentRef: false });
@@ -164,7 +168,8 @@ export default class GarmentManager {
     mesh.userData.indicator.scale.set(1, 1, 1);
   }
 
-  focusOnCollection(side, mesh) {
+  focusOnCollection(side, mesh, saveHistory = true) {
+    console.warn('current side', side)
     const center = this.computeCollectionCenter(side, mesh);
     const avgHeight = this.computeCollectionAvgHeight(side, mesh);
 
@@ -174,13 +179,15 @@ export default class GarmentManager {
     targetPos.y = avgHeight;
     targetPos.add(cameraOffset);
 
-    this.camera.moveTo(targetPos);
-    this.camera.lookAt(center);
+    this.camera.moveTo(targetPos, center, saveHistory);
+    //this.camera.lookAt(center);
+
+    console.warn('HISTORY', saveHistory)
 
     this.currentSide = side; // track currently focused side
   }
 
-  updateActive(name) {
+  updateActive(name, saveHistory) {
     this.resetMeshStyle(this.currentActiveGarment);
     const newActiveMesh = this.allMeshes.find(obj => obj.userData.garmentInfoKey === name);
     this.currentActiveGarment = newActiveMesh;
@@ -190,7 +197,7 @@ export default class GarmentManager {
 
     // Focus camera only if side changes
     if (newActiveMesh.userData.side !== this.currentSide) {
-      this.focusOnCollection(newActiveMesh.userData.side);
+      this.focusOnCollection(newActiveMesh.userData.side, newActiveMesh, saveHistory);
     }
   }
   
@@ -206,7 +213,7 @@ export default class GarmentManager {
     this.garmentInfoPanel = null;
     this.resetMeshStyle(this.currentActiveGarment);
     deleteActiveGarmentRef && (this.currentActiveGarment = null);
-    resetCamera && this.camera.reset();
+    resetCamera && this.camera.moveBack();
     deleteActiveGarmentRef && (this.currentSide = null);
   }
 

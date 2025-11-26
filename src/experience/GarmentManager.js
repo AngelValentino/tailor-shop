@@ -77,7 +77,6 @@ export default class GarmentManager {
     }
   }
 
-
   getActiveMannequin() {
     return this.currentActiveGarment;
   }
@@ -88,10 +87,11 @@ export default class GarmentManager {
     this.cloneManager.deleteActiveClone();
     this.cloneManager.showHidden();
    
-    // Show UI
+    // Show UI without focusing any garment
     this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.userData.garmentInfoKey, this, false);
-  
-    
+    // Go back to previous camera position before clone view
+    this.camera.moveBack();
+
     this.returnToGarmentPanelBtn.classList.remove('active');
     this.returnToGarmentPanelBtn.removeEventListener('click', this.restoreBind);
   }
@@ -107,9 +107,7 @@ export default class GarmentManager {
     // Clone the active mannequin and focus camera
     this.cloneManager.cloneActiveMannequin();
 
-    this.focusOnActiveGarment(this.cloneManager.getActiveClone(), false);
-
-    console.warn(this.camera.history)
+    this.focusOnActiveGarment(this.cloneManager.getActiveClone(), true);
 
     // Close garment info panel without resetting camera or active garment
     this.garmentInfoPanel.close({ resetCamera: false, deleteActiveGarmentRef: false });
@@ -142,14 +140,16 @@ export default class GarmentManager {
     console.warn('HISTORY', saveHistory)
   }
 
-  updateActive(name, saveHistory) {
+  updateActive(name, saveHistory, focusOnActiveGarment) {
     this.resetMeshStyle(this.currentActiveGarment);
     const newActiveGarment = this.allMeshes.find(obj => obj.userData.garmentInfoKey === name);
     this.currentActiveGarment = newActiveGarment;
     this.applyActiveMeshStyle(this.currentActiveGarment);
 
     console.warn('ACTIVE:', this.currentActiveGarment)
-    this.focusOnActiveGarment(newActiveGarment, saveHistory);
+    if (focusOnActiveGarment) {
+      this.focusOnActiveGarment(newActiveGarment, saveHistory);
+    }
   }
   
   applyActiveMeshStyle(group) {

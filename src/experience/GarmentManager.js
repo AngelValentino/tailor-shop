@@ -107,7 +107,7 @@ export default class GarmentManager {
     // Clone the active mannequin and focus camera
     this.cloneManager.cloneActiveGarment(this.getActiveGarment());
 
-    this.focusOnActiveGarment(this.cloneManager.getActiveGarmentClone(), true);
+    this.focusOnActiveGarment(this.cloneManager.getActiveGarmentClone(), true, 17);
 
     // Close garment info panel without resetting camera or active garment
     this.garmentInfoPanel.close({ resetCamera: false, deleteActiveGarmentRef: false });
@@ -123,7 +123,7 @@ export default class GarmentManager {
     mesh.userData.indicator.scale.set(1, 1, 1);
   }
 
-  focusOnActiveGarment(mesh, saveHistory = true) {
+  focusOnActiveGarment(mesh, saveHistory = true, fov = null) {
     const box = new THREE.Box3().setFromObject(mesh);
     const center = new THREE.Vector3();
     box.getCenter(center);
@@ -134,7 +134,8 @@ export default class GarmentManager {
     this.camera.moveTo({ 
       targetPosition: targetPosition, 
       lookAt: center, 
-      saveHistory: saveHistory 
+      saveHistory: saveHistory,
+      fov: fov
     });
 
     console.warn('HISTORY', saveHistory)

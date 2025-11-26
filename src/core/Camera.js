@@ -32,12 +32,19 @@ export default class Camera {
   pushCurrentStateToHistory() {
     this.history.push({
       position: this.instance.position.clone(),
-      lookAt: this.lookAtTarget.clone()
+      lookAt: this.lookAtTarget.clone(),
+      fov: this.instance.fov
     });
 
   }
 
-  moveTo({ targetPosition, lookAt = null, saveHistory = true, duration = this.animationDefaultTime }) {
+  moveTo({ 
+    targetPosition, 
+    lookAt = null, 
+    saveHistory = true, 
+    duration = this.animationDefaultTime,
+    fov = null
+  }) {
     console.warn('CAMERA HOSTORY BEFORE MOVE TO: ', this.history)
     
     if (saveHistory) this.pushCurrentStateToHistory();
@@ -66,6 +73,16 @@ export default class Camera {
         }
       });
     }
+
+    // Animate FOV (zoom)
+    if (fov) {
+      gsap.to(this.instance, {
+        fov,
+        duration,
+        ease: "power2.out",
+        onUpdate: () => this.instance.updateProjectionMatrix()
+      });
+    }
   }
 
   moveBack(duration = this.animationDefaultTime) {
@@ -75,9 +92,11 @@ export default class Camera {
     }
 
     const lastState = this.history.pop();
+    
     this.moveTo({ 
       targetPosition: lastState.position, 
       lookAt: lastState.lookAt, 
+      fov: lastState.fov,
       saveHistory: false, 
       duration: duration
     });

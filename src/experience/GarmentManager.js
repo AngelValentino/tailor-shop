@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import garmentInfoCollection from "../data/garmentInfoCollection.js";
+import garmentData from "../data/garmentData.js";
 import GarmentInfoPanel from "../ui/GarmentInfoPanel.js";
 
 export default class GarmentManager {
@@ -34,7 +34,7 @@ export default class GarmentManager {
         const name = match[1];
         const side = match[2];
 
-        obj.userData.garmentInfoKey = name;
+        obj.userData.garmentKey = name;
 
         console.log(side)
 
@@ -77,18 +77,18 @@ export default class GarmentManager {
     }
   }
 
-  getActiveMannequin() {
+  getActiveGarment() {
     return this.currentActiveGarment;
   }
 
   restoreOppositeSide() {
     console.warn('restore back to garment panel')
     // Delete the current clone and show hidden
-    this.cloneManager.deleteActiveClone();
-    this.cloneManager.showHidden();
+    this.cloneManager.deleteGarmentClone();
+    this.cloneManager.showHiddenGarments();
    
     // Show UI without focusing any garment
-    this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.userData.garmentInfoKey, this, false);
+    this.garmentInfoPanel = new GarmentInfoPanel(garmentData, this.currentActiveGarment.userData.garmentKey, this, false);
     // Go back to previous camera position before clone view
     this.camera.moveBack();
 
@@ -105,21 +105,21 @@ export default class GarmentManager {
     this.returnToGarmentPanelBtn.addEventListener('click', this.restoreBind)
 
     // Clone the active mannequin and focus camera
-    this.cloneManager.cloneActiveMannequin();
+    this.cloneManager.cloneActiveGarment(this.getActiveGarment());
 
-    this.focusOnActiveGarment(this.cloneManager.getActiveClone(), true);
+    this.focusOnActiveGarment(this.cloneManager.getActiveGarmentClone(), true);
 
     // Close garment info panel without resetting camera or active garment
     this.garmentInfoPanel.close({ resetCamera: false, deleteActiveGarmentRef: false });
   }
 
   onMouseEnter(mesh) {
-    console.log(`Mouse entered: ${mesh.userData.garmentInfoKey}`);
+    console.log(`Mouse entered: ${mesh.userData.garmentKey}`);
     mesh.userData.indicator.scale.set(1.3, 1.3, 1.3);
   }
 
   onMouseLeave(mesh) {
-    console.log(`Mouse left: ${mesh.userData.garmentInfoKey}`);
+    console.log(`Mouse left: ${mesh.userData.garmentKey}`);
     mesh.userData.indicator.scale.set(1, 1, 1);
   }
 
@@ -142,7 +142,7 @@ export default class GarmentManager {
 
   updateActive(name, saveHistory, focusOnActiveGarment) {
     this.resetMeshStyle(this.currentActiveGarment);
-    const newActiveGarment = this.allMeshes.find(obj => obj.userData.garmentInfoKey === name);
+    const newActiveGarment = this.allMeshes.find(obj => obj.userData.garmentKey === name);
     this.currentActiveGarment = newActiveGarment;
     this.applyActiveMeshStyle(this.currentActiveGarment);
 
@@ -168,7 +168,7 @@ export default class GarmentManager {
   }
 
   onClick(mesh) {
-    console.log(`Clicked ${mesh.userData.side} mannequin!`, mesh.userData.garmentInfoKey);
+    console.warn(`Clicked ${mesh.userData.side}!`, mesh.userData.garmentKey);
 
     if (this.currentActiveGarment === mesh) {
       console.warn('same mesh!')
@@ -187,13 +187,13 @@ export default class GarmentManager {
     if (this.garmentInfoPanel) {
       console.warn('update garment info panel instance')
       // Update garment information and set up a new active garment
-      this.garmentInfoPanel.updateGarment(garmentInfoCollection[this.currentActiveGarment.userData.garmentInfoKey], { updateSliderPos: true, collection: this.currentActiveGarment.userData.garmentInfoKey });
+      this.garmentInfoPanel.updateGarment(garmentData[this.currentActiveGarment.userData.garmentKey], { updateSliderPos: true, garmentKey: this.currentActiveGarment.userData.garmentKey });
     }
     // Create a new UI instance
     else {
       console.warn('new garment info panel instance')
       // Update garment information and set up a new active garment
-      this.garmentInfoPanel = new GarmentInfoPanel(garmentInfoCollection, this.currentActiveGarment.userData.garmentInfoKey, this);
+      this.garmentInfoPanel = new GarmentInfoPanel(garmentData, this.currentActiveGarment.userData.garmentKey, this);
     }
   }
 }

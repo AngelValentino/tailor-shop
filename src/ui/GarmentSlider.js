@@ -1,9 +1,9 @@
 export default class GarmentSlider {
-  constructor(garmentInfoCollection, collection) {
-    this.garmentsTitles = Object.keys(garmentInfoCollection)
-    this.garmentInfoCollection = garmentInfoCollection;
-    this.collectionName = collection;
-    this.garmentIndex = this.garmentsTitles.indexOf(this.collectionName);
+  constructor(garmentData, garmentKey) {
+    this.garmentsTitles = Object.keys(garmentData)
+    this.garmentData = garmentData;
+    this.garmentKey = garmentKey;
+    this.garmentIndex = this.garmentsTitles.indexOf(this.garmentKey);
 
     this.garmentSliderControlsSVGs = {
       'built-jacket': `
@@ -54,9 +54,9 @@ export default class GarmentSlider {
     this.updateSliderControls();
   }
 
-  updateSliderPos(collection) {
-    this.collectionName = collection;
-    this.garmentIndex = this.garmentsTitles.indexOf(collection);
+  updateSliderPos(garmentKey) {
+    this.garmentKey = garmentKey;
+    this.garmentIndex = this.garmentsTitles.indexOf(garmentKey);
   }
 
   dispose() {
@@ -87,8 +87,8 @@ export default class GarmentSlider {
     const controlBtn = e.target.closest('.garment-slider__control-btn')
     if (controlBtn) {
       this.garmentIndex = Number(controlBtn.dataset.index);
-      this.collectionName = controlBtn.dataset.name;
-      this.garmentInfoPanel.updateGarment(this.garmentInfoCollection[this.collectionName], {collection: this.collectionName});
+      this.garmentKey = controlBtn.dataset.name;
+      this.garmentInfoPanel.updateGarment(this.garmentData[this.garmentKey], { garmentKey: this.garmentKey });
     }
   }
 
@@ -102,15 +102,15 @@ export default class GarmentSlider {
       this.garmentIndex = this.garmentIndex === this.garmentsTitles.length - 1 ? 0 : ++this.garmentIndex;
     }
 
-    this.collectionName = this.garmentsTitles[this.garmentIndex];
+    this.garmentKey = this.garmentsTitles[this.garmentIndex];
 
     // Update the slider to reflect the new slide
-    this.garmentInfoPanel.updateGarment(this.garmentInfoCollection[this.collectionName], {collection: this.collectionName});
+    this.garmentInfoPanel.updateGarment(this.garmentData[this.garmentKey], { garmentKey: this.garmentKey });
   }
 
   updateTitle() {
-    console.log('garment NAME', this.collectionName)
-    this.lms.garmentTitle.innerText = this.collectionName;
+    console.log('garment NAME', this.garmentKey)
+    this.lms.garmentTitle.innerText = this.garmentKey;
   }
 
   updateSliderControls() {
@@ -159,7 +159,7 @@ export default class GarmentSlider {
             </g>
           </svg>
         </button>
-        <h2 id="garment-title" class="garment-slider__title">${this.collectionName}</h2>
+        <h2 id="garment-title" class="garment-slider__title">${this.garmentKey}</h2>
         <button aria-label="Sew next garment" class="garment-slider__next-btn">
           <svg class="garment-slider__next-btn-svg" ria-hidden="true" focusable="false" role="presentation" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <g fill="none" fill-rule="evenodd">

@@ -2,16 +2,16 @@ import GarmentGallerySlider from "./GarmentGallerySlider.js";
 import GarmentSlider from "./GarmentSlider.js";
 
 export default class GarmentInfoPanel {
-  constructor(garmentInfoCollection, collection, garmentManager, focusOnActiveGarment = true) {
+  constructor(garmentData, garmentKey, garmentManager, focusOnActiveGarment = true) {
     this.viewMoreBtn = document.getElementById('view-more-btn');
     this.returnBtn = document.getElementById('return-btn');
     this.btnContainerLm = document.getElementById('btn-container');
     this.garmentManager = garmentManager;
 
     this.eventHandler = {}
-    this.collectionName = collection;
+    this.garmentKey = garmentKey;
 
-    this.garmentInfoCollection = garmentInfoCollection;
+    this.garmentData = garmentData;
 
     this.lms = {
       panel: document.getElementById('garment-info-panel'),
@@ -21,14 +21,14 @@ export default class GarmentInfoPanel {
       viewMoreBtn: document.getElementById('garment-info-panel__view-more-btn')
     }
 
-    this.open(garmentInfoCollection[collection], this.collectionName, focusOnActiveGarment);
+    this.open(garmentData[garmentKey], this.garmentKey, focusOnActiveGarment);
   }
 
-  setCollection(collection) {
-    this.collectionName = collection;
+  setGarmentKey(garmentKey) {
+    this.garmentKey = garmentKey;
   }
 
-  open(garmentInfo, collection, focusOnActiveGarment = true) {
+  open(garmentData, garmentKey, focusOnActiveGarment = true) {
     this.eventHandler.closePanel = this.close.bind(this);
     this.eventHandler.enterCloneView = this.garmentManager.enterCloneView.bind(this.garmentManager);
 
@@ -38,9 +38,9 @@ export default class GarmentInfoPanel {
 
       this.lms.panel.classList.add('active');
       console.warn('open UI');
-      this.updateGarment(garmentInfo, { 
+      this.updateGarment(garmentData, { 
         newTitleSliderInstance: true, 
-        collection: collection, 
+        garmentKey: garmentKey, 
         saveHistory: true, 
         focusOnActiveGarment: focusOnActiveGarment 
       });
@@ -62,17 +62,17 @@ export default class GarmentInfoPanel {
     this.lms.garmentDescription.innerText = description;
   }
 
-  updateGarment(garmentInfo, { newTitleSliderInstance, collection, updateSliderPos, saveHistory = false, focusOnActiveGarment = true }) {
-    this.setCollection(collection);
+  updateGarment(garmentData, { newTitleSliderInstance, garmentKey, updateSliderPos, saveHistory = false, focusOnActiveGarment = true }) {
+    this.setGarmentKey(garmentKey);
 
     // Update title
     if (newTitleSliderInstance) {
-      this.garmentSlider = new GarmentSlider(this.garmentInfoCollection, collection);
+      this.garmentSlider = new GarmentSlider(this.garmentData, garmentKey);
       this.garmentSlider.setGarmentInfoPanelInstance(this);
     } 
     else {
       if (updateSliderPos) {
-        this.garmentSlider.updateSliderPos(collection);
+        this.garmentSlider.updateSliderPos(garmentKey);
         this.garmentSlider.updateTitle();
       } 
       else {
@@ -84,10 +84,10 @@ export default class GarmentInfoPanel {
     
     // Re-generate slider
     this.garmentGallerySlider && this.garmentGallerySlider.dispose();
-    this.garmentGallerySlider = new GarmentGallerySlider(garmentInfo.images);
+    this.garmentGallerySlider = new GarmentGallerySlider(garmentData.images);
     
-    this.updateGarmentInfo(garmentInfo); // Update additional information
-    this.garmentManager.updateActive(collection, saveHistory, focusOnActiveGarment); // Set active garment mesh
+    this.updateGarmentInfo(garmentData); // Update additional information
+    this.garmentManager.updateActive(garmentKey, saveHistory, focusOnActiveGarment); // Set active garment mesh
   }
 
   dispose({ hidePanel }) {

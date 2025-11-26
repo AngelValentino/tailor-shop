@@ -6,8 +6,8 @@ export default class CloneManager {
     this.garmentManager = null;
     this.roomGrid = roomGrid;
 
-    this.currentActiveClone = null;
-    this.hiddenCurrentSide = [];
+    this.activeGarmentClone = null;
+    this.hiddenGarments = [];
     this.hiddenSide = null;
   }
 
@@ -15,41 +15,32 @@ export default class CloneManager {
     this.garmentManager = garmentManager;
   }
 
-  getActiveClone() {
-    return this.currentActiveClone;
-  }
-
-  deleteActiveClone() {
-    console.log('deleted', this.garmentManager.getActiveMannequin())
-    if (this.currentActiveClone) {
-      console.log('last mesh', this.currentActiveClone)
-      this.utils.removeMesh(this.currentActiveClone, this.scene);
-      this.currentActiveClone = null;
-    }
+  getActiveGarmentClone() {
+    return this.activeGarmentClone;
   }
   
-  cloneMannequin(mesh) {
-    if (this.currentActiveClone && this.currentActiveClone.userData.original === mesh) {
+  cloneGarment(mesh) {
+    if (this.activeGarmentClone && this.activeGarmentClone.userData.original === mesh) {
       console.log('Clone already exists!');
       return;
     }
 
-    this.deleteActiveClone();
+    this.activeGarmentClone = mesh.clone();
+    console.warn('CURRENT ACTIVE CLONE ->>>',this.activeGarmentClone);
 
-    this.currentActiveClone = mesh.clone();
     // clone geometry/material references so we don't mutate originals
-    if (mesh.geometry) this.currentActiveClone.geometry = mesh.geometry.clone();
+    if (mesh.geometry) this.activeGarmentClone.geometry = mesh.geometry.clone();
  
     if (mesh.material) {
-      this.currentActiveClone.material = Array.isArray(mesh.material)
+      this.activeGarmentClone.material = Array.isArray(mesh.material)
         ? mesh.material.map(m => m.clone())
         : mesh.material.clone();
     }
 
     // Mark the clone with a reference to the original mesh
-    this.currentActiveClone.userData = { ...mesh.userData, original: mesh };
-    this.scene.add(this.currentActiveClone);
-    return this.currentActiveClone;
+    this.activeGarmentClone.userData = { ...mesh.userData, original: mesh };
+    this.scene.add(this.activeGarmentClone);
+    return this.activeGarmentClone;
   }
 
   hideSide(side) {
@@ -58,11 +49,11 @@ export default class CloneManager {
       return;
     }
 
-    this.hiddenCurrentSide.length = 0
+    this.hiddenGarments.length = 0;
     const filterCurrentSideMeshes = this.garmentManager.getAllMeshes().filter(mesh => {
       if (mesh.userData.side === side) {
         mesh.visible = false;
-        this.hiddenCurrentSide.push(mesh);
+        this.hiddenGarments.push(mesh);
         return false; // remove from allMeshes
       }
       return true; // keep in allMeshes
@@ -71,37 +62,43 @@ export default class CloneManager {
     this.garmentManager.setAllMeshes(filterCurrentSideMeshes);
 
     this.hiddenSide = side;
-    console.log(`Hid ${this.hiddenCurrentSide.length} meshes on side '${side}'`);
+    console.log(`Hid ${this.hiddenGarments.length} meshes on side '${side}'`);
   }
 
-  showHidden() {
-    if (!this.hiddenSide || this.hiddenCurrentSide.length === 0) {
-      console.warn('showHidden() called but nothing is hidden — skipping.');
+  showHiddenGarments() {
+    if (!this.hiddenSide || this.hiddenGarments.length === 0) {
+      console.warn('showHiddenGarments() called but nothing is hidden — skipping.');
       return;
     }
-    console.log(this.hiddenCurrentSide)
-    this.hiddenCurrentSide.forEach(mesh => {
+    console.log(this.hiddenGarments)
+    this.hiddenGarments.forEach(mesh => {
       mesh.visible = true;
       this.garmentManager.setAllMeshes(mesh);
     });
 
-    console.log(`Restored ${this.hiddenCurrentSide.length} meshes from side '${this.hiddenSide}'`);
-    this.hiddenCurrentSide.length = 0;
+    console.log(`Restored ${this.hiddenGarments.length} meshes from side '${this.hiddenSide}'`);
+    this.hiddenGarments.length = 0;
     this.hiddenSide = null;
   }
 
-  cloneActiveMannequin() {
-    if (!this.garmentManager.getActiveMannequin()) return null;
+  deleteGarmentClone() {
+    if (this.activeGarmentClone) {
+      console.warn('deleted CLONE!!!!!!', this.activeGarmentClone)
+      this.utils.removeMesh(this.activeGarmentClone, this.scene);
+      this.activeGarmentClone = null;
+    }
+  }
 
-    const currentActiveMannequin = this.garmentManager.getActiveMannequin();
+  cloneActiveGarment(activeGarment) {
+    if (!activeGarment) return null;
 
-    const side = currentActiveMannequin.userData.side;
+    const side = activeGarment.userData.side;
     const opposite = side === 'left' ? 'right' : 'left';
     const targetCol = side === 'left' ? this.roomGrid.roomBounds.cols - 2 : 1;
     const targetRow = side === 'left' ? 1 : 1;
     const gridPos = this.roomGrid.getGridPosition(targetCol, targetRow)
     
-    const cloned = this.cloneMannequin(currentActiveMannequin);
+    const cloned = this.cloneGarment(activeGarment);
     if (!cloned) return;
     console.log('hide', opposite);
     this.hideSide(opposite);

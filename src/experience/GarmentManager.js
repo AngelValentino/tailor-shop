@@ -83,44 +83,6 @@ export default class GarmentManager {
     return this.currentActiveGarment;
   }
 
-  computeCollectionCenter(side, mesh) {
-    const meshes = [];
-
-
-    if (mesh) {
-      meshes.push(mesh);
-    } 
-    else {
-      const sideMeshes = side === 'left' ? this.left : this.right
-      meshes.push(...sideMeshes);
-    }
-
-    if (!meshes || meshes.length === 0) return new THREE.Vector3();
-
-    const center = new THREE.Vector3();
-    meshes.forEach(mesh => center.add(mesh.position));
-    center.divideScalar(meshes.length); // average position
-    return center;
-  }
-
-  computeCollectionAvgHeight(side, mesh) {
-    const meshes = [];
-
-    if (mesh) {
-      meshes.push(mesh)
-    } 
-    else {
-      const sideMeshes = side === 'left' ? this.left : this.right;
-      meshes.push(...sideMeshes);
-    }
-
-    if (!meshes || meshes.length === 0) return 0;
-
-    let sum = 0;
-    meshes.forEach(m => sum += m.position.y);
-    return sum / meshes.length;
-  }
-
   restoreOppositeSide() {
     //TODO remove rotation controls for active clone
     
@@ -150,7 +112,7 @@ export default class GarmentManager {
     this.cloneManager.cloneActiveMannequin();
     const side = this.cloneManager.getActiveClone().userData.side === 'left' ? 'right' : 'left';
 
-    this.focusOnCollection(side, this.cloneManager.getActiveClone(), false);
+    this.focusOnActiveGarment(side, this.cloneManager.getActiveClone(), false);
 
     console.warn(this.camera.history)
 
@@ -168,19 +130,17 @@ export default class GarmentManager {
     mesh.userData.indicator.scale.set(1, 1, 1);
   }
 
-  focusOnCollection(side, mesh, saveHistory = true) {
+  focusOnActiveGarment(side, mesh, saveHistory = true) {
     console.warn('current side', side)
-    const center = this.computeCollectionCenter(side, mesh);
-    const avgHeight = this.computeCollectionAvgHeight(side, mesh);
 
-    // Offset in front of collection
-    const cameraOffset = new THREE.Vector3(0, 0, 4);
-    const targetPos = center.clone();
-    targetPos.y = avgHeight;
-    targetPos.add(cameraOffset);
+    const box = new THREE.Box3().setFromObject(mesh);
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    center.y += 0.5;
+
+    const targetPos = center.clone().add(new THREE.Vector3(0, 0, 4));
 
     this.camera.moveTo(targetPos, center, saveHistory);
-    //this.camera.lookAt(center);
 
     console.warn('HISTORY', saveHistory)
 
@@ -194,11 +154,7 @@ export default class GarmentManager {
     this.applyActiveMeshStyle(this.currentActiveGarment);
 
     console.warn('ACTIVE:', this.currentActiveGarment)
-
-    // Focus camera only if side changes
-    if (newActiveMesh.userData.side !== this.currentSide) {
-      this.focusOnCollection(newActiveMesh.userData.side, newActiveMesh, saveHistory);
-    }
+    this.focusOnActiveGarment(newActiveMesh.userData.side, newActiveMesh, saveHistory);
   }
   
   applyActiveMeshStyle(group) {

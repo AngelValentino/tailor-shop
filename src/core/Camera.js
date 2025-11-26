@@ -15,6 +15,7 @@ export default class Camera {
 
     this.lookAtTarget = new THREE.Vector3(0, 1.3, 0);
     this.instance.lookAt(this.lookAtTarget);
+    this.animationDefaultTime = 1;
 
     this.history = [];
   }
@@ -28,10 +29,6 @@ export default class Camera {
     this.instance.updateProjectionMatrix();
   }
 
-  reset() {
-    //console.warn('resresr')
-  }
-
   pushCurrentStateToHistory() {
     this.history.push({
       position: this.instance.position.clone(),
@@ -40,7 +37,7 @@ export default class Camera {
 
   }
 
-  moveTo(position, lookAt = null, saveHistory = true, duration = 1) {
+  moveTo({ targetPosition, lookAt = null, saveHistory = true, duration = this.animationDefaultTime }) {
     console.warn('CAMERA HOSTORY BEFORE MOVE TO: ', this.history)
     
     if (saveHistory) this.pushCurrentStateToHistory();
@@ -49,9 +46,9 @@ export default class Camera {
 
     // Animate camera position
     gsap.to(this.instance.position, {
-      x: position.x,
-      y: position.y,
-      z: position.z,
+      x: targetPosition.x,
+      y: targetPosition.y,
+      z: targetPosition.z,
       duration: duration,
       ease: "power2.out"
     });
@@ -71,17 +68,22 @@ export default class Camera {
     }
   }
 
-  moveBack(duration = 1) {
+  moveBack(duration = this.animationDefaultTime) {
     if (this.history.length === 0) {
       console.warn('no history');
       return;
     }
 
     const lastState = this.history.pop();
-    this.moveTo(lastState.position, lastState.lookAt, duration);
+    this.moveTo({ 
+      targetPosition: lastState.position, 
+      lookAt: lastState.lookAt, 
+      saveHistory: false, 
+      duration: duration
+    });
   }
 
-  lookAt(position, duration = 1) {
+  lookAt(position, duration = this.animationDefaultTime) {
     this.pushCurrentStateToHistory();
     gsap.to(this.lookAtTarget, {
       x: position.x,

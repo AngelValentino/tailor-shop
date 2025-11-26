@@ -16,7 +16,6 @@ export default class GarmentManager {
     this.left = [];
     this.right = [];
     this.allMeshes = [];
-    this.currentSide = null;
 
     this.returnToGarmentPanelBtn = document.getElementById('return-to-garment-panel-btn'); //? test element
   }
@@ -84,8 +83,6 @@ export default class GarmentManager {
   }
 
   restoreOppositeSide() {
-    //TODO remove rotation controls for active clone
-    
     console.warn('restore back to garment panel')
     // Delete the current clone and show hidden
     this.cloneManager.deleteActiveClone();
@@ -100,7 +97,6 @@ export default class GarmentManager {
   }
 
   enterCloneView() {
-    //TODO add rotation controls for active clone
     console.warn('enter clone view')
 
     // Bind restore button for exiting clone view
@@ -110,9 +106,8 @@ export default class GarmentManager {
 
     // Clone the active mannequin and focus camera
     this.cloneManager.cloneActiveMannequin();
-    const side = this.cloneManager.getActiveClone().userData.side === 'left' ? 'right' : 'left';
 
-    this.focusOnActiveGarment(side, this.cloneManager.getActiveClone(), false);
+    this.focusOnActiveGarment(this.cloneManager.getActiveClone(), false);
 
     console.warn(this.camera.history)
 
@@ -130,31 +125,31 @@ export default class GarmentManager {
     mesh.userData.indicator.scale.set(1, 1, 1);
   }
 
-  focusOnActiveGarment(side, mesh, saveHistory = true) {
-    console.warn('current side', side)
-
+  focusOnActiveGarment(mesh, saveHistory = true) {
     const box = new THREE.Box3().setFromObject(mesh);
     const center = new THREE.Vector3();
     box.getCenter(center);
     center.y += 0.5;
 
-    const targetPos = center.clone().add(new THREE.Vector3(0, 0, 4));
+    const targetPosition = center.clone().add(new THREE.Vector3(0, 0, 4));
 
-    this.camera.moveTo(targetPos, center, saveHistory);
+    this.camera.moveTo({ 
+      targetPosition: targetPosition, 
+      lookAt: center, 
+      saveHistory: saveHistory 
+    });
 
     console.warn('HISTORY', saveHistory)
-
-    this.currentSide = side; // track currently focused side
   }
 
   updateActive(name, saveHistory) {
     this.resetMeshStyle(this.currentActiveGarment);
-    const newActiveMesh = this.allMeshes.find(obj => obj.userData.garmentInfoKey === name);
-    this.currentActiveGarment = newActiveMesh;
+    const newActiveGarment = this.allMeshes.find(obj => obj.userData.garmentInfoKey === name);
+    this.currentActiveGarment = newActiveGarment;
     this.applyActiveMeshStyle(this.currentActiveGarment);
 
     console.warn('ACTIVE:', this.currentActiveGarment)
-    this.focusOnActiveGarment(newActiveMesh.userData.side, newActiveMesh, saveHistory);
+    this.focusOnActiveGarment(newActiveGarment, saveHistory);
   }
   
   applyActiveMeshStyle(group) {
@@ -168,9 +163,8 @@ export default class GarmentManager {
   resetActiveGarment({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
     this.garmentInfoPanel = null;
     this.resetMeshStyle(this.currentActiveGarment);
-    deleteActiveGarmentRef && (this.currentActiveGarment = null);
+    deleteActiveGarmentRef && (this.currentActiveGarment = null); //? This argument may not be needed 
     resetCamera && this.camera.moveBack();
-    deleteActiveGarmentRef && (this.currentSide = null);
   }
 
   onClick(mesh) {

@@ -30,11 +30,11 @@ export default class GarmentInfoPanel {
 
   open(garmentInfo, collection, saveHistory = true) {
     this.eventHandler.closePanel = this.close.bind(this);
-    this.eventHandler.moveToClone = this.garmentManager.enterCloneView.bind(this.garmentManager);
+    this.eventHandler.enterCloneView = this.garmentManager.enterCloneView.bind(this.garmentManager);
 
     if (!this.lms.panel.classList.contains('active')) {
       this.lms.closeBtn.addEventListener('click', this.eventHandler.closePanel);
-      this.lms.viewMoreBtn.addEventListener('click', this.eventHandler.moveToClone)
+      this.lms.viewMoreBtn.addEventListener('click', this.eventHandler.enterCloneView)
 
       this.lms.panel.classList.add('active')
       console.warn('open UI');
@@ -92,7 +92,7 @@ export default class GarmentInfoPanel {
       hidePanel && this.lms.panel.classList.remove('active');
 
       this.lms.closeBtn.removeEventListener('click', this.eventHandler.closePanel);
-      this.lms.viewMoreBtn.removeEventListener('click', this.eventHandler.moveToClone)
+      this.lms.viewMoreBtn.removeEventListener('click', this.eventHandler.enterCloneView);
     } 
     else {
       console.warn('ui alraedy closed ignore')

@@ -15,11 +15,15 @@ export default class Camera {
     this.instance.position.set(0, 1.5, 4);
     scene.add(this.instance);
 
+    this.cameraDefaultPos = this.instance.position.clone();
+
     this.lookAtTarget = new THREE.Vector3(0, 1.3, 0);
     this.instance.lookAt(this.lookAtTarget);
     this.animationDefaultTime = 0.8;
 
     this.history = [];
+
+    this.pointerControlsStatus = true;
 
     this.pointerControls = new PointerControls(this.instance);
 
@@ -35,21 +39,31 @@ export default class Camera {
   }
 
   pushCurrentStateToHistory() {
-    this.history.push({
-      position: this.instance.position.clone(),
-      lookAt: this.lookAtTarget.clone(),
-      fov: this.instance.fov
-    });
-
+    // Check if pointer controls are active and get the default camera position
+    if (this.history.length === 0) {
+      this.history.push({
+        position: this.cameraDefaultPos.clone(),
+        lookAt: this.lookAtTarget.clone(),
+        fov: this.instance.fov
+      });
+      console.warn('pushing default camera position to history')
+    // Else we can safely push the current camera position as no pointer controls are active
+    } else {
+      this.history.push({
+        position: this.instance.position.clone(),
+        lookAt: this.lookAtTarget.clone(),
+        fov: this.instance.fov
+      });
+    }
   }
 
   updatePointerState() {
     if (this.history.length > 0) {
-      // this.pointerControls.disable();
+      if (this.pointerControlsStatus) this.pointerControls.disable();
       console.warn('disable pointer')
     } 
     else {
-      // this.pointerControls.enable();
+      if (this.pointerControlsStatus) this.pointerControls.enable();
       console.warn('enable pointer')
     }
   }
@@ -70,7 +84,7 @@ export default class Camera {
       this.updatePointerState();
     };
 
-    // this.pointerControls.disable();
+    if (this.pointerControlsStatus) this.pointerControls.disable();
     console.warn('CAMERA HISTORY AFTER MOVE TO: ', this.history)
 
     // Animate camera position
@@ -82,10 +96,10 @@ export default class Camera {
       ease: "power2.out",
       overwrite: "auto",
       onComplete: () => {
-        // this.pointerControls.updateBasePosition();
-        this.updatePointerState();
+        if (this.pointerControlsStatus) this.pointerControls.updateBasePosition();
+        if (this.pointerControlsStatus) this.updatePointerState();
         document.body.style.pointerEvents = 'auto';
-        this.hoverControls.enable()
+        this.hoverControls.enable();
       }
     });
 
@@ -136,6 +150,6 @@ export default class Camera {
   }
 
   update() {
-    // this.pointerControls.update()
+    if (this.pointerControlsStatus) this.pointerControls.update()
   }
 }

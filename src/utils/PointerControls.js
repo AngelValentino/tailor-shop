@@ -30,8 +30,6 @@ export default class PointerControls {
 
     this.cursor.x = e.clientX / window.innerWidth - 0.5;
     this.cursor.y = - (e.clientY / window.innerHeight - 0.5);
-
-    console.log(this.cursor)
   }
 
   dispose() {
@@ -67,12 +65,6 @@ export default class PointerControls {
   // Re-enable pointer controls
   enable() {
     this.enabled = true;
-
-    this.ignoreMouse = true;
-    requestAnimationFrame(() => {
-      this.ignoreMouse = false;
-    });
-
     window.addEventListener('mousemove', this._onMouseMove);
   }
 

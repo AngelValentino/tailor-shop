@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import * as THREE from 'three';
+import PointerControls from '../utils/PointerControls';
 
 export default class Camera {
   constructor(scene) {
@@ -10,23 +11,27 @@ export default class Camera {
       100
     );
 
+
     this.instance.position.set(0, 1.5, 4);
     scene.add(this.instance);
 
     this.lookAtTarget = new THREE.Vector3(0, 1.3, 0);
     this.instance.lookAt(this.lookAtTarget);
-    this.animationDefaultTime = 1;
+    this.animationDefaultTime = 0.8;
 
     this.history = [];
-  }
 
-  setPointerControlsInstace(pointerControls) {
-    this.pointerControls = pointerControls;
+    this.pointerControls = new PointerControls(this.instance);
+
   }
 
   onResize() {
     this.instance.aspect = window.innerWidth / window.innerHeight;
     this.instance.updateProjectionMatrix();
+  }
+
+  setHoverControlsInstance(hoverControls) {
+    this.hoverControls = hoverControls;
   }
 
   pushCurrentStateToHistory() {
@@ -38,6 +43,17 @@ export default class Camera {
 
   }
 
+  updatePointerState() {
+    if (this.history.length > 0) {
+      this.pointerControls.disable();
+      console.warn('disable pointer')
+    } 
+    else {
+      this.pointerControls.enable();
+      console.warn('enable pointer')
+    }
+  }
+
   moveTo({ 
     targetPosition, 
     lookAt = null, 
@@ -46,9 +62,15 @@ export default class Camera {
     fov = null
   }) {
     console.warn('CAMERA HOSTORY BEFORE MOVE TO: ', this.history)
-    
-    if (saveHistory) this.pushCurrentStateToHistory();
+    document.body.style.pointerEvents = 'none';
+    this.hoverControls.disable()
 
+    if (saveHistory) {
+      this.pushCurrentStateToHistory();
+      this.updatePointerState();
+    };
+
+    this.pointerControls.disable();
     console.warn('CAMERA HOSTORY AFTER MOVE TO: ', this.history)
 
     // Animate camera position
@@ -57,7 +79,14 @@ export default class Camera {
       y: targetPosition.y,
       z: targetPosition.z,
       duration: duration,
-      ease: "power2.out"
+      ease: "power2.out",
+      overwrite: "auto",
+      onComplete: () => {
+        this.pointerControls.updateBasePosition();
+        this.updatePointerState();
+        document.body.style.pointerEvents = 'auto';
+        this.hoverControls.enable()
+      }
     });
 
     // Animate lookAt target
@@ -68,6 +97,7 @@ export default class Camera {
         z: lookAt.z,
         duration: duration,
         ease: "power2.out",
+        overwrite: "auto",
         onUpdate: () => {
           this.instance.lookAt(this.lookAtTarget);
         }
@@ -80,6 +110,7 @@ export default class Camera {
         fov,
         duration,
         ease: "power2.out",
+        overwrite: "auto",
         onUpdate: () => this.instance.updateProjectionMatrix()
       });
     }
@@ -92,6 +123,8 @@ export default class Camera {
     }
 
     const lastState = this.history.pop();
+
+    this.updatePointerState();
     
     this.moveTo({ 
       targetPosition: lastState.position, 
@@ -115,6 +148,6 @@ export default class Camera {
   }
 
   update() {
-
+    this.pointerControls.update()
   }
 }

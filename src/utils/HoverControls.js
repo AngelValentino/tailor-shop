@@ -9,6 +9,8 @@ export default class HoverControls {
 
     this.lastHovered = null;
 
+    this.enabled = true;
+
     // Event callbacks
     this.onMouseEnter = null;
     this.onMouseLeave = null;
@@ -22,6 +24,18 @@ export default class HoverControls {
 
     window.addEventListener('mousemove', this._onMouseMove);
     window.addEventListener('click', this._onClick);
+  }
+
+  disable() {
+    this.enabled = false;
+    if (this.lastHovered && this.onMouseLeave) {
+      this.onMouseLeave(this.lastHovered);
+    }
+    this.lastHovered = null;
+  }
+
+  enable() {
+    this.enabled = true;
   }
 
   setOnMouseEnter(callback) {
@@ -65,6 +79,8 @@ export default class HoverControls {
   }
 
   update() {
+    if (!this.enabled) return;
+
     if (this.isOverUI) {
       // handle leaving hover if UI is blocking
       if (this.lastHovered && this.onMouseLeave) {

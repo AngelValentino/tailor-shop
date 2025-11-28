@@ -19,20 +19,13 @@ export default class App {
     this.renderer = new Renderer(canvas, this.scene, this.camera.instance);
     this.lighting = new Lighting(this.scene);
     this.assetLoader = new AssetLoader(this.scene, this.camera.instance);
-    
-    this.pointerControls = new PointerControls(this.camera.instance, { 
-      maxOffset: { x: 0.1, y: 0.05 },
-      basePosition: { x: 0, y: 1 },
-      smoothing: 0.05
-    });
-
-    this.camera.setPointerControlsInstace(this.pointerControls);
 
     const utils = new Utils;
     const roomGrid = new RoomGrid(this.scene);
     const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid);
     const garmentManager = new GarmentManager(this.scene, utils, this.camera, cloneManager);
     const hoverControls = new HoverControls(this.camera.instance, () => garmentManager.getAllMeshes())
+    this.camera.setHoverControlsInstance(hoverControls);
     this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls, roomGrid);
     garmentManager.setTailorShopExperienceInstance(this.experience);
     cloneManager.setGarmentManagerInstance(garmentManager);
@@ -64,7 +57,6 @@ export default class App {
   }
 
   #loop() {
-    this.pointerControls.update();
     this.experience.update()
 
     // Update garment manager (camera movement)

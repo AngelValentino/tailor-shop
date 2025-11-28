@@ -70,15 +70,19 @@ export default class CloneManager {
       console.warn('showHiddenGarments() called but nothing is hidden — skipping.');
       return;
     }
-    console.log(this.hiddenGarments)
-    this.hiddenGarments.forEach(mesh => {
-      mesh.visible = true;
-      this.garmentManager.setAllMeshes(mesh);
-    });
+    setTimeout(() => {
+      this.hiddenGarments.forEach(mesh => {
+        mesh.visible = true;
+        this.garmentManager.setAllMeshes(mesh);
+      });
 
-    console.log(`Restored ${this.hiddenGarments.length} meshes from side '${this.hiddenSide}'`);
-    this.hiddenGarments.length = 0;
-    this.hiddenSide = null;
+      console.log(this.hiddenGarments)
+
+      console.log(`Restored ${this.hiddenGarments.length} meshes from side '${this.hiddenSide}'`);
+      this.hiddenGarments.length = 0;
+      this.hiddenSide = null;
+    }, 250)
+
   }
 
   deleteGarmentClone() {

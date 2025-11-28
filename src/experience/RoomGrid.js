@@ -17,7 +17,7 @@ export default class RoomGrid {
 
   init() {
     this.calculateRoomGrid();
-    this.#drawRoomGrid();
+    //this.#drawRoomGrid();
   }
 
   calculateRoomGrid() {

@@ -45,11 +45,11 @@ export default class Camera {
 
   updatePointerState() {
     if (this.history.length > 0) {
-      this.pointerControls.disable();
+      // this.pointerControls.disable();
       console.warn('disable pointer')
     } 
     else {
-      this.pointerControls.enable();
+      // this.pointerControls.enable();
       console.warn('enable pointer')
     }
   }
@@ -70,8 +70,8 @@ export default class Camera {
       this.updatePointerState();
     };
 
-    this.pointerControls.disable();
-    console.warn('CAMERA HOSTORY AFTER MOVE TO: ', this.history)
+    // this.pointerControls.disable();
+    console.warn('CAMERA HISTORY AFTER MOVE TO: ', this.history)
 
     // Animate camera position
     gsap.to(this.instance.position, {
@@ -82,7 +82,7 @@ export default class Camera {
       ease: "power2.out",
       overwrite: "auto",
       onComplete: () => {
-        this.pointerControls.updateBasePosition();
+        // this.pointerControls.updateBasePosition();
         this.updatePointerState();
         document.body.style.pointerEvents = 'auto';
         this.hoverControls.enable()
@@ -135,19 +135,7 @@ export default class Camera {
     });
   }
 
-  lookAt(position, duration = this.animationDefaultTime) {
-    this.pushCurrentStateToHistory();
-    gsap.to(this.lookAtTarget, {
-      x: position.x,
-      y: position.y,
-      z: position.z,
-      duration: duration,
-      ease: "power2.out",
-      onUpdate: () => this.instance.lookAt(this.lookAtTarget)
-    });
-  }
-
   update() {
-    this.pointerControls.update()
+    // this.pointerControls.update()
   }
 }

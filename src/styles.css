@@ -65,7 +65,7 @@ main {
   min-width: 320px;
   position: fixed; 
   inset: 0; 
-  border: 2px solid red; 
+  /* border: 2px solid red; */ 
 }
 
 .ui-container {
@@ -73,7 +73,7 @@ main {
   max-width: 1920px; 
   position: absolute;
   inset: 0;
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
 }
 
 .webgl {

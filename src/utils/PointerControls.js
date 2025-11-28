@@ -18,7 +18,7 @@ export default class PointerControls {
       y: 0
     };
 
-    this.enabled = true;
+    this.enabled = true; 
 
     this._onMouseMove = this.onMouseMove.bind(this);
     window.addEventListener('mousemove', this._onMouseMove);
@@ -30,20 +30,14 @@ export default class PointerControls {
 
     this.cursor.x = e.clientX / window.innerWidth - 0.5;
     this.cursor.y = - (e.clientY / window.innerHeight - 0.5);
-  
-    //this.updatePointer();
+
+    console.log(this.cursor)
   }
 
   dispose() {
     window.removeEventListener('mousemove', this._onMouseMove);
   }
 
-
-  resetCursor() {
-    const rect = document.body.getBoundingClientRect(); // or canvas/container
-    this.cursor.x = (window.mouseX || window.innerWidth / 2) / window.innerWidth - 0.5;
-    this.cursor.y = -(window.mouseY || window.innerHeight / 2) / window.innerHeight + 0.5;
-  }
   updatePointer() {
     if (!this.enabled) return;
 
@@ -73,18 +67,22 @@ export default class PointerControls {
   // Re-enable pointer controls
   enable() {
     this.enabled = true;
+
+    this.ignoreMouse = true;
+    requestAnimationFrame(() => {
+      this.ignoreMouse = false;
+    });
+
     window.addEventListener('mousemove', this._onMouseMove);
   }
 
 
   // Update base position after camera moves
   updateBasePosition() {
-  
     this.cursor = {
       x: 0,
       y: 0
     };
-
 
     this.basePosition.x = this.camera.position.x;
     this.basePosition.y = this.camera.position.y;

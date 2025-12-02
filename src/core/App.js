@@ -3,7 +3,6 @@ import Camera from './Camera.js';
 import Renderer from './Renderer.js';
 import Lighting from './Lighting.js';
 import AssetLoader from '../loaders/AssetLoader.js';
-import PointerControls from '../utils/PointerControls.js';
 import TailorShopExperience from '../experience/TailorShopExperience.js';
 import HoverControls from '../utils/HoverControls.js';
 import GarmentManager from '../experience/GarmentManager.js';
@@ -14,6 +13,7 @@ import RoomGrid from '../experience/RoomGrid.js';
 export default class App {
   constructor(canvas) {
     this.scene = new THREE.Scene();
+    this.time = performance.now();
 
     this.camera = new Camera(this.scene);
     this.renderer = new Renderer(canvas, this.scene, this.camera.instance);
@@ -27,7 +27,6 @@ export default class App {
     const hoverControls = new HoverControls(this.camera.instance, () => garmentManager.getAllMeshes())
     this.camera.setHoverControlsInstance(hoverControls);
     this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls, roomGrid);
-    garmentManager.setTailorShopExperienceInstance(this.experience);
     cloneManager.setGarmentManagerInstance(garmentManager);
 
     this.#resizeHandler();
@@ -56,8 +55,18 @@ export default class App {
     });
   }
 
+  updateDelta() {
+    const now = performance.now();
+    const delta = (now - this.time) / 1000;
+    this.time = now;
+
+    return delta;
+  }
+
   #loop() {
-    this.experience.update()
+    const delta = this.updateDelta();
+
+    this.experience.update(delta);
 
     // Update garment manager (camera movement)
     this.camera.update();

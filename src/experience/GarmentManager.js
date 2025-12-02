@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import garmentData from "../data/garmentData.js";
 import GarmentInfoPanel from "../ui/GarmentInfoPanel.js";
+import EnhancedGarmentView from './EnhancedGarmentView.js';
 
 export default class GarmentManager {
   constructor(scene, utils, camera, cloneManager) {
@@ -8,9 +9,9 @@ export default class GarmentManager {
 
     this.utils = utils;
     this.camera = camera;
-    this.tailorShopExperience = null;
     this.cloneManager = cloneManager;
     this.garmentInfoPanel = null;
+    this.enhancedGarmentView = null;
 
     this.currentActiveGarment = null;
     this.left = [];
@@ -18,10 +19,6 @@ export default class GarmentManager {
     this.allMeshes = [];
 
     this.returnToGarmentPanelBtn = document.getElementById('return-to-garment-panel-btn'); //? test element
-  }
-
-  setTailorShopExperienceInstance(tailorShopExperience) {
-    this.tailorShopExperience = tailorShopExperience;
   }
 
   init() {
@@ -83,6 +80,9 @@ export default class GarmentManager {
 
   restoreOppositeSide() {
     console.warn('restore back to garment panel')
+    this.enhancedGarmentView.dispose();
+    this.enhancedGarmentView = null;
+
     // Delete the current clone and show hidden
     this.cloneManager.deleteGarmentClone();
     this.cloneManager.showHiddenGarments();
@@ -111,6 +111,7 @@ export default class GarmentManager {
 
     // Close garment info panel without resetting camera or active garment
     this.garmentInfoPanel.close({ resetCamera: false, deleteActiveGarmentRef: false });
+    this.enhancedGarmentView = new EnhancedGarmentView(this.cloneManager.getActiveGarmentClone());
   }
 
   onMouseEnter(mesh) {
@@ -195,6 +196,12 @@ export default class GarmentManager {
       console.warn('new garment info panel instance')
       // Update garment information and set up a new active garment
       this.garmentInfoPanel = new GarmentInfoPanel(garmentData, this.currentActiveGarment.userData.garmentKey, this);
+    }
+  }
+
+  update(delta) {
+    if (this.enhancedGarmentView) {
+      this.enhancedGarmentView.update(delta);
     }
   }
 }

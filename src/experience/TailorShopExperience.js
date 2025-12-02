@@ -6,9 +6,9 @@ export default class TailorShopExperience {
     this.hoverControls = hoverControls;
     this.roomGrid = roomGrid;
 
-    this.hoverControls.setOnClick((mesh) => this.garmentManager.onClick(mesh));
-    this.hoverControls.setOnMouseEnter((mesh) => this.garmentManager.onMouseEnter(mesh));
-    this.hoverControls.setOnMouseLeave((mesh) => this.garmentManager.onMouseLeave(mesh));
+    this.hoverControls.setOnClick(mesh => this.garmentManager.onClick(mesh));
+    this.hoverControls.setOnMouseEnter(mesh => this.garmentManager.onMouseEnter(mesh));
+    this.hoverControls.setOnMouseLeave(mesh => this.garmentManager.onMouseLeave(mesh));
   }
 
   init() {
@@ -20,7 +20,8 @@ export default class TailorShopExperience {
     this.hoverControls.dispose();
   }
 
-  update() {
+  update(delta) {
     this.hoverControls.update();
+    this.garmentManager.update(delta);
   }
 }

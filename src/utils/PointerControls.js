@@ -1,10 +1,13 @@
 import * as THREE from 'three';
+import Utils from './Utils';
 
 export default class PointerControls {
   constructor(camera) {
     this.camera = camera;
+    this.utils = new Utils;
 
     this.maxOffset = { x: 0.1, y: 0.05 };
+    this.eventHandler = {};
 
     // Save full base camera position (x, y, z)
     this.basePosition = {
@@ -18,11 +21,35 @@ export default class PointerControls {
       y: 0
     };
 
+    this.lms = {
+      portraitOverlayLm: document.getElementById('portrait-overlay')
+    }
+
     this.enabled = true; 
 
-    this._onMouseMove = this.onMouseMove.bind(this);
-    window.addEventListener('mousemove', this._onMouseMove);
 
+    this.eventHandler.onMouseMove = this.onMouseMove.bind(this);
+    this.eventHandler.onTouchMove = this.onTouchMove.bind(this);
+    this.eventHandler.onOrientationChange = this.handleOrientationChange.bind(this)
+
+
+    if (this.utils.isTouchBasedDevice()) {
+      window.addEventListener('touchmove', this.eventHandler.onTouchMove);
+      this.handleOrientationChange();
+      window.addEventListener('resize', this.eventHandler.onOrientationChange);
+    } 
+    else {
+      window.addEventListener('mousemove', this.eventHandler.onMouseMove);
+    }
+  }
+
+  handleOrientationChange() {
+    if (this.utils.isPortrait()) {
+      this.lms.portraitOverlayLm.classList.add('active');
+    } 
+    else {
+      this.lms.portraitOverlayLm.classList.remove('active');
+    }
   }
 
   onMouseMove(e) {
@@ -32,19 +59,23 @@ export default class PointerControls {
     this.cursor.y = - (e.clientY / window.innerHeight - 0.5);
   }
 
+  onTouchMove(e) {
+    if (!this.enabled) return;
+    if (!e.touches || e.touches.length === 0) return;
+
+    const touch = e.touches[0];
+    this.cursor.x = touch.clientX / window.innerWidth - 0.5;
+    this.cursor.y = - (touch.clientY / window.innerHeight - 0.5);
+  }
+
   dispose() {
-    window.removeEventListener('mousemove', this._onMouseMove);
+    window.removeEventListener('mousemove', this.eventHandler.onMouseMove);
+    window.removeEventListener('touchmove', this.eventHandler.onTouchMove); 
+    window.removeEventListener('resize', this.eventHandler.onOrientationChange);
   }
 
   updatePointer() {
     if (!this.enabled) return;
-
-    // gsap.to(this.camera.position, {
-    //   x: this.basePosition.x + this.cursor.x * this.maxOffset.x,
-    //   y: this.basePosition.y + this.cursor.y * this.maxOffset.y,
-    //   z: this.basePosition.z, // keep z fixed
-    // });
-
 
     const targetPos = new THREE.Vector3(
       this.basePosition.x + this.cursor.x * this.maxOffset.x,
@@ -56,7 +87,7 @@ export default class PointerControls {
     this.camera.position.lerp(targetPos, 0.05); 
   }
 
-    // Temporarily disable pointer controls
+  // Temporarily disable pointer controls
   disable() {
     this.enabled = false;
     this.dispose();
@@ -65,7 +96,14 @@ export default class PointerControls {
   // Re-enable pointer controls
   enable() {
     this.enabled = true;
-    window.addEventListener('mousemove', this._onMouseMove);
+    if (this.utils.isTouchBasedDevice()) {
+      window.addEventListener('touchmove', this.eventHandler.onTouchMove);
+      this.handleOrientationChange();
+      window.addEventListener('resize', this.eventHandler.onOrientationChange);
+    } 
+    else {
+      window.addEventListener('mousemove', this.eventHandler.onMouseMove);
+    }
   }
 
 
@@ -82,6 +120,6 @@ export default class PointerControls {
   }
 
   update() {
-    this.updatePointer()
+    this.updatePointer();
   }
 }

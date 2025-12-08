@@ -27,6 +27,10 @@ export default class Utils {
     return window.matchMedia('(pointer: coarse)').matches;
   }
 
+  isPortrait() {
+    return window.innerHeight > window.innerWidth;
+  }
+
   handleSwipe(onSwipeLeft, onSwipeRight, minSwipeDistance = 25) {
     let touchStartX = null;
     let touchStartY = null;

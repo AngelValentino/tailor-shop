@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import Utils from './Utils';
 
 export default class HoverControls {
   constructor(camera, getTargets) {
@@ -6,6 +7,7 @@ export default class HoverControls {
     this.getTargets = getTargets; // Function that returns the meshes to test
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
+    this.utils = new Utils;
 
     this.lastHovered = null;
 
@@ -21,21 +23,21 @@ export default class HoverControls {
 
     this._onMouseMove = this.#onMouseMove.bind(this);
     this._onClick = this.#onClick.bind(this); 
+    
+    this._onTouchMove = this.#onTouchMove.bind(this);
+    this._onTouchStart = this.#onTouchStart.bind(this);
 
-    window.addEventListener('mousemove', this._onMouseMove);
-    window.addEventListener('click', this._onClick);
-  }
-
-  disable() {
-    this.enabled = false;
-    if (this.lastHovered && this.onMouseLeave) {
-      this.onMouseLeave(this.lastHovered);
+    // Desktop
+    if (!this.utils.isTouchBasedDevice()) {
+      window.addEventListener('mousemove', this._onMouseMove);
+      window.addEventListener('click', this._onClick);
+    } 
+    // Mobile
+    else {
+      window.addEventListener('touchstart', this._onTouchStart);
+      window.addEventListener('touchmove', this._onTouchMove);
+      window.addEventListener('touchend', this._onClick); // treat tap as click
     }
-    this.lastHovered = null;
-  }
-
-  enable() {
-    this.enabled = true;
   }
 
   setOnMouseEnter(callback) {
@@ -50,10 +52,52 @@ export default class HoverControls {
     this.onClick = callback;
   }
 
+  disable() {
+    this.enabled = false;
+    if (this.lastHovered && this.onMouseLeave) {
+      this.onMouseLeave(this.lastHovered);
+    }
+    this.lastHovered = null;
+  }
+
+  enable() {
+    this.enabled = true;
+  }
+
+  dispose() {
+    window.removeEventListener('mousemove', this._onMouseMove);
+    window.removeEventListener('click', this._onClick);
+
+    window.removeEventListener('touchstart', this._onTouchStart);
+    window.removeEventListener('touchmove', this._onTouchMove);
+    window.removeEventListener('touchend', this._onClick);
+  }
+
+
   #isOverUIPanel(e) {
     if (!this.uiBlocker) return false;
-    const Lm = document.elementFromPoint(e.clientX, e.clientY);
-    return Lm && this.uiBlocker.contains(Lm);
+    const x = e.clientX;
+    const y = e.clientY;
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+
+    const element = document.elementFromPoint(x, y);
+    return element && this.uiBlocker.contains(element);
+  }
+
+  #onTouchStart(e) {
+    if (e.touches.length > 0) {
+      this.mouse.x = e.touches[0].clientX / window.innerWidth * 2 - 1;
+      this.mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+      this.isOverUI = this.#isOverUIPanel(e.touches[0]);
+    }
+  }
+
+  #onTouchMove(e) {
+    if (e.touches.length > 0) {
+      this.mouse.x = e.touches[0].clientX / window.innerWidth * 2 - 1;
+      this.mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+      this.isOverUI = this.#isOverUIPanel(e.touches[0]);
+    }
   }
 
   #onMouseMove(e) {
@@ -73,11 +117,6 @@ export default class HoverControls {
     }
   }
 
-  dispose() {
-    window.removeEventListener('mousemove', this._onMouseMove);
-    window.removeEventListener('click', this._onClick);
-  }
-
   update() {
     if (!this.enabled) return;
 
@@ -91,11 +130,8 @@ export default class HoverControls {
     }
 
     const targets = this.getTargets();
-    //console.log(targets);
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(targets);
-
-    //console.log(intersects)
 
     if (intersects.length) {
       const hit = intersects[0].object.parent;

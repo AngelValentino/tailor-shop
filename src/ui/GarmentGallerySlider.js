@@ -1,8 +1,11 @@
+import Utils from "../utils/Utils";
+
 export default class GarmentGallerySlider {
   constructor(images) {
     this.images = images;
     this.imageIndex = 0;
     this.eventHandler = {};
+    this.utils = new Utils;
 
     this.root = document.getElementById('garment-gallery');
 
@@ -13,7 +16,7 @@ export default class GarmentGallerySlider {
       this.lms = {
         imageSliderContainer: this.root.querySelector('.garment-gallery__photos-list'),
         imageSliderNav: this.root.querySelector('.garment-gallery__nav'),
-        imageSlider: this.root,
+        imageSlider: this.root
       };
   
       this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this);
@@ -25,7 +28,13 @@ export default class GarmentGallerySlider {
 
       window.addEventListener('resize', this.eventHandler.updateNavHeight);
       this.lms.imageSliderNav.addEventListener('click', this.eventHandler.handleSliderClick);
+
+      this.addSwipeEvents();
     });
+  }
+
+  getTotalImages() {
+    return this.images.medium.length;
   }
 
   preloadImages() {
@@ -39,6 +48,23 @@ export default class GarmentGallerySlider {
     return Promise.all(promises);
   }
 
+  addSwipeEvents() {
+    const {
+      handleTouchStart, 
+      handleTouchMove, 
+      handleTouchEnd
+    } = this.utils.handleSwipe(this.slide.bind(this, 'right'), this.slide.bind(this, 'left'));
+      
+    this.eventHandler.touchStart = handleTouchStart;
+    this.eventHandler.touchMove = handleTouchMove;
+    this.eventHandler.touchEnd = handleTouchEnd;
+
+    this.lms.imageSlider.addEventListener('touchstart', this.eventHandler.touchStart);
+    this.lms.imageSlider.addEventListener('touchmove', this.eventHandler.touchMove);
+    this.lms.imageSlider.addEventListener('touchend', this.eventHandler.touchEnd);
+    this.lms.imageSlider.addEventListener('touchcancel', this.eventHandler.touchEnd);
+  }
+
   handleSliderClick(e) {
     const thumbnail = e.target.closest('.garment-gallery__thumb');
     if (thumbnail) {
@@ -46,6 +72,23 @@ export default class GarmentGallerySlider {
       this.setSlide(index);
     }
   }
+
+  slide(direction) {
+    const totalImages = this.getTotalImages();
+
+    if (direction === 'left') {
+      // Move left: wrap around to the last image if imageIndex is at the beginning
+      this.imageIndex = this.imageIndex === 0 ? totalImages - 1 : --this.imageIndex;
+    } 
+    else {
+      // Move right: wrap around to the first image if imageIndex is at the end
+      this.imageIndex = this.imageIndex === totalImages - 1 ? 0 : ++this.imageIndex;
+    }
+
+    this.updateSliderNav();
+    this.updateSliderImage();
+  }
+
 
   setSlide(i) {
     if (this.imageIndex === i) {
@@ -101,6 +144,11 @@ export default class GarmentGallerySlider {
     window.removeEventListener('resize', this.eventHandler.updateNavHeight);
     this.refImg.removeEventListener('load', this.eventHandler.setHeight);
     this.lms.imageSliderNav.removeEventListener('click', this.eventHandler.handleSliderClick);
+
+    this.lms.imageSlider.removeEventListener('touchstart', this.eventHandler.touchStart);
+    this.lms.imageSlider.removeEventListener('touchmove', this.eventHandler.touchMove);
+    this.lms.imageSlider.removeEventListener('touchend', this.eventHandler.touchEnd);
+    this.lms.imageSlider.removeEventListener('touchcancel', this.eventHandler.touchEnd);
   }
 
   generateSliderImages() {

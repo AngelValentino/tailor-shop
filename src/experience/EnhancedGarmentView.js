@@ -1,8 +1,9 @@
+import Utils from '../utils/Utils.js';
+
 export default class EnhancedGarmentView {
   constructor(activeClone) {
     this.activeClone = activeClone;
-
-    console.warn(activeClone)
+    this.utils = new Utils;
 
     this.isDragging = false;
     this.lastX = 0;
@@ -10,34 +11,62 @@ export default class EnhancedGarmentView {
     this.speed = 0.5;
     this.inertiaFactor = 0.95;
 
+    if (this.utils.isTouchBasedDevice()) {
+      this.speed = 0.25;
+    }
+
     this.onDown = this.onPointerDown.bind(this);
     this.onMove = this.onPointerMove.bind(this);
     this.onUp = this.onPointerUp.bind(this);
 
-    window.addEventListener("mousedown", this.onDown);
-    window.addEventListener("mousemove", this.onMove);
-    window.addEventListener("mouseup", this.onUp);
+    if (this.utils.isTouchBasedDevice()) {
+      window.addEventListener("touchstart", this.onDown, { passive: false });
+      window.addEventListener("touchmove", this.onMove, { passive: false });
+      window.addEventListener("touchend", this.onUp);
+      window.addEventListener("touchcancel", this.onUp);
+    } 
+    else {
+      window.addEventListener("mousedown", this.onDown);
+      window.addEventListener("mousemove", this.onMove);
+      window.addEventListener("mouseup", this.onUp);
+    }
   }
 
   dispose() {
+    // Remove desktop listeners
     window.removeEventListener("mousedown", this.onDown);
     window.removeEventListener("mousemove", this.onMove);
     window.removeEventListener("mouseup", this.onUp);
+
+    // Remove mobile listeners
+    window.removeEventListener("touchstart", this.onDown);
+    window.removeEventListener("touchmove", this.onMove);
+    window.removeEventListener("touchend", this.onUp);
+    window.removeEventListener("touchcancel", this.onUp);
   }
 
   onPointerDown(e) {
+    if (this.utils.isTouchBasedDevice()) {
+      if (e.touches.length !== 1) return;
+    }
+    const currentX = this.utils.isTouchBasedDevice() ? e.touches[0].clientX : e.clientX;
     this.isDragging = true;
-    this.lastX = e.clientX;
+    this.lastX = currentX;
   }
 
   onPointerMove(e) {
     if (!this.isDragging) return;
 
-    const dx = e.clientX - this.lastX;
+    const currentX = this.utils.isTouchBasedDevice() ? e.touches[0].clientX : e.clientX;
+
+    const dx = currentX - this.lastX;
+    const normalizedDx = dx / window.innerWidth;
     
-    this.velocityY = dx * this.speed;
+    this.velocityY = normalizedDx * this.speed * 1000;
     
-    this.lastX = e.clientX;
+    this.lastX = currentX;
+
+    if (this.utils.isTouchBasedDevice()) e.preventDefault(); // prevent scrolling while dragging
   }
 
   onPointerUp() {

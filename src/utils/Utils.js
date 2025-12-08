@@ -22,4 +22,8 @@ export default class Utils {
       });
     }
   }
+
+  isTouchBasedDevice() {
+    return window.matchMedia('(pointer: coarse)').matches;
+  }
 }

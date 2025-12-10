@@ -13,13 +13,83 @@
   <canvas class="webgl"></canvas>
   <main>
     <div id="portrait-overlay" class="portrait-overlay">
-        <p class="portrait-overlay__text">Please rotate the screen to see the full scene</p>
+      <p class="portrait-overlay__text">Please rotate the screen to see the full scene</p>
     </div>
     <div id="loading-screen">
       <div id="progress-bar"></div>
     </div>
     <div class="ui-container">
-      <button id="return-to-garment-panel-btn" class="return-to-garment-panel-btn">Return to garment panel</button>
+      <button id="toggle-menu-btn" class="toggle-menu-btn">
+        <svg class="toggle-menu-btn__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+          <g fill="none">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M44 16v20H29l-5 5l-5-5H4V6h30" />
+            <path stroke="currentColor" stroke-linecap="round" stroke-width="4" d="M23 20h2.003m7.998 0H35m-21.999 0H15" />
+            <circle cx="43" cy="7" r="3" fill="currentColor" />
+          </g>
+        </svg>
+      </button>
+      <div id="info-menu" class="info-menu">
+        <div class="info-menu__ui-limits">
+          <button aria-label="Close menu." title="Close menu" id="info-menu__close-btn" class="info-menu__close-btn">
+            <svg aria-hidden="true" focusable="false" role="presentation" class="info-menu__close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+          </button>
+          <div>
+            <p class="info-menu__desc">Hello, I'm Angel Valentino, a developer and designer. In this interactive atelier, I present my hand-sewn bespoke garments and invite you to explore the aesthetic choices that inspire my work.</p>
+            <div class="info-menu__socials-container">
+              <ul aria-label="Angel Valentino's social links." class="info-menu__social-links-list">
+                <li>
+                  <a aria-label="Go to Angel Valentino's freecodecamp profile." class="info-menu__social-link" title="freecodecamp" target="_blank" href="https://www.freecodecamp.org/AngelValentino">
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="info-menu__social-link-icon info-menu__freecodecamp-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                      <path fill="currentColor" d="M97.2 96.2c10.4-10.7 16-17.1 16-21.9 0-2.8-1.9-5.5-3.8-7.4A14.8 14.8 0 0 0 101 64.1c-8.5 0-20.9 8.8-35.8 25.7C23.7 137 2.5 182.8 3.4 250.3s17.5 117 54.1 161.9C76.2 435.9 90.6 448 100.9 448a13.6 13.6 0 0 0 8.4-3.8c1.9-2.8 3.8-5.6 3.8-8.4 0-5.6-3.9-12.2-13.2-20.6-44.5-42.3-67.3-97-67.5-165C32.3 188.8 54 137.8 97.2 96.2zM239.5 420.1c.6 .4 .9 .6 .9 .6zm93.8 .6 .2-.1C333.2 420.6 333.2 420.7 333.3 420.6zm3.1-158.2c-16.2-4.2 50.4-82.9-68.1-177.2 0 0 15.5 49.4-62.8 159.6-74.3 104.4 23.5 168.7 34 175.2-6.7-4.4-47.4-35.7 9.6-128.6 11-18.3 25.5-34.9 43.5-72.2 0 0 15.9 22.5 7.6 71.1C287.7 364 354 342.9 355 343.9c22.8 26.8-17.7 73.5-21.6 76.6 5.5-3.7 117.7-78 33-188.1C360.4 238.4 352.6 266.6 336.4 262.4zM510.9 89.7C496 72.8 483.5 64 475 64a14.8 14.8 0 0 0 -8.4 2.8c-1.9 1.9-3.8 4.7-3.8 7.4 0 4.8 5.6 11.3 16 21.9 43.2 41.6 65 92.6 64.8 154.1-.2 68-23 122.6-67.5 165-9.3 8.4-13.2 14.9-13.2 20.6 0 2.8 1.9 5.6 3.8 8.4A13.6 13.6 0 0 0 475.1 448c10.3 0 24.7-12.1 43.5-35.8 36.6-44.9 53.1-94.4 54.1-161.9S552.3 137 510.9 89.7z"></path>
+                    </svg>
+                  </a>
+                </li>
+                <li>
+                  <a aria-label="Go to Angel Valentino's LinkedIn profile." class="info-menu__social-link" title="LinkedIn" target="_blank" href="https://www.linkedin.com/in/angelvalentino/">
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="info-menu__social-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <g fill="none">
+                        <path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"></path>
+                        <path fill="currentColor" d="M18 3a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 2H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1M8 10a1 1 0 0 1 .993.883L9 11v5a1 1 0 0 1-1.993.117L7 16v-5a1 1 0 0 1 1-1m3-1a1 1 0 0 1 .984.821a6 6 0 0 1 .623-.313c.667-.285 1.666-.442 2.568-.159c.473.15.948.43 1.3.907c.315.425.485.942.519 1.523L17 12v4a1 1 0 0 1-1.993.117L15 16v-4c0-.33-.08-.484-.132-.555a.55.55 0 0 0-.293-.188c-.348-.11-.849-.052-1.182.09c-.5.214-.958.55-1.27.861L12 12.34V16a1 1 0 0 1-1.993.117L10 16v-6a1 1 0 0 1 1-1M8 7a1 1 0 1 1 0 2a1 1 0 0 1 0-2"></path>
+                      </g>
+                    </svg>
+                  </a>
+                </li>
+                <li>
+                  <a aria-label="Go to Angel Valentino's Github profile." class="info-menu__social-link" title="Github" target="_blank" href="https://github.com/AngelValentino">
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="info-menu__social-link-icon info-menu__github-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <g fill="none">
+                        <path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"></path>
+                        <path fill="currentColor" d="M6.315 6.176c-.25-.638-.24-1.367-.129-2.034a6.8 6.8 0 0 1 2.12 1.07c.28.214.647.283.989.18A9.3 9.3 0 0 1 12 5c.961 0 1.874.14 2.703.391c.342.104.709.034.988-.18a6.8 6.8 0 0 1 2.119-1.07c.111.667.12 1.396-.128 2.033c-.15.384-.075.826.208 1.14C18.614 8.117 19 9.04 19 10c0 2.114-1.97 4.187-5.134 4.818c-.792.158-1.101 1.155-.495 1.726c.389.366.629.882.629 1.456v3a1 1 0 0 0 2 0v-3c0-.57-.12-1.112-.334-1.603C18.683 15.35 21 12.993 21 10c0-1.347-.484-2.585-1.287-3.622c.21-.82.191-1.646.111-2.28c-.071-.568-.17-1.312-.57-1.756c-.595-.659-1.58-.271-2.28-.032a9 9 0 0 0-2.125 1.045A11.4 11.4 0 0 0 12 3c-.994 0-1.953.125-2.851.356a9 9 0 0 0-2.125-1.045c-.7-.24-1.686-.628-2.281.031c-.408.452-.493 1.137-.566 1.719l-.005.038c-.08.635-.098 1.462.112 2.283C3.484 7.418 3 8.654 3 10c0 2.992 2.317 5.35 5.334 6.397A4 4 0 0 0 8 17.98l-.168.034c-.717.099-1.176.01-1.488-.122c-.76-.322-1.152-1.133-1.63-1.753c-.298-.385-.732-.866-1.398-1.088a1 1 0 0 0-.632 1.898c.558.186.944 1.142 1.298 1.566c.373.448.869.916 1.58 1.218c.682.29 1.483.393 2.438.276V21a1 1 0 0 0 2 0v-3c0-.574.24-1.09.629-1.456c.607-.572.297-1.568-.495-1.726C6.969 14.187 5 12.114 5 10c0-.958.385-1.881 1.108-2.684c.283-.314.357-.756.207-1.14"></path>
+                      </g>
+                    </svg>
+                  </a>
+                </li>
+              </ul>
+              <a class="info-menu__social-link" href="https://angelvalentino.dev" title="Developer Portfolio">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+                  <path fill="currentColor" d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32M513.1 518.1l-192 161c-5.2 4.4-13.1.7-13.1-6.1v-62.7c0-2.3 1.1-4.6 2.9-6.1L420.7 512l-109.8-92.2a7.63 7.63 0 0 1-2.9-6.1V351c0-6.8 7.9-10.5 13.1-6.1l192 160.9c3.9 3.2 3.9 9.1 0 12.3M716 673c0 4.4-3.4 8-7.5 8h-185c-4.1 0-7.5-3.6-7.5-8v-48c0-4.4 3.4-8 7.5-8h185c4.1 0 7.5 3.6 7.5 8z" />
+                </svg>
+              </a>
+            </div>
+            <a class="info-menu__mailto-link" href="mailto:angelvalentino294@gmail.com">angelvalentino294@gmail.com</a>
+          </div>
+        </div>  
+      </div>
+      <button id="garment-info-btn" class="garment-info-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M20 3H5a2 2 0 0 0-2 2v6h4V9l4 3l-4 3v-2H3v6a2 2 0 0 0 2 2h15a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m-3 14h-4v-2h4zm3-4h-7v-2h7zm0-4h-7V7h7zM3 13H0v-2h3z" />
+        </svg>
+      </button>
+      <button id="return-to-garment-panel-btn" class="return-to-garment-panel-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+            <path d="m13 8l-7 6l7 7" />
+            <path d="M6 14h22.994c6.883 0 12.728 5.62 12.996 12.5c.284 7.27-5.723 13.5-12.996 13.5H11.998" />
+          </g>
+        </svg>
+      </button>
       <div id="garment-info-panel" class="garment-info-panel">
         <button class="garment-info-panel__close-btn" id="garment-info-panel__close-btn">
           <svg class="garment-info-panel__close-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">

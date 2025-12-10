@@ -19,6 +19,7 @@ export default class GarmentManager {
     this.allMeshes = [];
 
     this.returnToGarmentPanelBtn = document.getElementById('return-to-garment-panel-btn'); //? test element
+    this.garmentInfoBtn = document.getElementById('garment-info-btn');
   }
 
   init() {
@@ -94,6 +95,7 @@ export default class GarmentManager {
 
     this.returnToGarmentPanelBtn.classList.remove('active');
     this.returnToGarmentPanelBtn.removeEventListener('click', this.restoreBind);
+    this.garmentInfoBtn.classList.remove('active');
   }
 
   enterCloneView() {
@@ -103,6 +105,7 @@ export default class GarmentManager {
     this.restoreBind = this.restoreOppositeSide.bind(this);
     this.returnToGarmentPanelBtn.classList.add('active');
     this.returnToGarmentPanelBtn.addEventListener('click', this.restoreBind)
+    this.garmentInfoBtn.classList.add('active');
 
     // Clone the active mannequin and focus camera
     this.cloneManager.cloneActiveGarment(this.getActiveGarment());

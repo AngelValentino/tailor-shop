@@ -68,6 +68,10 @@ main {
   /* border: 2px solid red; */ 
 }
 
+:root {
+  --base-transition-duration: 0.25s;
+}
+
 .portrait-overlay {
   justify-content: center;
   align-items: center;
@@ -90,7 +94,7 @@ main {
   max-width: 1920px; 
   position: absolute;
   inset: 0;
-  /* border: 2px solid blue; */
+  border: 2px solid blue;
 }
 
 .webgl {
@@ -103,11 +107,162 @@ main {
 
 .return-to-garment-panel-btn {
   display: none;
+  color: white;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.return-to-garment-panel-btn:hover {
+  opacity: 1;
+}
+
+.return-to-garment-panel-btn svg {
+  width: 1.5rem;
+  display: block;
+  color: inherit;
 }
 
 .return-to-garment-panel-btn.active {
   display: inline-block;
 }
+
+
+/* Menu */
+
+.info-menu {
+  background-color: rgba(255, 255, 255, 0.97);
+  position: fixed;
+  inset: 0;
+  transform: translateX(-100vw);
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+  display: none;
+  padding: 20px;
+  font-size: 1rem;
+}
+
+.info-menu.active {
+  transform: translateX(0);
+  /* display: flex; */
+}
+
+.info-menu__ui-limits {
+  margin: 0 auto;
+  max-width: 1920px; 
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-menu__close-btn {
+  position: absolute;
+  top: 27px;
+  right: 37px;
+  padding: 3px;
+  line-height: 0;
+}
+
+.info-menu__close-icon {
+  width: 2rem;
+  color: inherit;
+}
+
+.info-menu__desc {
+  max-width: 500px;
+  font-size: 1.15em;
+  line-height: 1.6;
+}
+
+.info-menu__social-links-list {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.info-menu__social-link {
+  display: block;
+  line-height: 0;
+  transition: color var(--base-transition-duration);
+}
+
+.info-menu__social-link svg {
+  width: 2.15em;
+  color: inherit;
+}
+
+.info-menu__freecodecamp-icon {
+  width: 2.4em !important;
+}
+
+.info-menu__github-icon {
+  width: 2.05em !important;
+}
+
+.info-menu__social-link:hover {
+  color: red;
+}
+
+.info-menu__socials-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 23px;
+}
+
+.info-menu__mailto-link {
+  float: right;
+  margin-top: 40px;
+  font-size: 1.072em;
+}
+
+.toggle-menu-btn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  color: white;
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.garment-info-btn {
+  position: absolute;
+  right: 10px;
+  top: 62px;
+  color: white;
+  opacity: 0.8;
+  display: none;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.garment-info-btn.active {
+  display: inline-block;
+}
+
+.toggle-menu-btn:hover,
+.garment-info-btn:hover {
+  opacity: 1;
+}
+
+.toggle-menu-btn svg,
+.garment-info-btn svg {
+  width: 1.5rem;
+  display: block;
+  color: inherit;
+}
+
+/* End of menu */
+
 
 /* Garment info panel */
 

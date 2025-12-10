@@ -9,6 +9,8 @@ import GarmentManager from '../experience/GarmentManager.js';
 import Utils from '../utils/Utils.js';
 import CloneManager from '../experience/CloneManager.js';
 import RoomGrid from '../experience/RoomGrid.js';
+import ModalHandler from '../utils/ModalHandler.js';
+import infoMenu from '../ui/InfoMenu.js';
 
 export default class App {
   constructor(canvas) {
@@ -20,6 +22,11 @@ export default class App {
     this.lighting = new Lighting(this.scene);
     this.assetLoader = new AssetLoader(this.scene, this.camera.instance);
 
+    // Info menu
+    const modalHandler = new ModalHandler();
+    new infoMenu(modalHandler);
+
+    // App logic
     const utils = new Utils;
     const roomGrid = new RoomGrid(this.scene);
     const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid);
@@ -44,7 +51,6 @@ export default class App {
 
     // Continue app logic
     this.experience.init();
-
     this.#loop();
   }
 

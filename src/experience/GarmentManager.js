@@ -2,24 +2,28 @@ import * as THREE from 'three';
 import garmentData from "../data/garmentData.js";
 import GarmentInfoPanel from "../ui/GarmentInfoPanel.js";
 import EnhancedGarmentView from './EnhancedGarmentView.js';
+import GarmentMenu from '../ui/GarmentMenu.js';
 
 export default class GarmentManager {
-  constructor(scene, utils, camera, cloneManager) {
+  constructor(scene, utils, camera, cloneManager, modalHandler) {
     this.scene = scene;
 
     this.utils = utils;
     this.camera = camera;
     this.cloneManager = cloneManager;
+    this.modalHandler = modalHandler;
     this.garmentInfoPanel = null;
     this.enhancedGarmentView = null;
+    this.garmentMenu = null;
 
     this.currentActiveGarment = null;
     this.left = [];
     this.right = [];
     this.allMeshes = [];
+    this.eventHandler = {};
 
     this.returnToGarmentPanelBtn = document.getElementById('return-to-garment-panel-btn'); //? test element
-    this.garmentInfoBtn = document.getElementById('garment-info-btn');
+    this.garmentInfoBtn = document.getElementById('garment-menu-btn');
   }
 
   init() {
@@ -80,9 +84,15 @@ export default class GarmentManager {
   }
 
   restoreOppositeSide() {
-    console.warn('restore back to garment panel')
+    // Restore UI
+    this.garmentMenu.dispose();
+    this.garmentMenu = null;
+    
     this.enhancedGarmentView.dispose();
     this.enhancedGarmentView = null;
+
+    this.garmentInfoBtn.classList.remove('active');
+    this.returnToGarmentPanelBtn.classList.remove('active');
 
     // Delete the current clone and show hidden
     this.cloneManager.deleteGarmentClone();
@@ -93,23 +103,24 @@ export default class GarmentManager {
     // Go back to previous camera position before clone view
     this.camera.moveBack();
 
-    this.returnToGarmentPanelBtn.classList.remove('active');
-    this.returnToGarmentPanelBtn.removeEventListener('click', this.restoreBind);
-    this.garmentInfoBtn.classList.remove('active');
+    this.returnToGarmentPanelBtn.removeEventListener('click', this.eventHandler.restoreOppositeSide);
   }
 
   enterCloneView() {
     console.warn('enter clone view')
 
-    // Bind restore button for exiting clone view
-    this.restoreBind = this.restoreOppositeSide.bind(this);
-    this.returnToGarmentPanelBtn.classList.add('active');
-    this.returnToGarmentPanelBtn.addEventListener('click', this.restoreBind)
+    const garnmentLongDescription = garmentData[this.currentActiveGarment.userData.garmentKey].longDescription;
+
+    // Init UI
     this.garmentInfoBtn.classList.add('active');
+    this.garmentMenu = new GarmentMenu(this.modalHandler, garnmentLongDescription);
+
+    this.eventHandler.restoreOppositeSide = this.restoreOppositeSide.bind(this);
+    this.returnToGarmentPanelBtn.classList.add('active');
+    this.returnToGarmentPanelBtn.addEventListener('click', this.eventHandler.restoreOppositeSide)
 
     // Clone the active mannequin and focus camera
     this.cloneManager.cloneActiveGarment(this.getActiveGarment());
-
     this.focusOnActiveGarment(this.cloneManager.getActiveGarmentClone(), true, 17);
 
     // Close garment info panel without resetting camera or active garment

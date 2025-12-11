@@ -1,22 +1,38 @@
-export default class infoMenu {
-  constructor(modalHandler) {
+export default class GarmentMenu {
+  constructor(modalHandler, description) {
     this.modalHandler = modalHandler;
 
     this.timIds = {};
     this.lastFocusedLm = null;
 
     this.lms = {
-      toggleBtn: document.getElementById('toggle-menu-btn'),
-      menuLm: document.getElementById('info-menu'),
-      closeBtn: document.getElementById('info-menu__close-btn')
+      toggleBtn: document.getElementById('garment-menu-btn'),
+      menuLm: document.getElementById('garment-menu'),
+      closeBtn: document.getElementById('garment-menu__close-btn'),
+      infoContainer: document.getElementById('garment-menu__info-container')
     };
 
-    this.lms.toggleBtn.addEventListener('click', this.open.bind(this));
+    this.setDescription(description)
+    this._open = this.open.bind(this);
+
+    this.lms.toggleBtn.addEventListener('click', this._open);
+  }
+
+  dispose() {
+    this.lms.length = 0;
+    this.timIds.length = 0;
+    this.lastFocusedLm = null;
+
+    this.lms.toggleBtn.removeEventListener('click', this._open);
+  }
+
+  setDescription(description) {
+    this.lms.infoContainer.innerHTML = description;
   }
 
   close() {
-    console.log('CLOSE INFO MENU')
-    this.lms.toggleBtn.style.display = 'inline-block';
+    console.log('CLOSE GARMENT MENU')
+    this.lms.toggleBtn.style.display = '';
     this.lms.menuLm.classList.remove('active');
 
     this.timIds.hideMenu = setTimeout(() => {
@@ -25,14 +41,14 @@ export default class infoMenu {
     }, 300);
 
     this.modalHandler.removeModalEvents({
-      eventHandlerKey: 'infoModal',
+      eventHandlerKey: 'garmentModal',
       modalLm: this.lms.menuLm,
       closeLms: [ this.lms.closeBtn ]
     })
   }
 
   open() {
-    console.log('OPEN INFO MENU')
+    console.log('OPEN GARMENT MENU')
     clearTimeout(this.timIds.hideMenu);
 
     // Show menu
@@ -47,7 +63,7 @@ export default class infoMenu {
 
     // Add events
     this.modalHandler.addModalEvents({
-      eventHandlerKey: 'infoModal',
+      eventHandlerKey: 'garmentModal',
       modalLm: this.lms.menuLm,
       closeLms: [ this.lms.closeBtn ],
       closeHandler: this.close.bind(this)

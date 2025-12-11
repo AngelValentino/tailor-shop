@@ -1,7 +1,18 @@
 const garmentData = {
   'built-jacket': {
-    title: 'Built Biker Bespoke Jacket',
-    description: 'This biker jacket was made in Japan from medium weight leather and features hand finished details for a vintage inspired look.',
+    title: 'Timeless Heritage Biker Jacket',
+    description: 'Brown suede biker jacket with soft white fur lining, four adjustable pockets, structured action back, and a short cut for comfort and style.',
+    longDescription: `
+    <p>
+      Crafted from brown suede with a soft white fur lining, blending 70s biker heritage with modern bespoke comfort.
+    </p>
+    <p>
+      4 pocket design, each with optional flaps to keep what matters safe. Action back paired with a bias-cut back lining piece for the right amount of ease and structure. Buttoned back belts to choose the proper fit.
+    </p>
+    <p>
+      Short cut for proper 1/3 proportions, without sacrificing warmth, style, or comfort. It follows the body's natural structure, working alongside your frame instead of hiding it.
+    </p>
+    `,
     images: {
       large: [
         {
@@ -72,8 +83,19 @@ const garmentData = {
     }
   },
   'pleated-trousers': {
-    title: 'High Waisted Pleated Trousers',
-    description: 'Vintage modern looking denim inspired high waisted pleated trousers with side belts and 5 pockets,',
+    title: 'Unique Cut Pleated Trousers',
+    description: 'High-waisted denim trousers blending 20s bespoke tailoring with modern functionality, featuring military-inspired heritage.',
+    longDescription: `
+      <p>
+        Built from sturdy indigo denim paired with soft cotton pocket linings. Blending 20s bespoke trousers with modern style and durability.
+      </p>
+      <p>
+        Side belts allow a tailored fit, with slanted hand openings and a watch pocket for essentials. Asymmetric, military-inspired back pockets, one flap-covered and one open, designed for both easy access and secure storage.
+      </p>
+      <p>
+        High-waisted cut restores classic proportions for a taller, balanced silhouette, while single inverted pleats enhance comfort and give the front character.
+      </p>
+    `,
     images: {
       large: [
         {
@@ -144,8 +166,19 @@ const garmentData = {
     }
   },
   'built-jacket-outfit': {
-    title: 'Build Jacket and Pleated Trousers Complete Outfit',
-    description: 'Complet outfit bomber flight jacket casual formal style combined with a proper mid waisted trousers.',
+    title: 'Heritage Jacket & Pleated Wool Trousers',
+    description: 'A timeless ensemble blending heritage-inspired tailoring with modern, effortless style. Ready for the ride, anywhere it goes.',
+    longDescription: `
+    <p>
+      Green corduroy jacket lined with warm red tartan, matched with black wool pleated trousers, delivering a modern take on classic silhouettes.
+    </p>
+    <p>
+      Structured yet relaxed, the ensemble emphasizes proportion and movement, creating a fit that feels both tailored and effortless. making a statement without compromising comfort.
+    </p>
+    <p>
+      Heritage-inspired tartan meets modern black wool, creating a refined, timeless look. Paired with a knitted polo, it delivers a tailored yet relaxed ensemble. Ready for every situation, from riding a bike to anywhere the day takes you.
+    </p>
+    `,
     images: {
       large: [
         {

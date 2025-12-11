@@ -30,7 +30,7 @@ export default class App {
     const utils = new Utils;
     const roomGrid = new RoomGrid(this.scene);
     const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid);
-    const garmentManager = new GarmentManager(this.scene, utils, this.camera, cloneManager);
+    const garmentManager = new GarmentManager(this.scene, utils, this.camera, cloneManager, modalHandler);
     const hoverControls = new HoverControls(this.camera.instance, () => garmentManager.getAllMeshes())
     this.camera.setHoverControlsInstance(hoverControls);
     this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls, roomGrid);

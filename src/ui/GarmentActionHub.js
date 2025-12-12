@@ -9,13 +9,15 @@ export default class GarmentActionHub {
 
     this.lms = {
       returnBtn: document.getElementById('return-to-garment-panel-btn'),
-      infoBtn: document.getElementById('garment-menu-btn')
+      infoBtn: document.getElementById('garment-menu-btn'),
+      helper: document.getElementById('clone-view-helper')
     };
   }
 
   display(longDescription) {
     this.lms.infoBtn.classList.add('active');
     this.lms.returnBtn.classList.add('active');
+    this.lms.helper.classList.add('active');
     
     this.garmentInfoMenu = new GarmentInfoMenu(this.modalHandler, longDescription);
 
@@ -26,6 +28,7 @@ export default class GarmentActionHub {
   hide() {
     this.lms.infoBtn.classList.remove('active');
     this.lms.returnBtn.classList.remove('active');
+    this.lms.helper.classList.remove('active');
 
     this.garmentInfoMenu.dispose();
     this.garmentInfoMenu = null;

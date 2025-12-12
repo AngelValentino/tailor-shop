@@ -133,33 +133,43 @@ main {
 
 /* Menu */
 
-.info-menu {
+.info-menu,
+.garment-menu {
   background-color: rgba(255, 255, 255, 0.97);
   position: fixed;
   inset: 0;
   transform: translateX(-100vw);
   z-index: 1000;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, opacity 0.5s ease-in-out;
   display: none;
   font-size: 1rem;
+  padding: 20px;
+  opacity: 0;
 }
 
-.info-menu.active {
+.info-menu.active,
+.garment-menu.active {
   transform: translateX(0);
+  opacity: 1;
 }
 
-.info-menu__ui-limits {
+.info-menu__ui-limits,
+.garment-menu__ui-limits {
   margin: 0 auto;
   max-width: 1920px; 
-  position: absolute;
-  inset: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  padding: 20px;
+  align-items: center;
+  overflow: auto;
+  height: 100%;
 }
 
-.info-menu__close-btn {
+.info-menu__close-btn,
+.garment-menu__close-btn  {
   position: absolute;
   top: 27px;
   right: 37px;
@@ -167,7 +177,8 @@ main {
   line-height: 0;
 }
 
-.info-menu__close-icon {
+.info-menu__close-icon,
+.garment-menu__close-icon {
   width: 2rem;
   color: inherit;
 }
@@ -259,50 +270,29 @@ main {
   color: inherit;
 }
 
+.clone-view-helper {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  display: none;
+  font-weight: 500;
+}
+
+.clone-view-helper svg {
+  width: 2rem;
+}
+
+.clone-view-helper.active {
+  display: flex;
+}
+
 /* End of menu */
 
 /* Garment menu */
-
-.garment-menu {
-  background-color: rgba(255, 255, 255, 0.97);
-  position: fixed;
-  inset: 0;
-  transform: translateX(-100vw);
-  z-index: 1000;
-  transition: transform 0.3s ease-in-out;
-  display: none;
-  padding: 20px;
-  font-size: 1rem;
-}
-
-.garment-menu.active {
-  transform: translateX(0);
-  display: flex;
-}
-
-.garment-menu__ui-limits {
-  margin: 0 auto;
-  max-width: 1920px; 
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.garment-menu__close-btn {
-  position: absolute;
-  top: 27px;
-  right: 37px;
-  padding: 3px;
-  line-height: 0;
-}
-
-.garment-menu__close-icon {
-  width: 2rem;
-  color: inherit;
-}
 
 .garment-menu__info-container p {
   max-width: 500px;

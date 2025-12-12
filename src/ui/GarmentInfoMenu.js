@@ -1,4 +1,4 @@
-export default class GarmentMenu {
+export default class GarmentInfoMenu {
   constructor(modalHandler, description) {
     this.modalHandler = modalHandler;
 

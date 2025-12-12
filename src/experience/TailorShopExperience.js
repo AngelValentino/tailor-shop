@@ -1,14 +1,14 @@
 export default class TailorShopExperience {
-  constructor(scene, camera, garmentManager, hoverControls, roomGrid) {
+  constructor(scene, camera, garmentManager, raycasterControls, roomGrid) {
     this.scene = scene;
     this.camera = camera;
     this.garmentManager = garmentManager;
-    this.hoverControls = hoverControls;
+    this.raycasterControls = raycasterControls;
     this.roomGrid = roomGrid;
 
-    this.hoverControls.setOnClick(mesh => this.garmentManager.onClick(mesh));
-    this.hoverControls.setOnMouseEnter(mesh => this.garmentManager.onMouseEnter(mesh));
-    this.hoverControls.setOnMouseLeave(mesh => this.garmentManager.onMouseLeave(mesh));
+    this.raycasterControls.setOnClick(mesh => this.garmentManager.onClick(mesh));
+    this.raycasterControls.setOnMouseEnter(mesh => this.garmentManager.onMouseEnter(mesh));
+    this.raycasterControls.setOnMouseLeave(mesh => this.garmentManager.onMouseLeave(mesh));
   }
 
   init() {
@@ -16,12 +16,12 @@ export default class TailorShopExperience {
     this.garmentManager.init();
   }
 
-  disposeHoverControls() {
-    this.hoverControls.dispose();
+  disposeRaycaster() {
+    this.raycasterControls.dispose();
   }
 
   update(delta) {
-    this.hoverControls.update();
+    this.raycasterControls.update();
     this.garmentManager.update(delta);
   }
 }

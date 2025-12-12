@@ -1,29 +1,25 @@
 import * as THREE from 'three';
 import garmentData from "../data/garmentData.js";
 import GarmentInfoPanel from "../ui/GarmentInfoPanel.js";
-import EnhancedGarmentView from './EnhancedGarmentView.js';
-import GarmentMenu from '../ui/GarmentMenu.js';
+import GarmentRotationHandler from './GarmentRotationHandler.js';
 
 export default class GarmentManager {
-  constructor(scene, utils, camera, cloneManager, modalHandler) {
+  constructor(scene, utils, camera) {
     this.scene = scene;
 
     this.utils = utils;
     this.camera = camera;
-    this.cloneManager = cloneManager;
-    this.modalHandler = modalHandler;
+    this.cloneManager = null;
+    this.garmentActionHub = null;
     this.garmentInfoPanel = null;
-    this.enhancedGarmentView = null;
-    this.garmentMenu = null;
+    this.garmentInfoMenu = null;
+    this.garmentRotationHandler = null;
 
     this.currentActiveGarment = null;
     this.left = [];
     this.right = [];
     this.allMeshes = [];
     this.eventHandler = {};
-
-    this.returnToGarmentPanelBtn = document.getElementById('return-to-garment-panel-btn'); //? test element
-    this.garmentInfoBtn = document.getElementById('garment-menu-btn');
   }
 
   init() {
@@ -63,6 +59,14 @@ export default class GarmentManager {
     };
   }
 
+  setGarmentActionHubInstance(garmentActionHub) {
+    this.garmentActionHub = garmentActionHub;
+  }
+
+  setCloneManagerInstance(cloneManager) {
+    this.cloneManager = cloneManager;
+  }
+
   getAllMeshes() {
     return this.allMeshes;
   }
@@ -84,48 +88,36 @@ export default class GarmentManager {
   }
 
   restoreOppositeSide() {
-    // Restore UI
-    this.garmentMenu.dispose();
-    this.garmentMenu = null;
-    
-    this.enhancedGarmentView.dispose();
-    this.enhancedGarmentView = null;
+    // Hide garment action hub
+    this.garmentActionHub.hide();
 
-    this.garmentInfoBtn.classList.remove('active');
-    this.returnToGarmentPanelBtn.classList.remove('active');
+    // Reset garment rotation
+    this.garmentRotationHandler.dispose();
+    this.garmentRotationHandler = null;
 
     // Delete the current clone and show hidden
     this.cloneManager.deleteGarmentClone();
     this.cloneManager.showHiddenGarments();
    
-    // Show UI without focusing any garment
+    // Show garment info panel and return camera to previous position
     this.garmentInfoPanel = new GarmentInfoPanel(garmentData, this.currentActiveGarment.userData.garmentKey, this, false);
-    // Go back to previous camera position before clone view
     this.camera.moveBack();
 
-    this.returnToGarmentPanelBtn.removeEventListener('click', this.eventHandler.restoreOppositeSide);
   }
 
   enterCloneView() {
     console.warn('enter clone view')
 
-    const garnmentLongDescription = garmentData[this.currentActiveGarment.userData.garmentKey].longDescription;
-
-    // Init UI
-    this.garmentInfoBtn.classList.add('active');
-    this.garmentMenu = new GarmentMenu(this.modalHandler, garnmentLongDescription);
-
-    this.eventHandler.restoreOppositeSide = this.restoreOppositeSide.bind(this);
-    this.returnToGarmentPanelBtn.classList.add('active');
-    this.returnToGarmentPanelBtn.addEventListener('click', this.eventHandler.restoreOppositeSide)
+    // Display action hub
+    this.garmentActionHub.display(garmentData[this.currentActiveGarment.userData.garmentKey].longDescription);
 
     // Clone the active mannequin and focus camera
     this.cloneManager.cloneActiveGarment(this.getActiveGarment());
     this.focusOnActiveGarment(this.cloneManager.getActiveGarmentClone(), true, 17);
 
-    // Close garment info panel without resetting camera or active garment
+    // Close garment info panel and add rotation controls
     this.garmentInfoPanel.close({ resetCamera: false, deleteActiveGarmentRef: false });
-    this.enhancedGarmentView = new EnhancedGarmentView(this.cloneManager.getActiveGarmentClone());
+    this.garmentRotationHandler = new GarmentRotationHandler(this.cloneManager.getActiveGarmentClone(), this.utils);
   }
 
   onMouseEnter(mesh) {
@@ -214,8 +206,8 @@ export default class GarmentManager {
   }
 
   update(delta) {
-    if (this.enhancedGarmentView) {
-      this.enhancedGarmentView.update(delta);
+    if (this.garmentRotationHandler) {
+      this.garmentRotationHandler.update(delta);
     }
   }
 }

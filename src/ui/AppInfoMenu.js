@@ -1,4 +1,4 @@
-export default class infoMenu {
+export default class AppInfoMenu {
   constructor(modalHandler) {
     this.modalHandler = modalHandler;
 

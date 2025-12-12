@@ -1,9 +1,7 @@
-import Utils from '../utils/Utils.js';
-
-export default class EnhancedGarmentView {
-  constructor(activeClone) {
+export default class GarmentRotationHandler {
+  constructor(activeClone, utils) {
     this.activeClone = activeClone;
-    this.utils = new Utils;
+    this.utils = utils;
 
     this.isDragging = false;
     this.lastX = 0;

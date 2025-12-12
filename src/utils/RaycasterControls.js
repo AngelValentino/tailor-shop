@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import Utils from './Utils';
 
-export default class HoverControls {
+export default class RaycasterControls {
   constructor(camera, getTargets) {
     this.camera = camera;
     this.getTargets = getTargets; // Function that returns the meshes to test

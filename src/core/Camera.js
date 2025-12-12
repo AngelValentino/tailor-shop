@@ -34,8 +34,8 @@ export default class Camera {
     this.instance.updateProjectionMatrix();
   }
 
-  setHoverControlsInstance(hoverControls) {
-    this.hoverControls = hoverControls;
+  setHoverControlsInstance(raycasterControls) {
+    this.raycasterControls = raycasterControls;
   }
 
   pushCurrentStateToHistory() {
@@ -77,7 +77,7 @@ export default class Camera {
   }) {
     console.warn('CAMERA HOSTORY BEFORE MOVE TO: ', this.history)
     document.body.style.pointerEvents = 'none';
-    this.hoverControls.disable()
+    this.raycasterControls.disable();
 
     if (saveHistory) {
       this.pushCurrentStateToHistory();
@@ -99,7 +99,7 @@ export default class Camera {
         if (this.pointerControlsStatus) this.pointerControls.updateBasePosition();
         if (this.pointerControlsStatus) this.updatePointerState();
         document.body.style.pointerEvents = 'auto';
-        this.hoverControls.enable();
+        this.raycasterControls.enable();
       }
     });
 

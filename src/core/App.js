@@ -4,13 +4,14 @@ import Renderer from './Renderer.js';
 import Lighting from './Lighting.js';
 import AssetLoader from '../loaders/AssetLoader.js';
 import TailorShopExperience from '../experience/TailorShopExperience.js';
-import HoverControls from '../utils/HoverControls.js';
+import RaycasterControls from '../utils/RaycasterControls.js';
 import GarmentManager from '../experience/GarmentManager.js';
 import Utils from '../utils/Utils.js';
 import CloneManager from '../experience/CloneManager.js';
 import RoomGrid from '../experience/RoomGrid.js';
 import ModalHandler from '../utils/ModalHandler.js';
-import infoMenu from '../ui/InfoMenu.js';
+import AppInfoMenu from '../ui/AppInfoMenu.js';
+import GarmentActionHub from '../ui/GarmentActionHub.js';
 
 export default class App {
   constructor(canvas) {
@@ -22,20 +23,24 @@ export default class App {
     this.lighting = new Lighting(this.scene);
     this.assetLoader = new AssetLoader(this.scene, this.camera.instance);
 
-    // Info menu
-    const modalHandler = new ModalHandler();
-    new infoMenu(modalHandler);
-
-    // App logic
+    // Scene init
     const utils = new Utils;
     const roomGrid = new RoomGrid(this.scene);
-    const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid);
-    const garmentManager = new GarmentManager(this.scene, utils, this.camera, cloneManager, modalHandler);
-    const hoverControls = new HoverControls(this.camera.instance, () => garmentManager.getAllMeshes())
-    this.camera.setHoverControlsInstance(hoverControls);
-    this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, hoverControls, roomGrid);
-    cloneManager.setGarmentManagerInstance(garmentManager);
 
+    const modalHandler = new ModalHandler();
+    new AppInfoMenu(modalHandler);
+
+    // Garment logic handler
+    const garmentManager = new GarmentManager(this.scene, utils, this.camera, modalHandler);
+    const garmentActionHub = new GarmentActionHub(garmentManager, modalHandler);
+    garmentManager.setGarmentActionHubInstance(garmentActionHub);
+    const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid, garmentManager);
+    garmentManager.setCloneManagerInstance(cloneManager);
+
+    // Experience
+    const raycasterControls = new RaycasterControls(this.camera.instance, () => garmentManager.getAllMeshes())
+    this.camera.setHoverControlsInstance(raycasterControls);
+    this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, raycasterControls, roomGrid);
     this.#resizeHandler();
   }
 
@@ -72,10 +77,8 @@ export default class App {
   #loop() {
     const delta = this.updateDelta();
 
-    this.experience.update(delta);
-
-    // Update garment manager (camera movement)
     this.camera.update();
+    this.experience.update(delta);
 
     this.renderer.render();
     requestAnimationFrame(() => {

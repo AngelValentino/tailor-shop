@@ -1,18 +1,14 @@
 export default class CloneManager {
-  constructor(scene, camera, utils, roomGrid) {
+  constructor(scene, camera, utils, roomGrid, garmentManager) {
     this.scene = scene;
     this.camera = camera;
     this.utils = utils;
-    this.garmentManager = null;
+    this.garmentManager = garmentManager;
     this.roomGrid = roomGrid;
 
     this.activeGarmentClone = null;
     this.hiddenGarments = [];
     this.hiddenSide = null;
-  }
-
-  setGarmentManagerInstance(garmentManager) {
-    this.garmentManager = garmentManager;
   }
 
   getActiveGarmentClone() {

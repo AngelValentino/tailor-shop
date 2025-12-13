@@ -301,6 +301,16 @@ main {
   width: 2rem;
 }
 
+.clone-view-helper__hand,
+.clone-view-helper__mouse {
+  display: none;
+}
+
+.clone-view-helper__hand.active,
+.clone-view-helper__mouse.active {
+  display: block;
+}
+
 .clone-view-helper.active {
   display: flex;
 }
@@ -472,6 +482,7 @@ main {
   border-radius: 3px;
   font-size: 1.2rem;
   font-weight: 600;
+  transform: background-color var(--base-transition-duration);
 }
 
 /* End of garment info panel */
@@ -594,6 +605,10 @@ main {
   .garment-slider__prev-btn:is(:hover, :focus-visible),
   .garment-slider__next-btn:is(:hover, :focus-visible) {
     transform: scale(1.1);
+  }
+
+  .garment-info-panel__view-more-btn:is(:hover, :focus-visible) {
+    background-color: rgba(0, 0, 0, 0.72);
   }
 
   .return-to-garment-panel-btn:is(:hover, :focus-visible) {

@@ -32,7 +32,7 @@ export default class App {
 
     // Garment logic handler
     const garmentManager = new GarmentManager(this.scene, utils, this.camera, modalHandler);
-    const garmentActionHub = new GarmentActionHub(garmentManager, modalHandler);
+    const garmentActionHub = new GarmentActionHub(garmentManager, modalHandler, utils);
     garmentManager.setGarmentActionHubInstance(garmentActionHub);
     const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid, garmentManager);
     garmentManager.setCloneManagerInstance(cloneManager);

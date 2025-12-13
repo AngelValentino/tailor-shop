@@ -70,6 +70,146 @@ main {
 
 :root {
   --base-transition-duration: 0.25s;
+  --text-color: #2d2e32;
+  --text-color-secondary: #555;
+  --text-color-tertiary: #000;
+  --contrast-text-color: #fff;
+}
+
+
+.slide-in-and-out,
+.slide-in-and-back,
+.slide-middle-out,
+.appear-bg-from-center {
+  position: relative;
+  z-index: 1;
+}
+
+.appear-bg-from-center {
+  overflow: hidden;
+}
+
+.slide-in-and-out::after,
+.slide-in-and-out.underline::before,
+.slide-in-and-back::after,
+.slide-in-and-back.underline::before,
+.slide-middle-out::after,
+.slide-middle-out.underline::before,
+.appear-bg-from-center::after  {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 0.1em;
+  background-color: currentColor;
+  border-radius: 2px;
+  transform: scaleX(0);
+}
+
+/* Makes sure the underline does not become too thin at small font sizes */
+.slide-in-and-out.fixed-height::after,
+.slide-in-and-out.underline.fixed-height::before,
+.slide-in-and-back.fixed-height::after,
+.slide-in-and-back.underline.fixed-height::before,
+.slide-middle-out.fixed-height::after,
+.slide-middle-out.underline.fixed-height::before {
+  height: 3px;
+}
+
+.slide-in-and-out::after,
+.slide-in-and-back::after,
+.slide-middle-out::after,
+.appear-bg-from-center::after {
+  transition: transform 0.3s, opacity 0.5s, background-color var(--base-transition-duration);
+  will-change: transform;
+}
+
+.slide-in-and-out::after {
+  transform-origin: right;
+}
+
+.slide-in-and-back::after {
+  transform-origin: left;
+}
+
+.slide-middle-out::after {
+  transform-origin: center;
+}
+
+.appear-bg-from-center::after {
+  background-color: #eceff3;
+  z-index: -1;
+  inset: 0;
+  height: 100%;
+  transform: scale(0);
+  opacity: 0;
+}
+
+.appear-bg-from-center.rounded {
+  border-radius: 50%;
+}
+
+.appear-bg-from-center.rounded::after {
+  border-radius: 50%;
+}
+
+.slide-in-and-out.underline::before,
+.slide-in-and-back.underline::before,
+.slide-middle-out.underline::before {
+  transform: scaleX(1);
+  opacity: 0.3;
+}
+
+.slide-button {
+  position: relative;
+  overflow: hidden;
+  transition: background-color var(--base-transition-duration), color var(--base-transition-duration), padding 0.25s;
+  will-change: padding;
+}
+
+.slide-button::after {
+  content: "";
+  position: absolute;
+  width: 1.75rem;
+  height: 1.75rem;
+  background-color: currentColor;
+  transition: right 0.25s;
+  right: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.slide-button.garment-info-panel__view-more-btn::after {
+  mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m3.97%2014.812l.65-.393a3%203%200%200%200%201.258-1.41l2.425-5.615a1.6%201.6%200%200%201%20.353-.51c.641-.615%201.75-.355%202.288.351c.994%201.303-.341%202.536-.059%203.623l7.754-4.355c1.804-.972%203.362%201.611%201.569%202.804l-4.59%202.55c.884%201.153%203.126%206.746.253%208.452a2.4%202.4%200%200%201-.526.217l-.35.109c-.901.28-2.606.634-3.774.532c-1.216-.106-1.978.542-2.918%201.082M14.647%204.72c-.397.397-2.125.283-2.763.203m2.763-.202c.398-.397.409-2.333.33-2.969m-.33%202.969C13.625%202.949%209.562.123%205.53%202.949C3.58%204.315%203.306%205.175%202.998%205.752%22%20%2F%3E%3C%2Fsvg%3E") no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m3.97%2014.812l.65-.393a3%203%200%200%200%201.258-1.41l2.425-5.615a1.6%201.6%200%200%201%20.353-.51c.641-.615%201.75-.355%202.288.351c.994%201.303-.341%202.536-.059%203.623l7.754-4.355c1.804-.972%203.362%201.611%201.569%202.804l-4.59%202.55c.884%201.153%203.126%206.746.253%208.452a2.4%202.4%200%200%201-.526.217l-.35.109c-.901.28-2.606.634-3.774.532c-1.216-.106-1.978.542-2.918%201.082M14.647%204.72c-.397.397-2.125.283-2.763.203m2.763-.202c.398-.397.409-2.333.33-2.969m-.33%202.969C13.625%202.949%209.562.123%205.53%202.949C3.58%204.315%203.306%205.175%202.998%205.752%22%20%2F%3E%3C%2Fsvg%3E") no-repeat;
+}
+
+@media screen and (pointer: fine) and (hover: hover) {
+  .slide-in-and-out:is(:hover, :focus-visible)::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  
+  .slide-in-and-back:is(:hover, :focus-visible)::after,
+  .slide-middle-out:is(:hover, :focus-visible)::after {
+    transform: scaleX(1);
+  }
+
+  .appear-bg-from-center:is(:hover, :focus-visible)::after {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .slide-button:is(:hover, :focus-visible) {
+    padding: 12px 55px 12px 25px;
+    transition: background-color 0.15s, padding 0.4s;
+  } 
+
+  .slide-button:is(:hover, :focus-visible)::after {
+    right: 15px;
+    transition: right 0.4s;
+  }
 }
 
 .portrait-overlay {
@@ -104,32 +244,68 @@ main {
   z-index: 0;
 }
 
+/* UI buttons*/
+
+.toggle-menu-btn,
+.garment-menu-btn,
 .return-to-garment-panel-btn {
-  display: none;
-  color: white;
   position: absolute;
+  right: 10px;
   top: 10px;
-  left: 10px;
+  color: white;
   opacity: 0.8;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   padding: 10px;
+  transition: opacity var(--base-transition-duration);
 }
 
-.return-to-garment-panel-btn:hover {
-  opacity: 1;
+.garment-menu-btn {
+  right: 10px;
+  top: 62px;
+  display: none;
 }
 
+.return-to-garment-panel-btn {
+  display: none;
+  left: 10px;
+  right: auto;
+}
+
+.garment-menu-btn.active,
+.return-to-garment-panel-btn.active {
+  display: inline-block;
+}
+
+.toggle-menu-btn svg,
+.garment-menu-btn svg,
 .return-to-garment-panel-btn svg {
   width: 1.5rem;
   display: block;
   color: inherit;
 }
 
-.return-to-garment-panel-btn.active {
-  display: inline-block;
+.clone-view-helper {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  display: none;
+  font-weight: 500;
 }
 
+.clone-view-helper svg {
+  width: 2rem;
+}
+
+.clone-view-helper.active {
+  display: flex;
+}
+
+/* Enf of UI buttons */
 
 /* Menu */
 
@@ -214,10 +390,6 @@ main {
   width: 2.05em !important;
 }
 
-.info-menu__social-link:hover {
-  color: red;
-}
-
 .info-menu__socials-container {
   display: flex;
   justify-content: space-between;
@@ -229,65 +401,6 @@ main {
   float: right;
   margin-top: 40px;
   font-size: 1.1em;
-}
-
-.toggle-menu-btn {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  color: white;
-  opacity: 0.8;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
-  padding: 10px;
-}
-
-.garment-menu-btn {
-  position: absolute;
-  right: 10px;
-  top: 62px;
-  color: white;
-  opacity: 0.8;
-  display: none;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
-  padding: 10px;
-}
-
-.garment-menu-btn.active {
-  display: inline-block;
-}
-
-.toggle-menu-btn:hover,
-.garment-menu-btn:hover {
-  opacity: 1;
-}
-
-.toggle-menu-btn svg,
-.garment-menu-btn svg {
-  width: 1.5rem;
-  display: block;
-  color: inherit;
-}
-
-.clone-view-helper {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  display: none;
-  font-weight: 500;
-}
-
-.clone-view-helper svg {
-  width: 2rem;
-}
-
-.clone-view-helper.active {
-  display: flex;
 }
 
 /* End of menu */
@@ -332,11 +445,8 @@ main {
   top: 12px;
   right: 15px;
   color: inherit;
-    opacity: 0.7;
-}
-
-.garment-info-panel__close-btn:is(:hover, :focus-visible) {
-  opacity: 1;
+  opacity: 0.7;
+  transition: opacity var(--base-transition-duration);
 }
 
 .garment-info-panel__close-btn-svg {
@@ -377,10 +487,7 @@ main {
 .garment-slider__control-btn {
   color: inherit;
   opacity: 0.6;
-}
-
-.garment-slider__control-btn:is(:hover, :focus-visible) {
-  opacity: 1;
+  transition: opacity var(--base-transition-duration);
 }
 
 .garment-slider__control-btn.active {
@@ -412,6 +519,7 @@ main {
 .garment-slider__prev-btn,
 .garment-slider__next-btn {
   color: inherit;
+  transition: transform var(--base-transition-duration);
 }
 
 .garment-slider__prev-btn-svg,
@@ -488,13 +596,43 @@ main {
     transform: scale(1.1);
   }
 
-  .garment-slider__prev-btn:active,
-  .garment-slider__next-btn:active {
-    transform: scale(1);
+  .return-to-garment-panel-btn:is(:hover, :focus-visible) {
+    opacity: 1;
+  }
+
+  .info-menu__social-link:is(:hover, :focus-visible) {
+    /* color: #7C6EE6; */
+    color: #9A8CFF;
+  }
+
+  .toggle-menu-btn:is(:hover, :focus-visible),
+  .garment-menu-btn:is(:hover, :focus-visible) {
+    opacity: 1;
+  }
+
+  .garment-info-panel__close-btn:is(:hover, :focus-visible) {
+    opacity: 1;
+  }
+
+  .garment-slider__control-btn:is(:hover, :focus-visible) {
+    opacity: 1;
   }
 }
 
 /* End of hover capable diveces */
+
+/* Active */
+
+.info-menu__close-btn:active svg,
+.garment-menu__close-btn:active svg {
+  opacity: 0.7;
+}
+
+.info-menu__social-link:active {
+  opacity: 0.7;
+}
+
+/* End of active */
 
 /* Media queries */
 

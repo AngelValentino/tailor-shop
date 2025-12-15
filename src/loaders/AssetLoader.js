@@ -7,12 +7,71 @@ export default class AssetLoader {
     this.scene = scene;
     this.camera = camera;
 
-    this.gltfLoader = new GLTFLoader();
+    this.loadingBarLm = document.querySelector('.loading-bar')
+    this.loadingOverlayLm = document.getElementById('loading-overlay');
+
+    this.startPlaceholderAppLoader();
+
+    this.loadingManager = new THREE.LoadingManager(
+      () => this.onLoad(),
+      (url, loaded, total) => this.onProgress(url, loaded, total),
+      (url) => this.onError(url)
+    );
+
+    this.gltfLoader = new GLTFLoader(this.loadingManager);
     this.dracoLoader = new DRACOLoader();
     this.dracoLoader.setDecoderPath('/draco/');
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
 
     this.assets = {};
+    this.progress = 0;
+  }
+
+  generateRandomNumberBetween(min, max) {
+    // + 1 includes the max number also
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  startPlaceholderAppLoader() {
+    this.placeHolderInterval = setInterval(() => {
+      if (this.progress >= 0.4) {
+        return;
+      }
+
+      this.progress += 0.05
+      console.warn('PLACEHOLDER LOADING! PROGRESS => ', this.progress)
+
+      this.loadingBarLm.style.transform = `scaleX(${this.progress})`;
+
+    }, this.generateRandomNumberBetween(50, 500));
+  }
+
+  onLoad() {
+    this.loadingOverlayLm.classList.add('hidden');
+
+    setTimeout(() => {
+      this.loadingBarLm.style.transform = '';
+      this.loadingBarLm.classList.add('ended');
+    }, 500);
+    
+    setTimeout(() => {
+      this.loadingOverlayLm.style.display = 'none';
+    }, 3000);
+  }
+
+  onProgress(itemUrl, itemsLoaded, itemsTotal) {
+    if (this.placeHolderInterval) {
+      clearInterval(this.placeHolderInterval);
+      this.placeHolderInterval = null;
+    }
+
+    const progressRatio = itemsLoaded / itemsTotal;
+    console.log(progressRatio);
+    this.loadingBarLm.style.transform = `scaleX(${progressRatio})`;
+  }
+
+  onError(url) {
+    console.error(`Failed to load: ${url}`);
   }
 
   loadTailorShop() {

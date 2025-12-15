@@ -76,6 +76,44 @@ main {
   --contrast-text-color: #fff;
 }
 
+.blur-img-loader {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+}
+
+.blur-img-loader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  animation: pulse 2s infinite ease-in-out alternate;
+}
+
+.blur-img-loader.loaded::before {
+  content: none;
+}
+
+.blur-img-loader img {
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+  object-fit: cover;
+  object-position: center;
+}
+
+.blur-img-loader.loaded img {
+  opacity: 1;
+}
+
+@keyframes pulse {
+  from {
+    background-color: rgba(0, 0, 0 , 0.5);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+
 
 .slide-in-and-out,
 .slide-in-and-back,
@@ -217,10 +255,10 @@ main {
   align-items: center;
   height: 100vh;
   display: none;
-  background-color: rgb(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 20px;
-  z-index: 100;
+  z-index: 10000;
   text-align: center;
   font-size: 1.2rem;
 }
@@ -434,7 +472,7 @@ main {
   right: 0;
   bottom: 0;
   max-width: 500px;
-  background-color: rgb(0, 0, 0, 0.43);
+  background-color: rgba(0, 0, 0, 0.43);
   color: #fff;
   padding: 20px;
   border-radius: 3px;
@@ -477,7 +515,7 @@ main {
 }
 
 .garment-info-panel__view-more-btn {
-  background-color: rgb(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 12px 25px;
   border-radius: 3px;
   font-size: 1.2rem;
@@ -520,7 +558,7 @@ main {
   width: 100%;
   display: block;
   text-align: center;
-  background-color: rgb(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 3px;
   padding: 5px;
   font-size: 1.6rem;
@@ -558,6 +596,7 @@ main {
   width: 100%;
   border-radius: 3px;
   border: 2px solid white;
+  user-select: none;
 }
 
 .garment-gallery__photo-container {
@@ -566,6 +605,7 @@ main {
   flex-shrink: 0;
   flex-grow: 0;
   transition: transform 0.2s ease-in-out;
+  aspect-ratio: 1 / 1;
 }
 
 .garment-gallery__nav {
@@ -574,23 +614,44 @@ main {
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
-  scrollbar-width: none;  /* Firefox */
-  /* border: 2px solid red; */
+  scrollbar-width: none;
+  transition: max-height var(--base-transition-duration);
+  height: 100%;
+  user-select: none;
+}
+
+.garment-gallery__nav.remove-transition {
+  transition: none;
+}
+
+.garment-gallery__thumb-container {
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 .garment-gallery__nav::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
 }
 
 .garment-gallery__photo,
 .garment-gallery__thumb {
   width: 100%;
+  height: 100%;
   display: block;
+  object-fit: cover;
+    -webkit-user-drag: none; /* Chrome, Safari */
 }
 
 .garment-gallery__thumb {
   border: 2px solid transparent;
   border-radius: 3px;
+}
+
+.garment-gallery__thumb.remove-border {
+  border: none;
 }
 
 .garment-gallery__thumb.active {

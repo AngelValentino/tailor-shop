@@ -9,34 +9,35 @@ export default class GarmentGallerySlider {
 
     this.root = document.getElementById('garment-gallery');
 
-    //TODO Needs a loader to inform user the next images are being updated
-    this.preloadImages().then(() => {
-      this.root.innerHTML = this.generateSlider();
+    this.root.innerHTML = this.generateSlider();
+    this.utils.addProgressiveLoading(document.querySelectorAll('.blur-img-loader'))
 
-      this.lms = {
-        imageSliderContainer: this.root.querySelector('.garment-gallery__photos-list'),
-        imageSliderNav: this.root.querySelector('.garment-gallery__nav'),
-        imageSlider: this.root
-      };
+    this.lms = {
+      imageSliderContainer: this.root.querySelector('.garment-gallery__photos-list'),
+      imageSliderNav: this.root.querySelector('.garment-gallery__nav'),
+      imageSlider: this.root
+    };
+
+    this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this, false);
+    this.eventHandler.handleSliderClick = this.handleSliderClick.bind(this);
+    this.refImg = this.root.querySelector('.garment-gallery__photo');
   
-      this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this);
-      this.eventHandler.handleSliderClick = this.handleSliderClick.bind(this);
-      this.refImg = this.root.querySelector('.garment-gallery__photo');
-    
-      this.eventHandler.updateNavHeight();
-      this.updateSliderNav();
+    setTimeout(() => {
+      this.updateNavHeight(true);
+    }, 20)
+    this.updateSliderNav();
 
-      window.addEventListener('resize', this.eventHandler.updateNavHeight);
-      this.lms.imageSliderNav.addEventListener('click', this.eventHandler.handleSliderClick);
+    window.addEventListener('resize', this.eventHandler.updateNavHeight);
+    this.lms.imageSliderNav.addEventListener('click', this.eventHandler.handleSliderClick);
 
-      this.addSwipeEvents();
-    });
+    this.addSwipeEvents();
   }
 
   getTotalImages() {
     return this.images.medium.length;
   }
 
+  //? keeping it a while just in case, not truly needed anymore
   preloadImages() {
     const allImages = [...this.images.medium, ...this.images.small];
     const promises = allImages.map(({ url }) => new Promise((resolve, reject) => {
@@ -59,8 +60,8 @@ export default class GarmentGallerySlider {
     this.eventHandler.touchMove = handleTouchMove;
     this.eventHandler.touchEnd = handleTouchEnd;
 
-    this.lms.imageSlider.addEventListener('touchstart', this.eventHandler.touchStart);
-    this.lms.imageSlider.addEventListener('touchmove', this.eventHandler.touchMove);
+    this.lms.imageSlider.addEventListener('touchstart', this.eventHandler.touchStart, { passive: true });
+    this.lms.imageSlider.addEventListener('touchmove', this.eventHandler.touchMove, { passive: true });
     this.lms.imageSlider.addEventListener('touchend', this.eventHandler.touchEnd);
     this.lms.imageSlider.addEventListener('touchcancel', this.eventHandler.touchEnd);
   }
@@ -119,7 +120,7 @@ export default class GarmentGallerySlider {
     });
   }
 
-  updateNavHeight() {
+  updateNavHeight(ignoreTransition = false) {
     const nav = this.root.querySelector('.garment-gallery__nav');
 
     if (!this.refImg || !nav) return;
@@ -129,20 +130,27 @@ export default class GarmentGallerySlider {
       nav.style.maxHeight = imgHeight + 'px';
     };
 
-    // If image is loaded, just set height; otherwise, wait for load
-    if (this.refImg.complete) {
-      setHeight();
+    const removeTransition = () => {
+      nav.classList.add('remove-transition');
     }
-    // Save this listener reference so we can remove it later
-    else {
-      this.eventHandler.setHeight = setHeight;
-      this.refImg.addEventListener('load', this.eventHandler.setHeight);
+
+    setHeight();
+
+    if (ignoreTransition) {
+      // If image is loaded, just set height; otherwise, wait for load
+      if (this.refImg.complete) {
+        removeTransition();
+      }
+      // Save this listener reference so we can remove it later
+      else {
+        this.refImg.addEventListener('load', removeTransition, { once: true });
+      }
     }
   }
 
   dispose() {
     window.removeEventListener('resize', this.eventHandler.updateNavHeight);
-    this.refImg.removeEventListener('load', this.eventHandler.setHeight);
+    this.refImg.removeEventListener('load', this.eventHandler.removeSetNavHeightTransition);
     this.lms.imageSliderNav.removeEventListener('click', this.eventHandler.handleSliderClick);
 
     this.lms.imageSlider.removeEventListener('touchstart', this.eventHandler.touchStart);
@@ -154,7 +162,7 @@ export default class GarmentGallerySlider {
   generateSliderImages() {
     return this.images.medium.map(({ url, alt }, i) => (
       `
-        <li class="garment-gallery__photo-container">
+        <li class="garment-gallery__photo-container blur-img-loader">
           <img 
             class="garment-gallery__photo" 
             src="${url}" 
@@ -168,7 +176,7 @@ export default class GarmentGallerySlider {
   generateSliderNav() {
     return this.images.small.map(({ url, alt }, i) => (
       `
-        <li class="garment-gallery__nav-list">
+        <li class="garment-gallery__thumb-container blur-img-loader">
           <img 
             class="garment-gallery__thumb" 
             src="${url}" 
@@ -186,7 +194,7 @@ export default class GarmentGallerySlider {
         <ul class="garment-gallery__photos-list">
           ${this.generateSliderImages()}
         </ul>
-        <ul class="garment-gallery__nav" style="max-height: 287.6px;">
+        <ul class="garment-gallery__nav" style="max-height: 100px;">
           ${this.generateSliderNav()}
         </ul>
       `

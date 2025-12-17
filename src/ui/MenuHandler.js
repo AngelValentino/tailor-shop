@@ -10,7 +10,6 @@ export default class MenuHandler {
     this.menuKey = menuKey;
 
     this.timIds = {};
-    this.lastFocusedLm = null;
 
     this.lms = {
       toggleBtn: document.getElementById(toggleBtnId),
@@ -30,7 +29,6 @@ export default class MenuHandler {
   dispose() {
     this.lms.length = 0;
     this.timIds.length = 0;
-    this.lastFocusedLm = null;
 
     this.lms.toggleBtn.removeEventListener('click', this._open);
   }
@@ -42,7 +40,7 @@ export default class MenuHandler {
 
     this.timIds.hideMenu = setTimeout(() => {
       this.lms.menuLm.style.display = 'none';
-      this.modalHandler.toggleModalFocus('return', null, this.lastFocusedLm);
+      this.modalHandler.returnModalFocus(this.menuKey);
     }, 300);
 
     this.modalHandler.removeModalEvents({
@@ -58,8 +56,9 @@ export default class MenuHandler {
 
     // Show menu
     this.lms.toggleBtn.style.display = 'none';
-    this.lastFocusedLm = this.modalHandler.toggleModalFocus('add', this.lms.closeBtn);
+
     this.lms.menuLm.style.display = 'block';
+    this.modalHandler.addModalFocus(this.menuKey, this.lms.closeBtn);
 
     // Animate menu
     setTimeout(() => {

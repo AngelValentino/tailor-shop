@@ -4,17 +4,22 @@ export default class ModalHandler {
     ModalHandler.instance = this;
     this.eventsHandler = {};
     this.activeModals = [];
+    this.focusHandler = {};
   }
-  
-  toggleModalFocus(focusBehaviour, firstFocusableLm, lastFocusedLm) {
-    if (focusBehaviour === 'add') {
-      const storedLastFocusedLm = lastFocusedLm ? lastFocusedLm : document.activeElement
-      firstFocusableLm.focus();
-      return storedLastFocusedLm;
-    } 
-    else if (focusBehaviour === 'return') {
-      lastFocusedLm.focus();
-    }
+
+  addModalFocus(modalKey, firstFocusableLm, auto = true, lastFocusedLm = null) {
+    const lastFocusableLm = lastFocusedLm ? lastFocusedLm : document.activeElement;
+    
+    this.focusHandler[modalKey] = lastFocusableLm;
+    firstFocusableLm.focus();
+    
+    if (!auto) return lastFocusableLm;
+  }
+
+  returnModalFocus(modalKey, lastFocusedLm = null, auto = true) {
+    const lastFocusableLm = auto ? this.focusHandler[modalKey] : lastFocusedLm;
+
+    lastFocusableLm.focus();
   }
 
   trapFocus(e, element) {
@@ -69,17 +74,20 @@ export default class ModalHandler {
     }
   }
 
-  registerModal(modalLm) {
-    this.activeModals.push(modalLm);
+  registerModal(modalKey) {
+    this.activeModals.push(modalKey);
+    console.warn('REGISTER MODAL => ', this.activeModals)
   }
   
-  unregisterModal(modalLm) {
-    this.activeModals = this.activeModals.filter(modal => modal !== modalLm);
+  unregisterModal(modalKey) {
+    console.warn('UNREGISTER MODAL BEFORE FILTERING => ', this.activeModals)
+    this.activeModals = this.activeModals.filter(key => key !== modalKey);
+    console.warn('UNREGISTER MODAL => ', this.activeModals)
   }
   
-  isActiveModal(modalLm) {
+  isActiveModal(modalKey) {
     const modals = this.activeModals;
-    return modals.length && modals[modals.length - 1] === modalLm;
+    return modals.length && modals[modals.length - 1] === modalKey;
   }
 
   handleOutsideClickClose(closeHandler, modalLmOuterLimits, exemptLms = []) {
@@ -131,10 +139,11 @@ export default class ModalHandler {
   } = {}) {
     const handleActiveModalClose = e => {
       e.stopPropagation();
-      if (!this.isActiveModal(modalLm)) {
+      if (!this.isActiveModal(eventHandlerKey)) {
         return;
       }
 
+      console.error('CLOSE MODAL => ', eventHandlerKey)
       closeHandler();  // Only close if this is the topmost modal
     };
 
@@ -156,7 +165,7 @@ export default class ModalHandler {
       });
     }
 
-    this.registerModal(modalLm);
+    this.registerModal(eventHandlerKey);
     
     if (!this.eventsHandler[eventHandlerKey]) {
       this.eventsHandler[eventHandlerKey] = {};
@@ -213,6 +222,6 @@ export default class ModalHandler {
     const documentEvents = this.eventsHandler.documentBody[eventHandlerKey];
     documentEvents.length = 0;
 
-    this.unregisterModal(modalLm);
+    this.unregisterModal(eventHandlerKey);
   }
 }

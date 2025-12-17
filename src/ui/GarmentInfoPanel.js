@@ -2,11 +2,12 @@ import GarmentGallerySlider from "./GarmentGallerySlider.js";
 import GarmentSlider from "./GarmentSlider.js";
 
 export default class GarmentInfoPanel {
-  constructor(garmentData, garmentKey, garmentManager, focusOnActiveGarment = true) {
+  constructor(garmentData, garmentKey, garmentManager, modalHandler, focusOnActiveGarment = true) {
     this.viewMoreBtn = document.getElementById('view-more-btn');
     this.returnBtn = document.getElementById('return-btn');
     this.btnContainerLm = document.getElementById('btn-container');
     this.garmentManager = garmentManager;
+    this.modalHandler = modalHandler;
 
     this.eventHandler = {}
     this.garmentKey = garmentKey;
@@ -33,17 +34,23 @@ export default class GarmentInfoPanel {
     this.eventHandler.enterCloneView = this.garmentManager.enterCloneView.bind(this.garmentManager);
 
     if (!this.lms.panel.classList.contains('active')) {
-      this.lms.closeBtn.addEventListener('click', this.eventHandler.closePanel);
-      this.lms.viewMoreBtn.addEventListener('click', this.eventHandler.enterCloneView)
-
       this.lms.panel.classList.add('active');
-      console.warn('open UI');
+      this.modalHandler.addModalFocus('garmentInfoPanel', this.lms.closeBtn);
+
       this.updateGarment(garmentData, { 
         newTitleSliderInstance: true, 
         garmentKey: garmentKey, 
         saveHistory: true, 
         focusOnActiveGarment: focusOnActiveGarment 
       });
+
+      this.lms.viewMoreBtn.addEventListener('click', this.eventHandler.enterCloneView)
+      this.modalHandler.addModalEvents({
+        eventHandlerKey: 'garmentInfoPanel',
+        modalLm: this.lms.panel,
+        closeLms: [ this.lms.closeBtn ],
+        closeHandler: this.close.bind(this)
+      })
     } 
     else {
       console.warn('ui already opened ignore')
@@ -51,10 +58,10 @@ export default class GarmentInfoPanel {
   }
 
   close({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
-    console.log(resetCamera)
     this.dispose({ hidePanel: true });
+    this.modalHandler.returnModalFocus('garmentInfoPanel');
     this.garmentManager.resetActiveGarment({ resetCamera, deleteActiveGarmentRef });
-    console.log('close UI!')
+
   }
 
   updateGarmentInfo({ title, description }) {
@@ -96,8 +103,13 @@ export default class GarmentInfoPanel {
       this.garmentSlider.dispose();
       hidePanel && this.lms.panel.classList.remove('active');
 
-      this.lms.closeBtn.removeEventListener('click', this.eventHandler.closePanel);
+      //this.lms.closeBtn.removeEventListener('click', this.eventHandler.closePanel);
       this.lms.viewMoreBtn.removeEventListener('click', this.eventHandler.enterCloneView);
+      this.modalHandler.removeModalEvents({
+        eventHandlerKey: 'garmentInfoPanel',
+        modalLm: this.lms.panel,
+        closeLms: [ this.lms.closeBtn ]
+      });
     } 
     else {
       console.warn('ui alraedy closed ignore')

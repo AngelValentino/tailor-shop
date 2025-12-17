@@ -13,7 +13,6 @@ export default class GarmentManager {
     this.cloneManager = null;
     this.garmentActionHub = null;
     this.garmentInfoPanel = null;
-    this.garmentInfoMenu = null;
     this.garmentRotationHandler = null;
 
     this.currentActiveGarment = null;

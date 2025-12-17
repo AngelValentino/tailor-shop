@@ -144,7 +144,7 @@ export default class ModalHandler {
       }
 
       console.error('CLOSE MODAL => ', eventHandlerKey)
-      closeHandler();  // Only close if this is the topmost modal
+      closeHandler(); // Only close if this is the topmost modal
     };
 
     const escapeKeyHandler = this.handleEscapeKeyClose(handleActiveModalClose);

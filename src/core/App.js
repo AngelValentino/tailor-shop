@@ -12,6 +12,7 @@ import RoomGrid from '../experience/RoomGrid.js';
 import ModalHandler from '../utils/ModalHandler.js';
 import AppInfoMenu from '../ui/AppInfoMenu.js';
 import GarmentActionHub from '../ui/GarmentActionHub.js';
+import MenuHandler from '../ui/MenuHandler.js';
 
 export default class App {
   constructor(canvas) {
@@ -28,19 +29,23 @@ export default class App {
     const roomGrid = new RoomGrid(this.scene);
 
     const modalHandler = new ModalHandler();
-    new AppInfoMenu(modalHandler);
+    const menuHandler = new MenuHandler(modalHandler);
+    new AppInfoMenu(menuHandler);
 
     // Garment logic handler
     const garmentManager = new GarmentManager(this.scene, utils, this.camera, modalHandler);
-    const garmentActionHub = new GarmentActionHub(garmentManager, modalHandler, utils);
+    const garmentActionHub = new GarmentActionHub(garmentManager, modalHandler, utils, menuHandler);
     garmentManager.setGarmentActionHubInstance(garmentActionHub);
     const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid, garmentManager);
     garmentManager.setCloneManagerInstance(cloneManager);
 
     // Experience
     const raycasterControls = new RaycasterControls(this.camera.instance, () => garmentManager.getAllMeshes())
-    this.camera.setHoverControlsInstance(raycasterControls);
+    this.camera.setRaycasterControlsInstance(raycasterControls);
     this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, raycasterControls, roomGrid);
+    
+    menuHandler.setAtelierExperienceInstance(this.experience);
+
     this.#resizeHandler();
   }
 

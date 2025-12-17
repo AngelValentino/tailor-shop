@@ -1,8 +1,7 @@
-import MenuHandler from "./MenuHandler";
-
 export default class GarmentInfoMenu {
-  constructor(modalHandler, description) {
-    this.menuHandler = new MenuHandler(modalHandler, {
+  constructor(menuHandler, description) {
+    this.menuHandler = menuHandler;
+    this.menuHandler.update({
       toggleBtnId: 'garment-menu-btn',
       menuLmId: 'garment-menu',
       closeBtnId: 'garment-menu__close-btn',

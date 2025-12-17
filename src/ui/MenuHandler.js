@@ -1,12 +1,16 @@
 export default class MenuHandler {
-  constructor(modalHandler, {
+  constructor(modalHandler,) {
+    this.modalHandler = modalHandler;
+    this.atelierExperienceInstance = null;
+  }
+
+  update({
     toggleBtnId,
     menuLmId,
     closeBtnId,
     infoContainerId,
     menuKey
   }) {
-    this.modalHandler = modalHandler;
     this.menuKey = menuKey;
 
     this.timIds = {};
@@ -22,6 +26,10 @@ export default class MenuHandler {
     this.lms.toggleBtn.addEventListener('click', this._open);
   }
 
+  setAtelierExperienceInstance(atelierExperienceInstance) {
+    this.atelierExperienceInstance = atelierExperienceInstance;
+  }
+
   setDescription(description) {
     this.lms.infoContainer.innerHTML = description;
   }
@@ -35,6 +43,7 @@ export default class MenuHandler {
 
   close() {
     console.log('CLOSE MENU => ', this.menuKey)
+    this.atelierExperienceInstance.resume();
     this.lms.toggleBtn.style.display = '';
     this.lms.menuLm.classList.remove('active');
 
@@ -52,6 +61,7 @@ export default class MenuHandler {
 
   open() {
     console.log('OPEN MENU => ', this.menuKey)
+    this.atelierExperienceInstance.pause();
     clearTimeout(this.timIds.hideMenu);
 
     // Show menu

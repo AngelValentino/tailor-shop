@@ -360,6 +360,7 @@ main {
 .info-menu,
 .garment-menu {
   background-color: rgba(255, 255, 255, 0.97);
+  /* background-color: rgba(255, 255, 255, 0.2); */
   position: fixed;
   inset: 0;
   transform: translateX(-100vw);

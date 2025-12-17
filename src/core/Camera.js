@@ -34,7 +34,7 @@ export default class Camera {
     this.instance.updateProjectionMatrix();
   }
 
-  setHoverControlsInstance(raycasterControls) {
+  setRaycasterControlsInstance(raycasterControls) {
     this.raycasterControls = raycasterControls;
   }
 

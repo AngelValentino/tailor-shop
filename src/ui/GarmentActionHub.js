@@ -1,10 +1,11 @@
 import GarmentInfoMenu from "./GarmentInfoMenu";
 
 export default class GarmentActionHub {
-  constructor(garmentManager, modalHandler, utils) {
+  constructor(garmentManager, modalHandler, utils, menuHandler) {
     this.garmentManager = garmentManager;
     this.modalHandler = modalHandler
     this.utils = utils;
+    this.menuHandler = menuHandler;
 
     this.eventHandler = {};
 
@@ -35,7 +36,7 @@ export default class GarmentActionHub {
     this.updateHelperIcon();
     this.modalHandler.addModalFocus('cloneView', this.lms.returnBtn);
     
-    this.garmentInfoMenu = new GarmentInfoMenu(this.modalHandler, longDescription);
+    this.garmentInfoMenu = new GarmentInfoMenu(this.menuHandler, longDescription);
 
     this.modalHandler.addModalEvents({
       eventHandlerKey: 'cloneView',
@@ -58,7 +59,5 @@ export default class GarmentActionHub {
       eventHandlerKey: 'cloneView',
       closeLms: [ this.lms.returnBtn ]
     });
-
-    //this.lms.returnBtn.removeEventListener('click', this.eventHandler.restoreOppositeSide);
   }
 }

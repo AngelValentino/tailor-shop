@@ -1,4 +1,4 @@
-export default class TailorShopExperience {
+export default class AtelierExperience {
   constructor(scene, camera, garmentManager, raycasterControls, roomGrid) {
     this.scene = scene;
     this.camera = camera;

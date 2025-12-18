@@ -2,6 +2,7 @@ export default class MenuHandler {
   constructor(modalHandler,) {
     this.modalHandler = modalHandler;
     this.atelierExperienceInstance = null;
+    this.menus = {};
   }
 
   update({
@@ -11,76 +12,93 @@ export default class MenuHandler {
     infoContainerId,
     menuKey
   }) {
-    this.menuKey = menuKey;
+    if (!this.menus[menuKey]) {
+      this.menus[menuKey] = {
+        timIds: {},
+        lms: {},
+        open: this.open.bind(this, menuKey)
+      }
+    }
 
-    this.timIds = {};
+    const menu = this.menus[menuKey];
 
-    this.lms = {
+    console.log('UPDATE MENU HANDLER => ', menuKey, this.menus)
+
+    menu.lms = {
       toggleBtn: document.getElementById(toggleBtnId),
       menuLm: document.getElementById(menuLmId),
       closeBtn: document.getElementById(closeBtnId),
       infoContainer: document.getElementById(infoContainerId)
-    };
+    }
 
-    this._open = this.open.bind(this);
-    this.lms.toggleBtn.addEventListener('click', this._open);
+    menu.lms.toggleBtn.addEventListener('click', menu.open);
   }
 
   setAtelierExperienceInstance(atelierExperienceInstance) {
     this.atelierExperienceInstance = atelierExperienceInstance;
   }
 
-  setDescription(description) {
-    this.lms.infoContainer.innerHTML = description;
+  setDescription(description, menuKey) {
+    this.menus[menuKey].lms.infoContainer.innerHTML = description;
   }
 
-  dispose() {
-    this.lms.length = 0;
-    this.timIds.length = 0;
-
-    this.lms.toggleBtn.removeEventListener('click', this._open);
+  dispose(menuKey) {
+    const menu = this.menus[menuKey];
+    
+    if (menu.timIds.hideMenu) clearTimeout(menu.timIds.hideMenu);
+    menu.lms.toggleBtn.removeEventListener('click', menu.open);
+    
+    delete this.menus[menuKey];
+    console.log('DISPOSE MENU HANDLER =>', menuKey, this.menus)
   }
 
-  close() {
-    console.log('CLOSE MENU => ', this.menuKey)
+  close(menuKey) {
+    console.log('CLOSE MENU => ', menuKey)
+    const menu = this.menus[menuKey];
     this.atelierExperienceInstance.resume();
-    this.lms.toggleBtn.style.display = '';
-    this.lms.menuLm.classList.remove('active');
 
-    this.timIds.hideMenu = setTimeout(() => {
-      this.lms.menuLm.style.display = 'none';
-      this.modalHandler.returnModalFocus(this.menuKey);
+    const { toggleBtn, menuLm, closeBtn } = menu.lms;
+
+    // close menu
+    toggleBtn.style.display = '';
+    menuLm.classList.remove('active');
+
+    menu.timIds.hideMenu = setTimeout(() => {
+      menuLm.style.display = 'none';
+      this.modalHandler.returnModalFocus(menuKey);
     }, 300);
 
+    // remove events
     this.modalHandler.removeModalEvents({
-      eventHandlerKey: this.menuKey,
-      modalLm: this.lms.menuLm,
-      closeLms: [ this.lms.closeBtn ]
+      eventHandlerKey: menuKey,
+      modalLm: menuLm,
+      closeLms: [ closeBtn ]
     })
   }
 
-  open() {
-    console.log('OPEN MENU => ', this.menuKey)
+  open(menuKey) {
+    console.log('OPEN MENU => ', menuKey)
+    const menu = this.menus[menuKey];
     this.atelierExperienceInstance.pause();
-    clearTimeout(this.timIds.hideMenu);
+    clearTimeout(menu.timIds.hideMenu);
 
-    // Show menu
-    this.lms.toggleBtn.style.display = 'none';
+    const { toggleBtn, menuLm, closeBtn } = menu.lms;
 
-    this.lms.menuLm.style.display = 'block';
-    this.modalHandler.addModalFocus(this.menuKey, this.lms.closeBtn);
+    // show menu
+    toggleBtn.style.display = 'none';
+    menuLm.style.display = 'block';
+    this.modalHandler.addModalFocus(menuKey, closeBtn);
 
-    // Animate menu
     setTimeout(() => {
-      this.lms.menuLm.classList.add('active');
+      menuLm.classList.add('active');
     });
 
-    // Add events
+    // add events
     this.modalHandler.addModalEvents({
-      eventHandlerKey: this.menuKey,
-      modalLm: this.lms.menuLm,
-      closeLms: [ this.lms.closeBtn ],
-      closeHandler: this.close.bind(this)
+      eventHandlerKey: menuKey,
+      modalLm: menuLm,
+      closeLms: [ closeBtn ],
+      closeHandler: this.close.bind(this, menuKey)
     });
   }
 }

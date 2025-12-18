@@ -3,7 +3,7 @@ import Camera from './Camera.js';
 import Renderer from './Renderer.js';
 import Lighting from './Lighting.js';
 import AssetLoader from '../loaders/AssetLoader.js';
-import TailorShopExperience from '../experience/TailorShopExperience.js';
+import AtelierExperience from '../experience/AtelierExperience.js';
 import RaycasterControls from '../utils/RaycasterControls.js';
 import GarmentManager from '../experience/GarmentManager.js';
 import Utils from '../utils/Utils.js';
@@ -42,7 +42,7 @@ export default class App {
     // Experience
     const raycasterControls = new RaycasterControls(this.camera.instance, () => garmentManager.getAllMeshes())
     this.camera.setRaycasterControlsInstance(raycasterControls);
-    this.experience = new TailorShopExperience(this.scene, this.camera.instance, garmentManager, raycasterControls, roomGrid);
+    this.experience = new AtelierExperience(this.scene, this.camera.instance, garmentManager, raycasterControls, roomGrid);
     
     menuHandler.setAtelierExperienceInstance(this.experience);
 

@@ -14,6 +14,7 @@ button {
   border: none;
   padding: 0;
   background-color: transparent;
+  cursor: pointer;
 }
 
 button, input, textarea {
@@ -35,10 +36,6 @@ a {
 
 ul {
   list-style-type: none;
-}
-
-button {
-  cursor: pointer;
 }
 
 fieldset {
@@ -508,6 +505,10 @@ main {
   opacity: 1;
 }
 
+.garment-slider__control-btn.active {
+  cursor: default;
+}
+
 .garment-slider__control-btn-svg {
   width: 1.5rem;
   display: block;
@@ -597,6 +598,10 @@ main {
   flex-grow: 0;
 }
 
+.garment-gallery__thumb-container .garment-gallery__thumb:not(.active) {
+  cursor: pointer;
+}
+
 .garment-gallery__nav::-webkit-scrollbar {
   display: none;
 }
@@ -607,7 +612,7 @@ main {
   height: 100%;
   display: block;
   object-fit: cover;
-    -webkit-user-drag: none; /* Chrome, Safari */
+  -webkit-user-drag: none;
 }
 
 .garment-gallery__thumb {

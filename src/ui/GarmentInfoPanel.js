@@ -10,7 +10,7 @@ export default class GarmentInfoPanel {
     this.modalHandler = modalHandler;
 
     this.eventHandler = {}
-    this.garmentKey = garmentKey;
+    this.garmentKey = null;
 
     this.garmentData = garmentData;
 
@@ -22,7 +22,7 @@ export default class GarmentInfoPanel {
       viewMoreBtn: document.getElementById('garment-info-panel__view-more-btn')
     }
 
-    this.open(garmentData[garmentKey], this.garmentKey, focusOnActiveGarment);
+    this.open(garmentData[garmentKey], garmentKey, focusOnActiveGarment);
   }
 
   setGarmentKey(garmentKey) {
@@ -70,8 +70,16 @@ export default class GarmentInfoPanel {
   }
 
   updateGarment(garmentData, { newTitleSliderInstance, garmentKey, updateSliderPos, saveHistory = false, focusOnActiveGarment = true }) {
-    this.setGarmentKey(garmentKey);
+    console.warn('GARMENT KEY THIS => ', this.garmentKey);
+    console.warn('NEW GARMENT KEY => ', garmentKey)
 
+    if (garmentKey === this.garmentKey) {
+      console.warn('same data return')
+      return;
+    }
+    
+    this.setGarmentKey(garmentKey);
+    
     // Update title
     if (newTitleSliderInstance) {
       this.garmentSlider = new GarmentSlider(this.garmentData, garmentKey);

@@ -1,7 +1,7 @@
 const garmentData = {
   'built-jacket': {
-    title: 'Timeless Heritage Biker Jacket',
-    description: 'Brown suede biker jacket with soft white fur lining, four adjustable pockets, structured action back, and a short cut for comfort and style.',
+    title: 'Heritage Biker Jacket',
+    description: 'Brown suede built jacket with fur lining featuring four adjustable pockets, a structured action back and a short cut for comfort and style.',
     longDescription: `
     <p>
       Crafted from brown suede with a soft white fur lining, blending 70s biker heritage with modern bespoke comfort.

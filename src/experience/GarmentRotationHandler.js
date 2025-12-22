@@ -6,12 +6,8 @@ export default class GarmentRotationHandler {
     this.isDragging = false;
     this.lastX = 0;
     this.velocityY = 0;
-    this.speed = 0.5;
+    this.speed = 0.4;
     this.inertiaFactor = 0.95;
-
-    if (this.utils.isTouchBasedDevice()) {
-      this.speed = 0.25;
-    }
 
     this.onDown = this.onPointerDown.bind(this);
     this.onMove = this.onPointerMove.bind(this);
@@ -58,10 +54,9 @@ export default class GarmentRotationHandler {
     const currentX = this.utils.isTouchBasedDevice() ? e.touches[0].clientX : e.clientX;
 
     const dx = currentX - this.lastX;
-    const normalizedDx = dx / window.innerWidth;
-    
-    this.velocityY = normalizedDx * this.speed * 1000;
-    
+    const rotationDelta = dx * this.speed;
+
+    this.velocityY = rotationDelta;
     this.lastX = currentX;
 
     if (this.utils.isTouchBasedDevice()) e.preventDefault(); // prevent scrolling while dragging

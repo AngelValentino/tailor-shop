@@ -76,44 +76,39 @@ main {
   --contrast-text-color: #fff;
 }
 
-.blur-img-loader {
-  position: relative;
-  background-size: cover;
-  background-position: center;
+.portrait-overlay {
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  display: none;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 20px;
+  z-index: 10000;
+  text-align: center;
+  font-size: 1.2rem;
 }
 
-.blur-img-loader::before {
-  content: "";
+.portrait-overlay.active {
+  display: flex;
+}
+
+.ui-container {
+  margin: 0 auto;
+  max-width: 1920px; 
   position: absolute;
   inset: 0;
-  animation: pulse 2s infinite ease-in-out alternate;
 }
 
-.blur-img-loader.loaded::before {
-  content: none;
+.webgl {
+  position: fixed;
+  outline: none;
+  top: 0;
+  left: 0;
+  z-index: 0;
 }
 
-.blur-img-loader img {
-  opacity: 0;
-  transition: opacity 0.25s ease-in-out;
-  object-fit: cover;
-  object-position: center;
-}
-
-.blur-img-loader.loaded img {
-  opacity: 1;
-}
-
-@keyframes pulse {
-  from {
-    background-color: rgba(0, 0, 0 , 0.5);
-  }
-  to {
-    background-color: rgba(255, 255, 255, 0.25);
-  }
-}
-
-
+/* Reusable classes */
 
 .slide-in-and-out,
 .slide-in-and-back,
@@ -250,37 +245,7 @@ main {
   }
 }
 
-.portrait-overlay {
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  display: none;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 20px;
-  z-index: 10000;
-  text-align: center;
-  font-size: 1.2rem;
-}
-
-.portrait-overlay.active {
-  display: flex;
-}
-
-.ui-container {
-  margin: 0 auto;
-  max-width: 1920px; 
-  position: absolute;
-  inset: 0;
-}
-
-.webgl {
-  position: fixed;
-  outline: none;
-  top: 0;
-  left: 0;
-  z-index: 0;
-}
+/* End of reusable classes */
 
 /* UI buttons*/
 
@@ -291,11 +256,10 @@ main {
   right: 10px;
   top: 10px;
   color: white;
-  opacity: 0.8;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   padding: 10px;
-  transition: opacity var(--base-transition-duration);
+  transition: background-color var(--base-transition-duration);
 }
 
 .garment-menu-btn {
@@ -355,7 +319,7 @@ main {
 
 /* Enf of UI buttons */
 
-/* Menu */
+/* App menu */
 
 .info-menu,
 .garment-menu {
@@ -368,7 +332,6 @@ main {
   transition: transform 0.3s ease-in-out, opacity 0.5s ease-in-out;
   display: none;
   font-size: 1rem;
-  padding: 20px;
   opacity: 0;
 }
 
@@ -391,6 +354,7 @@ main {
   align-items: center;
   overflow: auto;
   height: 100%;
+  padding: 20px;
 }
 
 .info-menu__close-btn,
@@ -452,9 +416,9 @@ main {
   font-size: 1.1em;
 }
 
-/* End of menu */
+/* End of app menu */
 
-/* Garment menu */
+/* Garment info menu */
 
 .garment-menu__info-container p {
   max-width: 500px;
@@ -464,7 +428,7 @@ main {
   margin-top: 20px;
 }
 
-/* End of garment menu */
+/* End of garment info menu */
 
 /* Garment info panel */
 
@@ -661,6 +625,45 @@ main {
 
 /* End of garment gallery */
 
+/* Loaders */
+
+.blur-img-loader {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+}
+
+.blur-img-loader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  animation: pulse 2s infinite ease-in-out alternate;
+}
+
+.blur-img-loader.loaded::before {
+  content: none;
+}
+
+.blur-img-loader img {
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+  object-fit: cover;
+  object-position: center;
+}
+
+.blur-img-loader.loaded img {
+  opacity: 1;
+}
+
+@keyframes pulse {
+  from {
+    background-color: rgba(0, 0, 0 , 0.5);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -713,6 +716,7 @@ main {
   }
 }
 
+/* End of loaders */
 
 /* Hover capable devices */
 
@@ -726,18 +730,14 @@ main {
     background-color: rgba(0, 0, 0, 0.72);
   }
 
-  .return-to-garment-panel-btn:is(:hover, :focus-visible) {
-    opacity: 1;
-  }
-
   .info-menu__social-link:is(:hover, :focus-visible) {
-    /* color: #7C6EE6; */
     color: #9A8CFF;
   }
 
   .toggle-menu-btn:is(:hover, :focus-visible),
-  .garment-menu-btn:is(:hover, :focus-visible) {
-    opacity: 1;
+  .garment-menu-btn:is(:hover, :focus-visible),
+  .return-to-garment-panel-btn:is(:hover, :focus-visible) {
+    background-color: rgba(0, 0, 0, 0.72);
   }
 
   .garment-info-panel__close-btn:is(:hover, :focus-visible) {
@@ -773,6 +773,12 @@ main {
 
   html {
     font-size: 15px;
+  }
+
+  .info-menu__close-btn,
+  .garment-menu__close-btn  {
+    top: 30px;
+    right: 20px;
   }
 }
 

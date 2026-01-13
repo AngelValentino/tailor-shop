@@ -14,69 +14,95 @@ const garmentData = {
     </p>
     `,
     images: {
-      large: [
-        {
-          url: '/images/jacket2/1.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/jacket2/2.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/jacket2/3.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/jacket2/4.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/jacket2/5.jpg',
-          alt: ''
-        },
-      ],
       medium: [
         {
-          url: '/images/jacket2/1-regular.jpg',
+          url: '/images/built-jacket-suede/front-m.jpg',
           alt: ''
         },
         {
-          url: '/images/jacket2/2-regular.jpg',
+          url: '/images/built-jacket-suede/collar-closed-m.jpg',
           alt: ''
         },
         {
-          url: '/images/jacket2/3-regular.jpg',
+          url: '/images/built-jacket-suede/back-m.jpg',
           alt: ''
         },
         {
-          url: '/images/jacket2/4-regular.jpg',
+          url: '/images/built-jacket-suede/collar-open-m.jpg',
           alt: ''
         },
         {
-          url: '/images/jacket2/5-regular.jpg',
+          url: '/images/built-jacket-suede/cuff-closed-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/cuff-open-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/lining-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/inner-pocket-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/pocket-flap-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/belt-closed-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/belt-resting-m.jpg',
           alt: ''
         },
       ],
       small: [
         {
-          url: '/images/jacket2/1-small.jpg',
+          url: '/images/built-jacket-suede/front-s.jpg',
           alt: ''
         },
         {
-          url: '/images/jacket2/2-small.jpg',
+          url: '/images/built-jacket-suede/collar-closed-s.jpg',
           alt: ''
         },
         {
-          url: '/images/jacket2/3-small.jpg',
+          url: '/images/built-jacket-suede/back-s.jpg',
           alt: ''
         },
         {
-          url: '/images/jacket2/4-small.jpg',
+          url: '/images/built-jacket-suede/collar-open-s.jpg',
           alt: ''
         },
         {
-          url: '/images/jacket2/5-small.jpg',
+          url: '/images/built-jacket-suede/cuff-closed-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/cuff-open-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/lining-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/inner-pocket-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/pocket-flap-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/belt-closed-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-suede/belt-resting-s.jpg',
           alt: ''
         },
       ]
@@ -97,69 +123,71 @@ const garmentData = {
       </p>
     `,
     images: {
-      large: [
-        {
-          url: '/images/pleated-trousers/1.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/pleated-trousers/2.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/pleated-trousers/3.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/pleated-trousers/4.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/pleated-trousers/5.jpg',
-          alt: ''
-        },
-      ],
       medium: [
         {
-          url: '/images/pleated-trousers/1-regular.jpg',
+          url: '/images/pleated-trousers-denim/front-m.jpg',
           alt: ''
         },
         {
-          url: '/images/pleated-trousers/2-regular.jpg',
+          url: '/images/pleated-trousers-denim/side-adjuster-m.jpg',
           alt: ''
         },
         {
-          url: '/images/pleated-trousers/3-regular.jpg',
+          url: '/images/pleated-trousers-denim/back-m.jpg',
           alt: ''
         },
         {
-          url: '/images/pleated-trousers/4-regular.jpg',
+          url: '/images/pleated-trousers-denim/pocket-flap-m.jpg',
           alt: ''
         },
         {
-          url: '/images/pleated-trousers/5-regular.jpg',
+          url: '/images/pleated-trousers-denim/front-zoom-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-denim/zipper-fly-open-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-denim/watch-pocket-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-denim/bottom-hem-m.jpg',
           alt: ''
         },
       ],
       small: [
         {
-          url: '/images/pleated-trousers/1-small.jpg',
+          url: '/images/pleated-trousers-denim/front-s.jpg',
           alt: ''
         },
         {
-          url: '/images/pleated-trousers/2-small.jpg',
+          url: '/images/pleated-trousers-denim/side-adjuster-s.jpg',
           alt: ''
         },
         {
-          url: '/images/pleated-trousers/3-small.jpg',
+          url: '/images/pleated-trousers-denim/back-s.jpg',
           alt: ''
         },
         {
-          url: '/images/pleated-trousers/4-small.jpg',
+          url: '/images/pleated-trousers-denim/pocket-flap-s.jpg',
           alt: ''
         },
         {
-          url: '/images/pleated-trousers/5-small.jpg',
+          url: '/images/pleated-trousers-denim/front-zoom-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-denim/zipper-fly-open-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-denim/watch-pocket-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-denim/bottom-hem-s.jpg',
           alt: ''
         },
       ]
@@ -180,33 +208,63 @@ const garmentData = {
     </p>
     `,
     images: {
-      large: [
-        {
-          url: '/images/bomber5-outfit/1.jpg',
-          alt: ''
-        },
-        {
-          url: '/images/bomber5-outfit/2.jpg',
-          alt: ''
-        }
-      ],
       medium: [
         {
-          url: '/images/bomber5-outfit/1-regular.jpg',
+          url: '/images/built-jacket-corduroy/front-m.jpg',
           alt: ''
         },
         {
-          url: '/images/bomber5-outfit/2-regular.jpg',
+          url: '/images/built-jacket-corduroy/collar-closed-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-corduroy/inner-pocket-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-corduroy/cuff-open-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-wool/front-zoom-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-wool/side-adjuster-m.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-wool/zipper-fly-open-m.jpg',
           alt: ''
         }
       ],
       small: [
         {
-          url: '/images/bomber5-outfit/1-small.jpg',
+          url: '/images/built-jacket-corduroy/front-s.jpg',
           alt: ''
         },
         {
-          url: '/images/bomber5-outfit/2-small.jpg',
+          url: '/images/built-jacket-corduroy/collar-closed-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-corduroy/inner-pocket-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/built-jacket-corduroy/cuff-open-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-wool/front-zoom-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-wool/side-adjuster-s.jpg',
+          alt: ''
+        },
+        {
+          url: '/images/pleated-trousers-wool/zipper-fly-open-s.jpg',
           alt: ''
         }
       ]

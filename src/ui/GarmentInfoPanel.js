@@ -34,6 +34,7 @@ export default class GarmentInfoPanel {
     this.eventHandler.enterCloneView = this.garmentManager.enterCloneView.bind(this.garmentManager);
 
     if (!this.lms.panel.classList.contains('active')) {
+      this.garmentManager.hideFocusableBtns();
       this.lms.panel.classList.add('active');
       this.modalHandler.addModalFocus('garmentInfoPanel', this.lms.closeBtn);
 
@@ -58,6 +59,7 @@ export default class GarmentInfoPanel {
   }
 
   close({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
+    if (resetCamera) this.garmentManager.showFocusableBtns();
     this.dispose({ hidePanel: true });
     this.modalHandler.returnModalFocus('garmentInfoPanel');
     this.garmentManager.resetActiveGarment({ resetCamera, deleteActiveGarmentRef });

@@ -20,10 +20,11 @@ export default class GarmentManager {
     this.right = [];
     this.allMeshes = [];
     this.eventHandler = {};
+    this.focusableBtns = [];
   }
 
   init() {
-    const regex = /^prop__interactive__(.*)__(left|right)$/;
+    const regex = /^prop__interactive__(.*)__(left|right)(?:__(\d+))$/;
 
     this.scene.traverse(obj => {
       const match = obj.name.match(regex);
@@ -31,10 +32,10 @@ export default class GarmentManager {
       if (match) {
         const name = match[1];
         const side = match[2];
+        const order = match[3] ? parseInt(match[3], 10) : 0;
 
         obj.userData.garmentKey = name;
-
-        console.log(side)
+        obj.userData.order = order;
 
         if (side === 'left') {
           this.left.push(obj);
@@ -49,14 +50,86 @@ export default class GarmentManager {
     this.left.forEach(m => (m.userData.side = 'left'));
     this.right.forEach(m => (m.userData.side = 'right'));
 
+    this.left.sort((a, b) => a.userData.order - b.userData.order);
+    this.right.sort((a, b) => a.userData.order - b.userData.order);
+
     this.allMeshes.push(...this.left, ...this.right);
 
-    console.log(this.allMeshes)
-    return {
-      left: this.left,
-      right: this.right,
-      all: this.allMeshes
-    };
+    const uiContainerLm = document.getElementById('ui-container');
+
+    const buttonContainerLm = document.createElement('div');
+    uiContainerLm.append(buttonContainerLm);
+
+    this.allMeshes.forEach(mesh => {
+
+      const btn = document.createElement('button');
+      btn.dataset.garmentKey = mesh.userData.garmentKey
+      btn.innerText = mesh.userData.garmentKey;
+      btn.classList.add('aria-btn')
+
+      this.focusableBtns.push(btn)
+
+      buttonContainerLm.append(btn)
+    });
+
+    console.error(this.focusableBtns)
+
+    buttonContainerLm.addEventListener('click', e => {
+      this.onClick(this.currentFocusedGarment)
+    })
+
+
+    this.focusableBtns.forEach(btn => {
+      btn.addEventListener('focus', () => {
+          // Remove 'active' from all buttons, add to the focused one
+          this.focusableBtns.forEach(b => b.classList.toggle('active', b === btn));
+
+          const newActiveMesh = this.allMeshes.find(mesh => mesh.userData.garmentKey === btn.dataset.garmentKey);
+
+          if (this.currentFocusedGarment !== newActiveMesh) {
+            // If there was a previously active mesh, fire mouse leave
+            if (this.currentFocusedGarment) {
+              this.onMouseLeave(this.currentFocusedGarment);
+            }
+
+            // Fire mouse enter for the new mesh
+            this.onMouseEnter(newActiveMesh);
+
+            // Update the active mesh reference
+            this.currentFocusedGarment = newActiveMesh;
+          }
+      });
+
+      btn.addEventListener('blur', () => {
+        if (!buttonContainerLm.contains(document.activeElement)) {
+          this.focusableBtns.forEach(b => b.classList.remove('active'));
+          if (this.currentFocusedGarment) {
+            this.onMouseLeave(this.currentFocusedGarment);
+            this.currentFocusedGarment = null;
+          }
+        }
+      });
+    });
+
+
+    console.warn(this.allMeshes)
+    // return {
+    //   left: this.left,
+    //   right: this.right,
+    //   all: this.allMeshes
+    // };
+  }
+
+  hideFocusableBtns() {
+    this.focusableBtns.forEach(btn => {
+      btn.classList.add('hidden')
+    });
+  }
+
+  showFocusableBtns() {
+    this.focusableBtns.forEach(btn => {
+      btn.classList.remove('hidden')
+    });
   }
 
   setGarmentActionHubInstance(garmentActionHub) {

@@ -294,6 +294,7 @@ main {
   gap: 5px;
   display: none;
   font-weight: 500;
+  user-select: none;
 }
 
 .clone-view-helper svg {
@@ -629,6 +630,30 @@ main {
 }
 
 /* End of garment gallery */
+
+.aria-btn {
+  background-color: #9A8CFF;
+  display: block;
+  padding: 5px 10px;
+  margin: 10px 5px;
+  color: white;
+  border-radius: 2px;
+
+  position: absolute;
+  left: -9999px; /* move offscreen */
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.aria-btn.active {
+  background-color: #111;
+}
+
+.aria-btn.hidden {
+  display: none;
+}
 
 /* Loaders */
 

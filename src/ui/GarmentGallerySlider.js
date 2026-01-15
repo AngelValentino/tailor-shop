@@ -105,6 +105,7 @@ export default class GarmentGallerySlider {
     const images = [...this.lms.imageSliderContainer.children]
     images.forEach((img, i) => {
       img.style.transform = `translateX(${-100 * this.imageIndex}%)`;
+      img.ariaHidden = i !== this.imageIndex;
     });
   }
 
@@ -113,9 +114,11 @@ export default class GarmentGallerySlider {
     thumbs.forEach(thumb => {
       if (Number(thumb.dataset.index) === this.imageIndex) {
         thumb.classList.add('active');
+        thumb.ariaSelected = true;
       }
       else {
         thumb.classList.remove('active');
+        thumb.ariaSelected = false;
       }
     });
   }
@@ -150,7 +153,6 @@ export default class GarmentGallerySlider {
 
   dispose() {
     window.removeEventListener('resize', this.eventHandler.updateNavHeight);
-    this.refImg.removeEventListener('load', this.eventHandler.removeSetNavHeightTransition);
     this.lms.imageSliderNav.removeEventListener('click', this.eventHandler.handleSliderClick);
 
     this.lms.imageSlider.removeEventListener('touchstart', this.eventHandler.touchStart);
@@ -162,13 +164,19 @@ export default class GarmentGallerySlider {
   generateSliderImages() {
     return this.images.medium.map(({ url, alt }, i) => (
       `
-        <li class="garment-gallery__photo-container blur-img-loader">
+        <div 
+          aria-roledescription="slide"
+          role="tabpanel" 
+          class="garment-gallery__photo-container blur-img-loader"
+          aria-hidden="${this.imageIndex !== i}"
+          id="garment-gallery__photo-container__item-${i + 1}" 
+        >
           <img 
             class="garment-gallery__photo" 
             src="${url}" 
-            alt="${alt}"
+            alt="${alt}, image ${i + 1} of ${this.getTotalImages()}"
           >
-        </li>
+        </div>
       `
     )).join('');
   }
@@ -176,12 +184,17 @@ export default class GarmentGallerySlider {
   generateSliderNav() {
     return this.images.small.map(({ url, alt }, i) => (
       `
-        <li class="garment-gallery__thumb-container blur-img-loader">
+        <li role="presentation" class="garment-gallery__thumb-container blur-img-loader">
           <img 
+            role="tab"
+            aria-selected="${i === this.imageIndex}"
+            aria-controls="garment-gallery__photo-container__item-${i + 1}"
+            aria-label="Show image ${i + 1}"
             class="garment-gallery__thumb" 
             src="${url}" 
             alt="${alt}"
             data-index="${i}"
+            tabindex="0"
           >
         </li>
       `
@@ -191,10 +204,10 @@ export default class GarmentGallerySlider {
   generateSlider() {
     return (
       `
-        <ul class="garment-gallery__photos-list">
+        <div class="garment-gallery__photos-list">
           ${this.generateSliderImages()}
-        </ul>
-        <ul class="garment-gallery__nav" style="max-height: 100px;">
+        </div>
+        <ul role="tablist" class="garment-gallery__nav" style="max-height: 100px;">
           ${this.generateSliderNav()}
         </ul>
       `

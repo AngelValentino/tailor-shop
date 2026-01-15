@@ -118,61 +118,21 @@
         </svg>
         <p>Drag to interact</p>
       </div>
-      <div id="garment-info-panel" class="garment-info-panel">
+      <div id="garment-info-panel" class="garment-info-panel" role="tabpanel">
         <button aria-label="Close garment info panel" title="Close" class="garment-info-panel__close-btn" id="garment-info-panel__close-btn">
           <svg aria-hidden="true" focusable="false" role="presentation" class="garment-info-panel__close-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
             <path fill="currentColor" d="M55.1 73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L147.2 256L9.9 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l137.3-137.4l137.4 137.3c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.8 256l137.3-137.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192.5 210.7z" />
           </svg>
         </button>
         <div>
-          <div id="garment-slider-container" class="garment-slider-container">
-            <ul class="garment-slider__controls"><li><button>1</button></li><li><button>2</button></li></ul>
-            <div id="garment-slider" class="garment-slider"> 
-              <button class="garment-slider__prev-btn">prev</button>
-              <h2 id="garment-slider__title" class="garment-slider__title">jacket2</h2>
-              <button class="garment-slider__next-btn">next</button>
-            </div>
-          </div>
-          <div id="garment-gallery" class="garment-gallery">
-            <ul class="garment-gallery__photos-list">
-              <li class="garment-gallery__photo-container">
-                <img class="garment-gallery__photo" src="/images/jacket2/1-regular.jpg" alt="">
-              </li>
-              <li class="garment-gallery__photo-container">
-                <img class="garment-gallery__photo" src="/images/jacket2/2-regular.jpg" alt="">
-              </li>
-              <li class="garment-gallery__photo-container">
-                <img class="garment-gallery__photo" src="/images/jacket2/3-regular.jpg" alt="">
-              </li>
-              <li class="garment-gallery__photo-container">
-                <img class="garment-gallery__photo" src="/images/jacket2/4-regular.jpg" alt="">
-              </li>
-              <li class="garment-gallery__photo-container">
-                <img class="garment-gallery__photo" src="/images/jacket2/5-regular.jpg" alt="">
-              </li>
-            </ul>
-            <ul class="garment-gallery__nav">
-              <li class="garment-gallery__nav-list">
-                <img class="garment-gallery__thumb active" src="/images/jacket2/1-small.jpg" alt="" data-index="0">
-              </li>
-              <li class="garment-gallery__nav-list">
-                <img class="garment-gallery__thumb" src="/images/jacket2/2-small.jpg" alt="" data-index="1">
-              </li>
-              <li class="garment-gallery__nav-list">
-                <img class="garment-gallery__thumb" src="/images/jacket2/3-small.jpg" alt="" data-index="2">
-              </li>
-              <li class="garment-gallery__nav-list">
-                <img class="garment-gallery__thumb" src="/images/jacket2/4-small.jpg" alt="" data-index="3">
-              </li>
-              <li class="garment-gallery__nav-list">
-                <img class="garment-gallery__thumb" src="/images/jacket2/5-small.jpg" alt="" data-index="4">
-              </li>
-            </ul>
-          </div>
+          <a class="skip-link" href="#garment-gallery-skip-link">Skip garment slider</a>
+          <div id="garment-slider-container" class="garment-slider-container" role="region" aria-label="Garment slider"></div>
+          <a class="skip-link" id="garment-gallery-skip-link" href="#garment-info-container">Skip garment gallery</a>
+          <div id="garment-gallery" class="garment-gallery" role="region" aria-roledescription="carousel" aria-label="Garment image gallery"></div>
         </div>
-        <div>
-          <h1 id="garment-info-panel__title" class="garment-info-panel__title">Indigo Denim Built Biker Jacket</h1>
-          <p id="garment-info-panel__description" class="garment-info-panel__description">This biker jacket was made in Japan from medium weight leather and features hand finished details for a vintage inspired look.</p>
+        <div id="garment-info-container">
+          <h1 id="garment-info-panel__title" class="garment-info-panel__title"></h1>
+          <p id="garment-info-panel__description" class="garment-info-panel__description"></p>
           <button class="garment-info-panel__view-more-btn slide-button" id="garment-info-panel__view-more-btn">Explore garment</button>
         </div>       
       </div>

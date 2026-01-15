@@ -631,14 +631,20 @@ main {
 
 /* End of garment gallery */
 
-.aria-btn {
-  background-color: #9A8CFF;
-  display: block;
+.skip-link {
+  position: absolute;
+  translate: 0 -9999px;
+  background-color: rgba(0, 0, 0, 0.72);
   padding: 5px 10px;
-  margin: 10px 5px;
-  color: white;
-  border-radius: 2px;
+  border-radius: 3px;
+  z-index: 1000;
+}
 
+.skip-link:focus {
+  translate: 0;
+}
+
+.aria-btn {
   position: absolute;
   left: -9999px; /* move offscreen */
   top: auto;

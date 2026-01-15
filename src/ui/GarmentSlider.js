@@ -135,8 +135,11 @@ export default class GarmentSlider {
   generateControls() {
     return this.garmentsTitles.map((title, i) => (
       `
-        <li>
+        <li role="presentation">
           <button
+            role="tab"
+            aria-selected="${i === this.garmentIndex}"
+            aria-controls="garment-info-panel"
             data-index="${i}"
             data-name="${title}"
             class="garment-slider__control-btn"
@@ -153,7 +156,7 @@ export default class GarmentSlider {
   generateSlider() {
     return (
       `
-      <ul class="garment-slider__controls">
+      <ul role="tablist" class="garment-slider__controls">
         ${this.generateControls()}
       </ul>
       <div id="garment-slider" class="garment-slider"> 

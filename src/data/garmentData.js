@@ -17,47 +17,47 @@ const garmentData = {
       medium: [
         {
           url: '/images/built-jacket-suede/front-m.jpg',
-          alt: ''
+          alt: 'Brown suede Heritage Biker Jacket front view showing short cut and four pocket layout'
         },
         {
           url: '/images/built-jacket-suede/collar-closed-m.jpg',
-          alt: ''
+          alt: 'Heritage Biker Jacket with collar closed showing fur lining at neckline'
         },
         {
           url: '/images/built-jacket-suede/back-m.jpg',
-          alt: ''
+          alt: 'Back view of brown suede Heritage Biker Jacket showing action back construction'
         },
         {
           url: '/images/built-jacket-suede/collar-open-m.jpg',
-          alt: ''
+          alt: 'Heritage Biker Jacket with collar open revealing white fur lining'
         },
         {
           url: '/images/built-jacket-suede/cuff-closed-m.jpg',
-          alt: ''
+          alt: 'Close up of jacket cuff closed showing suede finish and structure'
         },
         {
           url: '/images/built-jacket-suede/cuff-open-m.jpg',
-          alt: ''
+          alt: 'Close up of jacket cuff open showing functional opening and lining'
         },
         {
           url: '/images/built-jacket-suede/lining-m.jpg',
-          alt: ''
+          alt: 'Interior view of jacket showing white fur lining and bias cut back panel'
         },
         {
           url: '/images/built-jacket-suede/inner-pocket-m.jpg',
-          alt: ''
+          alt: 'Inside pocket detail of Heritage Biker Jacket showing inner flap pocket'
         },
         {
           url: '/images/built-jacket-suede/pocket-flap-m.jpg',
-          alt: ''
+          alt: 'Close up of a pocket flap showing construction and edge finishing'
         },
         {
           url: '/images/built-jacket-suede/belt-closed-m.jpg',
-          alt: ''
+          alt: 'Heritage Biker Jacket button belt fastened'
         },
         {
           url: '/images/built-jacket-suede/belt-resting-m.jpg',
-          alt: ''
+          alt: 'Heritage Biker Jacket button belt resting loose'
         },
       ],
       small: [
@@ -126,35 +126,35 @@ const garmentData = {
       medium: [
         {
           url: '/images/pleated-trousers-denim/front-m.jpg',
-          alt: ''
+          alt: 'Indigo denim Unique Cut Pleated Trousers front view showing high waist and pleated front'
         },
         {
           url: '/images/pleated-trousers-denim/side-adjuster-m.jpg',
-          alt: ''
+          alt: 'Side belt adjuster detail on pleated trousers showing tailored waist adjustment with golden buckle'
         },
         {
           url: '/images/pleated-trousers-denim/back-m.jpg',
-          alt: ''
+          alt: 'Back view of pleated denim trousers showing asymmetric military inspired pockets'
         },
         {
           url: '/images/pleated-trousers-denim/pocket-flap-m.jpg',
-          alt: ''
+          alt: 'Back pocket flap detail showing construction and stitching'
         },
         {
           url: '/images/pleated-trousers-denim/front-zoom-m.jpg',
-          alt: ''
+          alt: 'Close up of front pleats showing inverted pleat structure and denim texture'
         },
         {
           url: '/images/pleated-trousers-denim/zipper-fly-open-m.jpg',
-          alt: ''
+          alt: 'Zipper fly open showing interior construction and cotton pocket lining'
         },
         {
           url: '/images/pleated-trousers-denim/watch-pocket-m.jpg',
-          alt: ''
+          alt: 'Watch pocket detail showing placement and stitching'
         },
         {
           url: '/images/pleated-trousers-denim/bottom-hem-m.jpg',
-          alt: ''
+          alt: 'Bottom hem detail showing clean slip stich finish and denim weight'
         },
       ],
       small: [
@@ -211,31 +211,31 @@ const garmentData = {
       medium: [
         {
           url: '/images/built-jacket-corduroy/front-m.jpg',
-          alt: ''
+          alt: 'Green corduroy heritage jacket front view showing overall fit and texture'
         },
         {
           url: '/images/built-jacket-corduroy/collar-closed-m.jpg',
-          alt: ''
+          alt: 'Corduroy jacket with collar closed showing neckline shape and fabric texture'
         },
         {
           url: '/images/built-jacket-corduroy/inner-pocket-m.jpg',
-          alt: ''
+          alt: 'Interior pocket detail of corduroy jacket showing red tartan lining'
         },
         {
           url: '/images/built-jacket-corduroy/cuff-open-m.jpg',
-          alt: ''
+          alt: 'Open cuff detail of corduroy jacket showing lining and sleeve construction'
         },
         {
           url: '/images/pleated-trousers-wool/front-zoom-m.jpg',
-          alt: ''
+          alt: 'Black wool pleated trousers front detail showing pleat structure and fabric'
         },
         {
           url: '/images/pleated-trousers-wool/side-adjuster-m.jpg',
-          alt: ''
+          alt: 'Side adjuster detail on wool pleated trousers showing waist adjustment with golden buckle'
         },
         {
           url: '/images/pleated-trousers-wool/zipper-fly-open-m.jpg',
-          alt: ''
+          alt: 'Zipper fly open on wool trousers showing interior construction and japanese cotton pocket lining'
         }
       ],
       small: [

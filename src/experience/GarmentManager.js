@@ -68,7 +68,7 @@ export default class GarmentManager {
       // Create button
       const btn = document.createElement('button');
       btn.dataset.garmentKey = mesh.userData.garmentKey
-      btn.innerText = 'See details about ' + mesh.userData.garmentKey;
+      btn.innerText = 'See details about ' + garmentData[mesh.userData.garmentKey].title;
       btn.classList.add('aria-btn');
 
       // Add button 

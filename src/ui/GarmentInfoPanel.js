@@ -127,16 +127,4 @@ export default class GarmentInfoPanel {
       console.warn('ui alraedy closed ignore')
     }
   }
-
-  generatePanelStructure({ title, description }) {
-    return (
-      `
-        <div id="garment-slider-container" class="garment-slider-container" role="region" aria-label="Garment slider"></div>
-        <div id="garment-gallery" class="garment-gallery" role="region" aria-roledescription="carousel" aria-label="Garment image gallery">
-        <h1 id="garment-info-panel__title" class="garment-info-panel__title">${title}</h1>
-        <p id="garment-info-panel__description" class="garment-info-panel__description">${description}</p>
-        <button class="garment-info-panel__view-more-btn">Go to enhanced view!</button>
-      `
-    );
-  }
 }

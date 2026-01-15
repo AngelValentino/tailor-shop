@@ -7,21 +7,30 @@ export default class ModalHandler {
     this.focusHandler = {};
   }
 
-  addModalFocus(modalKey, firstFocusableLm, auto = true, lastFocusedLm = null) {
+  addModalFocus({
+    modalKey, 
+    firstFocusableLm, 
+    auto = true, 
+    lastFocusedLm = null, 
+    storeLastFocused = true
+  }) {
     const lastFocusableLm = lastFocusedLm ? lastFocusedLm : document.activeElement;
-    
-    this.focusHandler[modalKey] = lastFocusableLm;
+    if (storeLastFocused) this.focusHandler[modalKey] = lastFocusableLm;
+
     // Needs a timeout for keyboard navigation, if not focus is unreliable
     setTimeout(() => {
       firstFocusableLm.focus();
     });
-    
+
     if (!auto) return lastFocusableLm;
   }
 
-  returnModalFocus(modalKey, lastFocusedLm = null, auto = true) {
+  returnModalFocus({
+    modalKey, 
+    lastFocusedLm = null, 
+    auto = true
+  }) {
     const lastFocusableLm = auto ? this.focusHandler[modalKey] : lastFocusedLm;
-
     lastFocusableLm.focus();
   }
 

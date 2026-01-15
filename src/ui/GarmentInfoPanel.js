@@ -36,7 +36,11 @@ export default class GarmentInfoPanel {
     if (!this.lms.panel.classList.contains('active')) {
       this.garmentManager.hideFocusableBtns();
       this.lms.panel.classList.add('active');
-      this.modalHandler.addModalFocus('garmentInfoPanel', this.lms.closeBtn);
+      this.modalHandler.addModalFocus({
+        modalKey: 'garmentInfoPanel', 
+        firstFocusableLm: this.lms.closeBtn,
+        storeLastFocused: focusOnActiveGarment
+      });
 
       this.updateGarment(garmentData, { 
         newTitleSliderInstance: true, 
@@ -59,11 +63,10 @@ export default class GarmentInfoPanel {
   }
 
   close({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
-    if (resetCamera) this.garmentManager.showFocusableBtns();
     this.dispose({ hidePanel: true });
-    this.modalHandler.returnModalFocus('garmentInfoPanel');
     this.garmentManager.resetActiveGarment({ resetCamera, deleteActiveGarmentRef });
-
+    if (resetCamera) this.garmentManager.showFocusableBtns();
+    if (resetCamera) this.modalHandler.returnModalFocus({ modalKey: 'garmentInfoPanel' });
   }
 
   updateGarmentInfo({ title, description }) {
@@ -113,7 +116,6 @@ export default class GarmentInfoPanel {
       this.garmentSlider.dispose();
       hidePanel && this.lms.panel.classList.remove('active');
 
-      //this.lms.closeBtn.removeEventListener('click', this.eventHandler.closePanel);
       this.lms.viewMoreBtn.removeEventListener('click', this.eventHandler.enterCloneView);
       this.modalHandler.removeModalEvents({
         eventHandlerKey: 'garmentInfoPanel',

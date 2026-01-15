@@ -65,7 +65,7 @@ export default class MenuHandler {
 
     menu.timIds.hideMenu = setTimeout(() => {
       menuLm.style.display = 'none';
-      this.modalHandler.returnModalFocus(menuKey);
+      this.modalHandler.returnModalFocus({ modalKey: menuKey });
     }, 300);
 
     // remove events
@@ -87,7 +87,10 @@ export default class MenuHandler {
     // show menu
     toggleBtn.style.display = 'none';
     menuLm.style.display = 'block';
-    this.modalHandler.addModalFocus(menuKey, closeBtn);
+    this.modalHandler.addModalFocus({
+      modalKey: menuKey, 
+      firstFocusableLm: closeBtn
+    });
 
     setTimeout(() => {
       menuLm.classList.add('active');

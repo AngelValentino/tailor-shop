@@ -24,7 +24,13 @@ export default class GarmentManager {
   }
 
   init() {
+    // Regex to match interactive meshes
     const regex = /^prop__interactive__(.*)__(left|right)(?:__(\d+))$/;
+
+    // Create focusable buttons container
+    const uiContainerLm = document.getElementById('ui-container');
+    const buttonContainerLm = document.createElement('div');
+    uiContainerLm.append(buttonContainerLm);
 
     this.scene.traverse(obj => {
       const match = obj.name.match(regex);
@@ -44,91 +50,39 @@ export default class GarmentManager {
           this.right.push(obj);
         }
       }
+    });
 
-    })
-    // tag userData and create global list
+    // Tag mesh side
     this.left.forEach(m => (m.userData.side = 'left'));
     this.right.forEach(m => (m.userData.side = 'right'));
 
+    // Order meshes
     this.left.sort((a, b) => a.userData.order - b.userData.order);
     this.right.sort((a, b) => a.userData.order - b.userData.order);
 
+    // Add all meshes
     this.allMeshes.push(...this.left, ...this.right);
 
-    const uiContainerLm = document.getElementById('ui-container');
-
-    const buttonContainerLm = document.createElement('div');
-    uiContainerLm.append(buttonContainerLm);
-
+    // Create focusable buttons based on the number of interactive meshes
     this.allMeshes.forEach(mesh => {
-
+      // Create button
       const btn = document.createElement('button');
       btn.dataset.garmentKey = mesh.userData.garmentKey
-      btn.innerText = mesh.userData.garmentKey;
-      btn.classList.add('aria-btn')
+      btn.innerText = 'See details about ' + mesh.userData.garmentKey;
+      btn.classList.add('aria-btn');
 
-      this.focusableBtns.push(btn)
-
-      buttonContainerLm.append(btn)
+      // Add button 
+      this.focusableBtns.push(btn);
+      buttonContainerLm.append(btn);
     });
 
-    console.error(this.focusableBtns)
-
-    buttonContainerLm.addEventListener('click', e => {
-      this.onClick(this.currentFocusedGarment)
-    })
-
-
-    this.focusableBtns.forEach(btn => {
-      btn.addEventListener('focus', () => {
-          // Remove 'active' from all buttons, add to the focused one
-          this.focusableBtns.forEach(b => b.classList.toggle('active', b === btn));
-
-          const newActiveMesh = this.allMeshes.find(mesh => mesh.userData.garmentKey === btn.dataset.garmentKey);
-
-          if (this.currentFocusedGarment !== newActiveMesh) {
-            // If there was a previously active mesh, fire mouse leave
-            if (this.currentFocusedGarment) {
-              this.onMouseLeave(this.currentFocusedGarment);
-            }
-
-            // Fire mouse enter for the new mesh
-            this.onMouseEnter(newActiveMesh);
-
-            // Update the active mesh reference
-            this.currentFocusedGarment = newActiveMesh;
-          }
-      });
-
-      btn.addEventListener('blur', () => {
-        if (!buttonContainerLm.contains(document.activeElement)) {
-          this.focusableBtns.forEach(b => b.classList.remove('active'));
-          if (this.currentFocusedGarment) {
-            this.onMouseLeave(this.currentFocusedGarment);
-            this.currentFocusedGarment = null;
-          }
-        }
-      });
+    buttonContainerLm.addEventListener('click', () => {
+      this.onClick(this.currentFocusedGarment);
     });
 
-
-    console.warn(this.allMeshes)
-    // return {
-    //   left: this.left,
-    //   right: this.right,
-    //   all: this.allMeshes
-    // };
-  }
-
-  hideFocusableBtns() {
     this.focusableBtns.forEach(btn => {
-      btn.classList.add('hidden')
-    });
-  }
-
-  showFocusableBtns() {
-    this.focusableBtns.forEach(btn => {
-      btn.classList.remove('hidden')
+      btn.addEventListener('focus', () => this.handleButtonFocus(btn));
+      btn.addEventListener('blur', () => this.handleButtonBlur(buttonContainerLm));
     });
   }
 
@@ -158,6 +112,45 @@ export default class GarmentManager {
 
   getActiveGarment() {
     return this.currentActiveGarment;
+  }
+
+  handleButtonFocus(btn) {
+    const newActiveMesh = this.allMeshes.find(mesh => mesh.userData.garmentKey === btn.dataset.garmentKey);
+
+    if (this.currentFocusedGarment !== newActiveMesh) {
+      // If there was a previously active mesh, fire mouse leave
+      if (this.currentFocusedGarment) {
+        this.onMouseLeave(this.currentFocusedGarment);
+      }
+
+      // Fire mouse enter for the new mesh
+      this.onMouseEnter(newActiveMesh);
+
+      // Update the active mesh reference
+      this.currentFocusedGarment = newActiveMesh;
+    }
+  }
+
+  handleButtonBlur(buttonContainerLm) {
+    if (
+      !buttonContainerLm.contains(document.activeElement) && 
+      this.currentFocusedGarment
+    ) {
+      this.onMouseLeave(this.currentFocusedGarment);
+      this.currentFocusedGarment = null;
+    }
+  }
+
+  hideFocusableBtns() {
+    this.focusableBtns.forEach(btn => {
+      btn.classList.add('hidden');
+    });
+  }
+
+  showFocusableBtns() {
+    this.focusableBtns.forEach(btn => {
+      btn.classList.remove('hidden');
+    });
   }
 
   restoreOppositeSide() {

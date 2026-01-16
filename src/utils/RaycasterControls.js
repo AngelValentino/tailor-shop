@@ -10,7 +10,6 @@ export default class RaycasterControls {
     this.utils = new Utils;
 
     this.lastHovered = null;
-
     this.enabled = true;
 
     // Event callbacks
@@ -23,7 +22,6 @@ export default class RaycasterControls {
 
     this._onMouseMove = this.#onMouseMove.bind(this);
     this._onClick = this.#onClick.bind(this); 
-    
     this._onTouchMove = this.#onTouchMove.bind(this);
     this._onTouchStart = this.#onTouchStart.bind(this);
 
@@ -73,11 +71,23 @@ export default class RaycasterControls {
     window.removeEventListener('touchend', this._onClick);
   }
 
-
   #isOverUIPanel(e) {
     if (!this.uiBlocker) return false;
-    const x = e.clientX;
-    const y = e.clientY;
+
+    let x;
+    let y;
+
+    if (this.utils.isTouchBasedDevice()) {
+      const touch = e.touches?.[0] || e.changedTouches?.[0];
+      if (!touch) return false;
+      x = touch.clientX;
+      y = touch.clientY;
+    } 
+    else {
+      x = e.clientX;
+      y = e.clientY;
+    }
+
     if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
 
     const element = document.elementFromPoint(x, y);
@@ -88,7 +98,7 @@ export default class RaycasterControls {
     if (e.touches.length > 0) {
       this.mouse.x = e.touches[0].clientX / window.innerWidth * 2 - 1;
       this.mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-      this.isOverUI = this.#isOverUIPanel(e.touches[0]);
+      this.isOverUI = this.#isOverUIPanel(e);
     }
   }
 
@@ -96,7 +106,7 @@ export default class RaycasterControls {
     if (e.touches.length > 0) {
       this.mouse.x = e.touches[0].clientX / window.innerWidth * 2 - 1;
       this.mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-      this.isOverUI = this.#isOverUIPanel(e.touches[0]);
+      this.isOverUI = this.#isOverUIPanel(e);
     }
   }
 

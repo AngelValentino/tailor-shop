@@ -39,18 +39,6 @@ export default class GarmentGallerySlider {
     return this.images.medium.length;
   }
 
-  //? keeping it a while just in case, not truly needed anymore
-  preloadImages() {
-    const allImages = [...this.images.medium, ...this.images.small];
-    const promises = allImages.map(({ url }) => new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => resolve();
-      img.onerror = () => resolve(); // resolve even if image fails to load
-    }));
-    return Promise.all(promises);
-  }
-
   addSwipeEvents() {
     const {
       handleTouchStart, 

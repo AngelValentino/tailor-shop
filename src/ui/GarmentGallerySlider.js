@@ -19,7 +19,8 @@ export default class GarmentGallerySlider {
     };
 
     this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this, false);
-    this.eventHandler.handleSliderClick = this.handleSliderClick.bind(this);
+    this.eventHandler.handleNavClick = this.handleNavClick.bind(this);
+    this.eventHandler.handleNavKeyboardA11y = this.handleNavKeyboardA11y.bind(this);
     this.refImg = this.root.querySelector('.garment-gallery__photo');
   
     setTimeout(() => {
@@ -28,7 +29,8 @@ export default class GarmentGallerySlider {
     this.updateSliderNav();
 
     window.addEventListener('resize', this.eventHandler.updateNavHeight);
-    this.lms.imageSliderNav.addEventListener('click', this.eventHandler.handleSliderClick);
+    this.lms.imageSliderNav.addEventListener('click', this.eventHandler.handleNavClick);
+    this.lms.imageSliderNav.addEventListener('keydown', this.eventHandler.handleNavKeyboardA11y);
 
     this.addSwipeEvents();
   }
@@ -66,7 +68,18 @@ export default class GarmentGallerySlider {
     this.lms.imageSlider.addEventListener('touchcancel', this.eventHandler.touchEnd);
   }
 
-  handleSliderClick(e) {
+  handleNavKeyboardA11y(e) {
+    const thumb = e.target.closest('.garment-gallery__thumb');
+    if (!thumb) return;
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); // prevent Space from scrolling
+      const index = Number(thumb.dataset.index);
+      this.setSlide(index);
+    }
+  }
+
+  handleNavClick(e) {
     const thumbnail = e.target.closest('.garment-gallery__thumb');
     if (thumbnail) {
       const index = Number(thumbnail.dataset.index);
@@ -153,7 +166,8 @@ export default class GarmentGallerySlider {
 
   dispose() {
     window.removeEventListener('resize', this.eventHandler.updateNavHeight);
-    this.lms.imageSliderNav.removeEventListener('click', this.eventHandler.handleSliderClick);
+    this.lms.imageSliderNav.removeEventListener('click', this.eventHandler.handleNavClick);
+    this.lms.imageSliderNav.removeEventListener('keydown', this.eventHandler.handleNavKeyboardA11y);
 
     this.lms.imageSlider.removeEventListener('touchstart', this.eventHandler.touchStart);
     this.lms.imageSlider.removeEventListener('touchmove', this.eventHandler.touchMove);

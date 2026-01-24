@@ -181,7 +181,7 @@ export default class GarmentManager {
     this.focusOnActiveGarment(this.cloneManager.getActiveGarmentClone(), true, 17);
 
     // Close garment info panel and add rotation controls
-    this.garmentInfoPanel.close({ resetCamera: false, deleteActiveGarmentRef: false });
+    this.garmentInfoPanel.close({ resetPanel: false, deleteActiveGarmentRef: false });
     this.garmentRotationHandler = new GarmentRotationHandler(this.cloneManager.getActiveGarmentClone(), this.utils);
   }
 

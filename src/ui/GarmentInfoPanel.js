@@ -29,7 +29,7 @@ export default class GarmentInfoPanel {
     this.garmentKey = garmentKey;
   }
 
-  open(garmentData, garmentKey, focusOnActiveGarment = true) {
+  open(garmentData, garmentKey, openFromInitialScene = true) {
     this.eventHandler.closePanel = this.close.bind(this);
     this.eventHandler.enterCloneView = this.garmentManager.enterCloneView.bind(this.garmentManager);
 
@@ -37,41 +37,41 @@ export default class GarmentInfoPanel {
       this.garmentManager.hideFocusableBtns();
       this.lms.panel.classList.add('active');
 
-      // If it's the first panel, we add and store focus.
+      // If opened from the initial scene, we add and store focus.
       // If opened from the interactive view, we focus but don't restore it
       // to avoid overwriting the last stored key and element.
       this.modalHandler.addFocus({
         modalKey: 'garmentInfoPanel', 
         firstFocusableLm: this.lms.closeBtn,
-        auto: focusOnActiveGarment
+        auto: openFromInitialScene
       });
 
       this.updateGarment(garmentData, { 
         newTitleSliderInstance: true, 
         garmentKey: garmentKey, 
         saveHistory: true, 
-        focusOnActiveGarment: focusOnActiveGarment 
+        focusOnActiveGarment: openFromInitialScene 
       });
 
-      this.lms.viewMoreBtn.addEventListener('click', this.eventHandler.enterCloneView)
+      this.lms.viewMoreBtn.addEventListener('click', this.eventHandler.enterCloneView);
       this.modalHandler.addA11yEvents({
         modalKey: 'garmentInfoPanel',
         modalLm: this.lms.panel,
         closeLms: [ this.lms.closeBtn ],
         closeHandler: this.close.bind(this)
-      })
+      });
     } 
     else {
-      console.warn('ui already opened ignore')
+      console.warn('ui already opened ignore');
     }
   }
 
-  close({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
+  close({ resetPanel = true, deleteActiveGarmentRef = true } = {}) {
     this.dispose({ hidePanel: true });
-    this.garmentManager.resetActiveGarment({ resetCamera, deleteActiveGarmentRef });
+    this.garmentManager.resetActiveGarment({ resetCamera: resetPanel, deleteActiveGarmentRef });
     // Restores focus and buttons only when closing the first panel, not when going to the interactive view.
-    if (resetCamera) this.garmentManager.showFocusableBtns();
-    if (resetCamera) this.modalHandler.restoreFocus({ modalKey: 'garmentInfoPanel' });
+    if (resetPanel) this.garmentManager.showFocusableBtns();
+    if (resetPanel) this.modalHandler.restoreFocus({ modalKey: 'garmentInfoPanel' });
   }
 
   updateGarmentInfo({ title, description }) {

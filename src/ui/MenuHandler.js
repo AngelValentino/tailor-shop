@@ -1,5 +1,5 @@
 export default class MenuHandler {
-  constructor(modalHandler,) {
+  constructor(modalHandler) {
     this.modalHandler = modalHandler;
     this.atelierExperienceInstance = null;
     this.menus = {};
@@ -65,15 +65,15 @@ export default class MenuHandler {
 
     menu.timIds.hideMenu = setTimeout(() => {
       menuLm.style.display = 'none';
-      this.modalHandler.returnModalFocus({ modalKey: menuKey });
+      this.modalHandler.restoreFocus({ modalKey: menuKey });
     }, 300);
 
     // remove events
-    this.modalHandler.removeModalEvents({
-      eventHandlerKey: menuKey,
+    this.modalHandler.removeA11yEvents({
+      modalKey: menuKey,
       modalLm: menuLm,
       closeLms: [ closeBtn ]
-    })
+    });
   }
 
   open(menuKey) {
@@ -87,7 +87,7 @@ export default class MenuHandler {
     // show menu
     toggleBtn.style.display = 'none';
     menuLm.style.display = 'block';
-    this.modalHandler.addModalFocus({
+    this.modalHandler.addFocus({
       modalKey: menuKey, 
       firstFocusableLm: closeBtn
     });
@@ -97,8 +97,8 @@ export default class MenuHandler {
     });
 
     // add events
-    this.modalHandler.addModalEvents({
-      eventHandlerKey: menuKey,
+    this.modalHandler.addA11yEvents({
+      modalKey: menuKey,
       modalLm: menuLm,
       closeLms: [ closeBtn ],
       closeHandler: this.close.bind(this, menuKey)

@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import ModalHandler from 'vanilla-aria-modals';
+
 import Camera from './Camera.js';
 import Renderer from './Renderer.js';
 import Lighting from './Lighting.js';
@@ -9,7 +11,6 @@ import GarmentManager from '../experience/GarmentManager.js';
 import Utils from '../utils/Utils.js';
 import CloneManager from '../experience/CloneManager.js';
 import RoomGrid from '../experience/RoomGrid.js';
-import ModalHandler from '../utils/ModalHandler.js';
 import AppInfoMenu from '../ui/AppInfoMenu.js';
 import GarmentActionHub from '../ui/GarmentActionHub.js';
 import MenuHandler from '../ui/MenuHandler.js';
@@ -29,6 +30,7 @@ export default class App {
     const roomGrid = new RoomGrid(this.scene);
 
     const modalHandler = new ModalHandler();
+    modalHandler.setDebug(true);
     const menuHandler = new MenuHandler(modalHandler);
     new AppInfoMenu(menuHandler);
 

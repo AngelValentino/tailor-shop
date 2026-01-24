@@ -34,15 +34,15 @@ export default class GarmentActionHub {
     this.lms.returnBtn.classList.add('active');
     this.lms.helper.classList.add('active');
     this.updateHelperIcon();
-    this.modalHandler.addModalFocus({
+    this.modalHandler.addFocus({
       modalKey: 'cloneView', 
       firstFocusableLm: this.lms.returnBtn
     });
     
     this.garmentInfoMenu = new GarmentInfoMenu(this.menuHandler, longDescription);
 
-    this.modalHandler.addModalEvents({
-      eventHandlerKey: 'cloneView',
+    this.modalHandler.addA11yEvents({
+      modalKey: 'cloneView',
       closeLms: [ this.lms.returnBtn ],
       closeHandler: this.garmentManager.restoreOppositeSide.bind(this.garmentManager)
     });
@@ -56,10 +56,10 @@ export default class GarmentActionHub {
     this.garmentInfoMenu.dispose();
     this.garmentInfoMenu = null;
 
-    this.modalHandler.returnModalFocus({ modalKey: 'cloneView' });
+    this.modalHandler.restoreFocus({ modalKey: 'cloneView' });
 
-    this.modalHandler.removeModalEvents({
-      eventHandlerKey: 'cloneView',
+    this.modalHandler.removeA11yEvents({
+      modalKey: 'cloneView',
       closeLms: [ this.lms.returnBtn ]
     });
   }

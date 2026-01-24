@@ -36,10 +36,14 @@ export default class GarmentInfoPanel {
     if (!this.lms.panel.classList.contains('active')) {
       this.garmentManager.hideFocusableBtns();
       this.lms.panel.classList.add('active');
-      this.modalHandler.addModalFocus({
+
+      // If it's the first panel, we add and store focus.
+      // If opened from the interactive view, we focus but don't restore it
+      // to avoid overwriting the last stored key and element.
+      this.modalHandler.addFocus({
         modalKey: 'garmentInfoPanel', 
         firstFocusableLm: this.lms.closeBtn,
-        storeLastFocused: focusOnActiveGarment
+        auto: focusOnActiveGarment
       });
 
       this.updateGarment(garmentData, { 
@@ -50,8 +54,8 @@ export default class GarmentInfoPanel {
       });
 
       this.lms.viewMoreBtn.addEventListener('click', this.eventHandler.enterCloneView)
-      this.modalHandler.addModalEvents({
-        eventHandlerKey: 'garmentInfoPanel',
+      this.modalHandler.addA11yEvents({
+        modalKey: 'garmentInfoPanel',
         modalLm: this.lms.panel,
         closeLms: [ this.lms.closeBtn ],
         closeHandler: this.close.bind(this)
@@ -65,8 +69,9 @@ export default class GarmentInfoPanel {
   close({ resetCamera = true, deleteActiveGarmentRef = true } = {}) {
     this.dispose({ hidePanel: true });
     this.garmentManager.resetActiveGarment({ resetCamera, deleteActiveGarmentRef });
+    // Restores focus and buttons only when closing the first panel, not when going to the interactive view.
     if (resetCamera) this.garmentManager.showFocusableBtns();
-    if (resetCamera) this.modalHandler.returnModalFocus({ modalKey: 'garmentInfoPanel' });
+    if (resetCamera) this.modalHandler.restoreFocus({ modalKey: 'garmentInfoPanel' });
   }
 
   updateGarmentInfo({ title, description }) {
@@ -117,8 +122,8 @@ export default class GarmentInfoPanel {
       hidePanel && this.lms.panel.classList.remove('active');
 
       this.lms.viewMoreBtn.removeEventListener('click', this.eventHandler.enterCloneView);
-      this.modalHandler.removeModalEvents({
-        eventHandlerKey: 'garmentInfoPanel',
+      this.modalHandler.removeA11yEvents({
+        modalKey: 'garmentInfoPanel',
         modalLm: this.lms.panel,
         closeLms: [ this.lms.closeBtn ]
       });

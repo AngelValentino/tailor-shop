@@ -25,14 +25,16 @@ export default class GarmentGallerySlider {
   
     setTimeout(() => {
       this.updateNavHeight(true);
-    }, 20)
+    }, 20);
     this.updateSliderNav();
 
     window.addEventListener('resize', this.eventHandler.updateNavHeight);
     this.lms.imageSliderNav.addEventListener('click', this.eventHandler.handleNavClick);
     this.lms.imageSliderNav.addEventListener('keydown', this.eventHandler.handleNavKeyboardA11y);
 
-    this.addSwipeEvents();
+    if (this.utils.isTouchBasedDevice()) {
+      this.addSwipeEvents();
+    }
   }
 
   getTotalImages() {

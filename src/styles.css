@@ -582,13 +582,8 @@ main {
   gap: 8px;
   overflow-y: auto;
   scrollbar-width: none;
-  transition: max-height var(--base-transition-duration);
   height: 100%;
   user-select: none;
-}
-
-.garment-gallery__nav.remove-transition {
-  transition: none;
 }
 
 .garment-gallery__thumb-container {

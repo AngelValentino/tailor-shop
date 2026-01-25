@@ -18,13 +18,12 @@ export default class GarmentGallerySlider {
       imageSlider: this.root
     };
 
-    this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this, false);
+    this.eventHandler.updateNavHeight = this.updateNavHeight.bind(this);
     this.eventHandler.handleNavClick = this.handleNavClick.bind(this);
     this.eventHandler.handleNavKeyboardA11y = this.handleNavKeyboardA11y.bind(this);
-    this.refImg = this.root.querySelector('.garment-gallery__photo');
   
     setTimeout(() => {
-      this.updateNavHeight(true);
+      this.updateNavHeight();
     }, 20);
     this.updateSliderNav();
 
@@ -126,32 +125,8 @@ export default class GarmentGallerySlider {
     });
   }
 
-  updateNavHeight(ignoreTransition = false) {
-    const nav = this.root.querySelector('.garment-gallery__nav');
-
-    if (!this.refImg || !nav) return;
-
-    const setHeight = () => {
-      const imgHeight = this.refImg.getBoundingClientRect().height;
-      nav.style.maxHeight = imgHeight + 'px';
-    };
-
-    const removeTransition = () => {
-      nav.classList.add('remove-transition');
-    }
-
-    setHeight();
-
-    if (ignoreTransition) {
-      // If image is loaded, just set height; otherwise, wait for load
-      if (this.refImg.complete) {
-        removeTransition();
-      }
-      // Save this listener reference so we can remove it later
-      else {
-        this.refImg.addEventListener('load', removeTransition, { once: true });
-      }
-    }
+  updateNavHeight() {
+    this.lms.imageSliderNav.style.maxHeight = this.lms.imageSliderContainer.getBoundingClientRect().height + 'px';
   }
 
   dispose() {

@@ -73,7 +73,37 @@ main {
   --contrast-text-color: #fff;
 }
 
+.skip-link {
+  position: absolute;
+  translate: 0 -9999px;
+  background-color: rgba(0, 0, 0, 0.72);
+  padding: 5px 10px;
+  border-radius: 3px;
+  z-index: 10;
+}
+
+.skip-link:focus {
+  translate: 0;
+}
+
+.aria-btn {
+  position: absolute;
+  left: -9999px; /* move offscreen */
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.aria-btn.hidden {
+  display: none;
+}
+
 .portrait-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
   justify-content: center;
   align-items: center;
   height: 100vh;
@@ -81,7 +111,7 @@ main {
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 20px;
-  z-index: 10000;
+  z-index: 100;
   text-align: center;
   font-size: 1.2rem;
 }
@@ -322,7 +352,6 @@ main {
 .info-menu,
 .garment-menu {
   background-color: rgba(255, 255, 255, 0.97);
-  /* background-color: rgba(255, 255, 255, 0.2); */
   position: fixed;
   inset: 0;
   transform: translateX(-100vw);
@@ -626,36 +655,6 @@ main {
 
 /* End of garment gallery */
 
-.skip-link {
-  position: absolute;
-  translate: 0 -9999px;
-  background-color: rgba(0, 0, 0, 0.72);
-  padding: 5px 10px;
-  border-radius: 3px;
-  z-index: 1000;
-}
-
-.skip-link:focus {
-  translate: 0;
-}
-
-.aria-btn {
-  position: absolute;
-  left: -9999px; /* move offscreen */
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-.aria-btn.active {
-  background-color: #111;
-}
-
-.aria-btn.hidden {
-  display: none;
-}
-
 /* Loaders */
 
 .blur-img-loader {
@@ -823,6 +822,12 @@ main {
     grid-template-columns: 1.25fr 1fr;
     gap: 30px;
     max-width: 800px;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  html {
+    font-size: 15px;
   }
 }
 

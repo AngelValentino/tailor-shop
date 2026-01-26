@@ -16,13 +16,12 @@ export default class CloneManager {
   }
   
   cloneGarment(mesh) {
+    // Clone already exists 
     if (this.activeGarmentClone && this.activeGarmentClone.userData.original === mesh) {
-      console.log('Clone already exists!');
       return;
     }
 
     this.activeGarmentClone = mesh.clone();
-    console.warn('CURRENT ACTIVE CLONE ->>>',this.activeGarmentClone);
 
     // clone geometry/material references so we don't mutate originals
     if (mesh.geometry) this.activeGarmentClone.geometry = mesh.geometry.clone();
@@ -40,8 +39,8 @@ export default class CloneManager {
   }
 
   hideSide(side) {
+    // Side is already hidden
     if (this.hiddenSide === side) {
-      console.warn(`Side '${side}' is already hidden — skipping hideSide.`);
       return;
     }
 
@@ -58,12 +57,11 @@ export default class CloneManager {
     this.garmentManager.setAllMeshes(filterCurrentSideMeshes);
 
     this.hiddenSide = side;
-    console.log(`Hid ${this.hiddenGarments.length} meshes on side '${side}'`);
   }
 
   showHiddenGarments() {
+    // Nothing is hidden
     if (!this.hiddenSide || this.hiddenGarments.length === 0) {
-      console.warn('showHiddenGarments() called but nothing is hidden — skipping.');
       return;
     }
     setTimeout(() => {
@@ -72,9 +70,6 @@ export default class CloneManager {
         this.garmentManager.setAllMeshes(mesh);
       });
 
-      console.log(this.hiddenGarments)
-
-      console.log(`Restored ${this.hiddenGarments.length} meshes from side '${this.hiddenSide}'`);
       this.hiddenGarments.length = 0;
       this.hiddenSide = null;
     }, 250)
@@ -83,7 +78,6 @@ export default class CloneManager {
 
   deleteGarmentClone() {
     if (this.activeGarmentClone) {
-      console.warn('deleted CLONE!!!!!!', this.activeGarmentClone)
       this.utils.removeMesh(this.activeGarmentClone, this.scene);
       this.activeGarmentClone = null;
     }
@@ -96,13 +90,14 @@ export default class CloneManager {
     const opposite = side === 'left' ? 'right' : 'left';
     const targetCol = side === 'left' ? this.roomGrid.roomBounds.cols - 2 : 1;
     const targetRow = side === 'left' ? 1 : 1;
-    const gridPos = this.roomGrid.getGridPosition(targetCol, targetRow)
+    const gridPos = this.roomGrid.getGridPosition(targetCol, targetRow);
     
     const cloned = this.cloneGarment(activeGarment);
     if (!cloned) return;
-    console.log('hide', opposite);
+
     this.hideSide(opposite);
-    console.log('position new clone')
+
+    // Position new clone
     cloned.position.x = gridPos.x;
     cloned.position.z = gridPos.z;
     cloned.rotation.set(0, 0, 0); 

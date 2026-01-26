@@ -41,9 +41,7 @@ export default class AssetLoader {
         return;
       }
 
-      this.progress += 0.05
-      console.warn('PLACEHOLDER LOADING! PROGRESS => ', this.progress)
-
+      this.progress += 0.05;
       this.loadingBarLm.style.transform = `scaleX(${this.progress})`;
 
     }, this.generateRandomNumberBetween(50, 500));
@@ -74,7 +72,6 @@ export default class AssetLoader {
     }
 
     const progressRatio = itemsLoaded / itemsTotal;
-    console.log(progressRatio);
     this.loadingBarLm.style.transform = `scaleX(${progressRatio})`;
   }
 

@@ -46,7 +46,6 @@ export default class Camera {
         lookAt: this.lookAtTarget.clone(),
         fov: this.instance.fov
       });
-      console.warn('pushing default camera position to history')
     // Else we can safely push the current camera position as no pointer controls are active
     } else {
       this.history.push({
@@ -60,11 +59,9 @@ export default class Camera {
   updatePointerState() {
     if (this.history.length > 0) {
       if (this.pointerControlsStatus) this.pointerControls.disable();
-      console.warn('disable pointer')
     } 
     else {
       if (this.pointerControlsStatus) this.pointerControls.enable();
-      console.warn('enable pointer')
     }
   }
 
@@ -75,7 +72,6 @@ export default class Camera {
     duration = this.animationDefaultTime,
     fov = null
   }) {
-    console.warn('CAMERA HOSTORY BEFORE MOVE TO: ', this.history)
     document.body.style.pointerEvents = 'none';
     this.raycasterControls.disable();
 
@@ -85,7 +81,6 @@ export default class Camera {
     };
 
     if (this.pointerControlsStatus) this.pointerControls.disable();
-    console.warn('CAMERA HISTORY AFTER MOVE TO: ', this.history)
 
     // Animate camera position
     gsap.to(this.instance.position, {
@@ -132,7 +127,6 @@ export default class Camera {
 
   moveBack(duration = this.animationDefaultTime) {
     if (this.history.length === 0) {
-      console.warn('no history');
       return;
     }
 

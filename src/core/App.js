@@ -55,7 +55,6 @@ export default class App {
     // Wait until the model is fully loaded
     try {
       await this.assetLoader.loadTailorShop();
-      console.log('Tailor shop ready!');
     } 
     catch (err) {
       console.error('Error loading assets:', err);

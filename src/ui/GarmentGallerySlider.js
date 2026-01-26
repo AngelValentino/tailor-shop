@@ -95,7 +95,6 @@ export default class GarmentGallerySlider {
 
   setSlide(i) {
     if (this.imageIndex === i) {
-      console.warn('same index, ignoring set image');
       return;
     }
     this.imageIndex = i;

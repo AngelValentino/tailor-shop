@@ -18,12 +18,10 @@ export default class AtelierExperience {
   }
 
   pause() {
-    console.error('PAUSED ATELIER EXPERIENCE')
     this.enabled = false;
   }
 
   resume() {
-    console.error('RESUMED ATELIER EXPERIENCE')
     this.enabled = true;
   }
 

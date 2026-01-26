@@ -78,11 +78,9 @@ export default class GarmentSlider {
     if (!btn) return; // clicked somewhere else
 
     if (btn.classList.contains('garment-slider__prev-btn')) {
-      console.log('left');
       this.slide('left');
     } 
     else if (btn.classList.contains('garment-slider__next-btn')) {
-      console.log('right');
       this.slide('right');
     }
   } 
@@ -113,7 +111,6 @@ export default class GarmentSlider {
   }
 
   updateTitle() {
-    console.log('garment NAME', this.garmentKey)
     this.lms.garmentTitle.innerText = this.kebabToSpaces(this.garmentKey);
   }
 

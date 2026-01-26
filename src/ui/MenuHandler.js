@@ -22,8 +22,6 @@ export default class MenuHandler {
 
     const menu = this.menus[menuKey];
 
-    console.log('UPDATE MENU HANDLER => ', menuKey, this.menus)
-
     menu.lms = {
       toggleBtn: document.getElementById(toggleBtnId),
       menuLm: document.getElementById(menuLmId),
@@ -49,11 +47,9 @@ export default class MenuHandler {
     menu.lms.toggleBtn.removeEventListener('click', menu.open);
     
     delete this.menus[menuKey];
-    console.log('DISPOSE MENU HANDLER =>', menuKey, this.menus)
   }
 
   close(menuKey) {
-    console.log('CLOSE MENU => ', menuKey)
     const menu = this.menus[menuKey];
     this.atelierExperienceInstance.resume();
 
@@ -77,7 +73,6 @@ export default class MenuHandler {
   }
 
   open(menuKey) {
-    console.log('OPEN MENU => ', menuKey)
     const menu = this.menus[menuKey];
     this.atelierExperienceInstance.pause();
     clearTimeout(menu.timIds.hideMenu);

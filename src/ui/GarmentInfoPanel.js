@@ -60,9 +60,6 @@ export default class GarmentInfoPanel {
         closeLms: [ this.lms.closeBtn ],
         closeHandler: this.close.bind(this)
       });
-    } 
-    else {
-      console.warn('ui already opened ignore');
     }
   }
 
@@ -80,11 +77,7 @@ export default class GarmentInfoPanel {
   }
 
   updateGarment(garmentData, { newTitleSliderInstance, garmentKey, updateSliderPos, saveHistory = false, focusOnActiveGarment = true }) {
-    console.warn('GARMENT KEY THIS => ', this.garmentKey);
-    console.warn('NEW GARMENT KEY => ', garmentKey)
-
     if (garmentKey === this.garmentKey) {
-      console.warn('same data return')
       return;
     }
     
@@ -127,9 +120,6 @@ export default class GarmentInfoPanel {
         modalLm: this.lms.panel,
         closeLms: [ this.lms.closeBtn ]
       });
-    } 
-    else {
-      console.warn('ui alraedy closed ignore')
     }
   }
 }

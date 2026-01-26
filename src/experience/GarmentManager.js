@@ -171,8 +171,6 @@ export default class GarmentManager {
   }
 
   enterCloneView() {
-    console.warn('enter clone view')
-
     // Display action hub
     this.garmentActionHub.display(garmentData[this.currentActiveGarment.userData.garmentKey].longDescription);
 
@@ -186,12 +184,10 @@ export default class GarmentManager {
   }
 
   onMouseEnter(mesh) {
-    console.log(`Mouse entered: ${mesh.userData.garmentKey}`);
     mesh.userData.indicator.scale.set(1.3, 1.3, 1.3);
   }
 
   onMouseLeave(mesh) {
-    console.log(`Mouse left: ${mesh.userData.garmentKey}`);
     mesh.userData.indicator.scale.set(1, 1, 1);
   }
 
@@ -209,8 +205,6 @@ export default class GarmentManager {
       saveHistory: saveHistory,
       fov: fov
     });
-
-    console.warn('HISTORY', saveHistory)
   }
 
   updateActive(name, saveHistory, focusOnActiveGarment) {
@@ -219,7 +213,6 @@ export default class GarmentManager {
     this.currentActiveGarment = newActiveGarment;
     this.applyActiveMeshStyle(this.currentActiveGarment);
 
-    console.warn('ACTIVE:', this.currentActiveGarment)
     if (focusOnActiveGarment) {
       this.focusOnActiveGarment(newActiveGarment, saveHistory);
     }
@@ -241,10 +234,7 @@ export default class GarmentManager {
   }
 
   onClick(mesh) {
-    console.warn(`Clicked ${mesh.userData.side}!`, mesh.userData.garmentKey);
-
     if (this.currentActiveGarment === mesh) {
-      console.warn('same mesh!')
       return;
     }
 
@@ -258,13 +248,11 @@ export default class GarmentManager {
 
     // If panel is open just update the UI
     if (this.garmentInfoPanel) {
-      console.warn('update garment info panel instance')
       // Update garment information and set up a new active garment
       this.garmentInfoPanel.updateGarment(garmentData[this.currentActiveGarment.userData.garmentKey], { updateSliderPos: true, garmentKey: this.currentActiveGarment.userData.garmentKey });
     }
     // Create a new UI instance
     else {
-      console.warn('new garment info panel instance')
       // Update garment information and set up a new active garment
       this.garmentInfoPanel = new GarmentInfoPanel(garmentData, this.currentActiveGarment.userData.garmentKey, this, this.modalHandler);
     }

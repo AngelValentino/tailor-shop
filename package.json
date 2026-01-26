@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "gsap": "^3.13.0",
-    "lil-gui": "^0.20.0",
     "three": "^0.180.0",
     "vanilla-aria-modals": "^1.0.2"
   },

@@ -7,8 +7,9 @@ export default class AssetLoader {
     this.scene = scene;
     this.camera = camera;
 
-    this.loadingBarLm = document.querySelector('.loading-bar')
+    this.loadingBarLm = document.querySelector('.loading-bar');
     this.loadingOverlayLm = document.getElementById('loading-overlay');
+    this.domLoaderLm = document.getElementById('dom-loader');
 
     this.startPlaceholderAppLoader();
 
@@ -33,6 +34,8 @@ export default class AssetLoader {
   }
 
   startPlaceholderAppLoader() {
+    this.domLoaderLm.classList.add('hidden');
+
     this.placeHolderInterval = setInterval(() => {
       if (this.progress >= 0.4) {
         return;
@@ -47,16 +50,21 @@ export default class AssetLoader {
   }
 
   onLoad() {
-    this.loadingOverlayLm.classList.add('hidden');
-
+    // wait 500ms from the last progress call to make
+    // sure the loading bar has ended
     setTimeout(() => {
       this.loadingBarLm.style.transform = '';
       this.loadingBarLm.classList.add('ended');
+
+      // small timeout to start fading the background
+      setTimeout(() => {
+        this.loadingOverlayLm.classList.add('hidden');
+          // after the background is fully faded, hide it from the dom 
+          setTimeout(() => {
+            this.loadingOverlayLm.style.display = 'none';
+          }, 3000);
+      }, 250);
     }, 500);
-    
-    setTimeout(() => {
-      this.loadingOverlayLm.style.display = 'none';
-    }, 3000);
   }
 
   onProgress(itemUrl, itemsLoaded, itemsTotal) {

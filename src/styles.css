@@ -62,7 +62,6 @@ main {
   min-width: 320px;
   position: fixed; 
   inset: 0; 
-  /* border: 2px solid red; */ 
 }
 
 :root {
@@ -728,16 +727,42 @@ main {
   transition: transform 1.5s ease-in-out;
 }
 
-.loading-text {
+.dom-loader {
   position: absolute;
   right: 20px;
   bottom: 20px;
   color: white;
-  font-weight: 700;
-  animation: textPulse 2s infinite ease-in-out alternate;
+  animation: fade 2s infinite ease-in-out alternate;
+  display: flex;
+  justify-content: center;
 }
 
-@keyframes textPulse {
+.dom-loader::after {
+  content: "";
+  border-radius: 50%;
+  transform: rotate(0.16turn);
+  animation: spinLoader 1s ease infinite;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0.4rem solid transparent;
+  border-top-color: inherit;
+}
+
+.dom-loader.hidden {
+  display: none;
+}
+
+@keyframes spinLoader {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+
+@keyframes fade {
   from {
     color: rgba(0, 0, 0, 0);
   }

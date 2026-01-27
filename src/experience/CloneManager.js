@@ -59,7 +59,7 @@ export default class CloneManager {
     this.hiddenSide = side;
   }
 
-  showHiddenGarments() {
+  showHiddenGarments(onRestored) {
     // Nothing is hidden
     if (!this.hiddenSide || this.hiddenGarments.length === 0) {
       return;
@@ -72,8 +72,11 @@ export default class CloneManager {
 
       this.hiddenGarments.length = 0;
       this.hiddenSide = null;
-    }, 250)
 
+      if (onRestored) {
+        onRestored();
+      }
+    }, 250);
   }
 
   deleteGarmentClone() {

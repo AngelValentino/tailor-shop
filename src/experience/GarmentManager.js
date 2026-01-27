@@ -4,11 +4,13 @@ import GarmentInfoPanel from "../ui/GarmentInfoPanel.js";
 import GarmentRotationHandler from './GarmentRotationHandler.js';
 
 export default class GarmentManager {
-  constructor(scene, utils, camera, modalHandler) {
+  constructor(scene, camera, renderer, utils, modalHandler, ) {
     this.scene = scene;
-
-    this.utils = utils;
     this.camera = camera;
+    this.renderer = renderer;
+    
+    this.utils = utils;
+    
     this.modalHandler = modalHandler;
     this.cloneManager = null;
     this.garmentActionHub = null;
@@ -163,7 +165,7 @@ export default class GarmentManager {
 
     // Delete the current clone and show hidden
     this.cloneManager.deleteGarmentClone();
-    this.cloneManager.showHiddenGarments();
+    this.cloneManager.showHiddenGarments(this.renderer.freezeShadows.bind(this.renderer));
    
     // Show garment info panel and return camera to previous position
     this.garmentInfoPanel = new GarmentInfoPanel(garmentData, this.currentActiveGarment.userData.garmentKey, this, this.modalHandler, false);
@@ -171,6 +173,9 @@ export default class GarmentManager {
   }
 
   enterCloneView() {
+    // Unfroze shadows
+    this.renderer.unfreezeShadows();
+
     // Display action hub
     this.garmentActionHub.display(garmentData[this.currentActiveGarment.userData.garmentKey].longDescription);
 

@@ -35,7 +35,7 @@ export default class App {
     new AppInfoMenu(menuHandler);
 
     // Garment logic handler
-    const garmentManager = new GarmentManager(this.scene, utils, this.camera, modalHandler);
+    const garmentManager = new GarmentManager(this.scene, this.camera, this.renderer, utils, modalHandler);
     const garmentActionHub = new GarmentActionHub(garmentManager, modalHandler, utils, menuHandler);
     garmentManager.setGarmentActionHubInstance(garmentActionHub);
     const cloneManager = new CloneManager(this.scene, this.camera, utils, roomGrid, garmentManager);
@@ -58,10 +58,12 @@ export default class App {
     } 
     catch (err) {
       console.error('Error loading assets:', err);
+      return;
     }
 
     // Continue app logic
     this.experience.init();
+    this.renderer.freezeShadows();
     this.#loop();
   }
 

@@ -3,7 +3,8 @@ import * as THREE from 'three';
 export default class Renderer {
   constructor(canvas, scene, camera) {
     this.instance = new THREE.WebGLRenderer({
-      canvas: canvas
+      canvas: canvas,
+      antialias: true
     });
 
     this.instance.setSize(window.innerWidth, window.innerHeight);

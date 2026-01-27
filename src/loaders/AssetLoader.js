@@ -122,7 +122,6 @@ export default class AssetLoader {
               if (obj.name === 'room__main__atelier') {
                   obj.traverse((mesh) => {
                   if (mesh.isMesh) {
-                    //mesh.castShadow = true;
                     mesh.receiveShadow = true;
                     mesh.material.side = THREE.FrontSide;
                   }
@@ -130,31 +129,40 @@ export default class AssetLoader {
               }
 
             if (obj.name === 'light__window__area-light') {
-              const dirLight = new THREE.DirectionalLight(0xffffff, 1); // color, intensity
+              const dirLight = new THREE.DirectionalLight(0xffffff, 1);
               dirLight.position.copy(obj.position);
+              
               dirLight.target.position.set(0, 0, 0);
               dirLight.castShadow = true;
+
+              const shadowCam = dirLight.shadow.camera;
+              shadowCam.left = -3;
+              shadowCam.right = 3;
+              shadowCam.top = 3;
+              shadowCam.bottom = -2;
+              shadowCam.near = 0.5;
+              shadowCam.far = 8;
+
+              dirLight.shadow.mapSize.width = 1024;
+              dirLight.shadow.mapSize.height = 1024;
 
               this.scene.add(dirLight);
               this.scene.add(dirLight.target);
             }
 
             if (obj.isLight) {
-              const blenderToThreeScale = 1000; // adjust as needed
+              const blenderToThreeScale = 1000;
               const lightIntensity = obj.intensity / blenderToThreeScale;
               
               const regex = /^light__wall/;
 
-              obj.shadow.mapSize.width = 1024;
-              obj.shadow.mapSize.height = 1024;
-              // obj.shadow.bias = -0.001; // reduce shadow acne
-              // obj.shadow.normalBias = 0.05; // helps on glancing angles
-              obj.shadow.camera.near = 0.5;
-              obj.shadow.camera.far = 20;
-
               if (obj.name === 'light__ceiling__point-light') {
                 obj.intensity = lightIntensity * 1.8;
                 obj.castShadow = true;
+                obj.shadow.mapSize.width = 1024;
+                obj.shadow.mapSize.height = 1024;
+                obj.shadow.camera.near = 0.5;
+                obj.shadow.camera.far = 10;
               }
 
               if (regex.test(obj.name)) {
@@ -162,8 +170,6 @@ export default class AssetLoader {
               }
             }
           });
-
-     
 
           this.scene.add(gltf.scene);
           this.assets.tailorShop = gltf.scene;

@@ -72,7 +72,7 @@ git clone https://github.com/angelvalentino/thread-and-mesh.git
 
 ### Development and Production
 
-- For development with vite
+- For development with vite:
   
   ```bash
   npm run dev
@@ -106,7 +106,7 @@ The main alternatives would be either removing the 3D aspect entirely or creatin
 
 The same challenge applies to mobile compatibility. While the experience is technically accessible on mobile, it is designed for desktop; users need to tilt their device to view each scene optimally because the content is ultimately a wide panoramic view. A separate mobile experience, such as a simple slider of garments, would again compromise the goal of a unified, interactive atelier that communicates the concept at a glance.  
 
-To optimize mobile performance, certain elements such as the wall lamp lighting were removed to maintain a smooth framerate of 30+ FPS on most devices. On smaller screens, these changes are barely noticeable, and the experience remains visually consistent compared with lower framerate alternatives.  
+To optimize mobile performance, certain elements such as the wall lamp lighting were removed to maintain a smooth framerate of 30+ FPS on most devices. On smaller screens, these changes are barely noticeable, and the experience remains visually consistent. 
 
 <br>
 

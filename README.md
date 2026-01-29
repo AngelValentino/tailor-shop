@@ -12,7 +12,7 @@ Accessibility is treated as a first class concern. Despite being a 3D experience
 
 A key part of this is my custom [vanilla-aria-modal npm package](https://www.npmjs.com/package/vanilla-aria-modals), which handles modal stacking, focus trapping, escape behavior and keyboard navigation throughout the application. My idea is that no matter how experimental the medium may be, the experience should remain the same for everyone.
 
-## 🪡 Concept and Intent
+### 🪡 Concept and Intent
 
 thread & mesh sits at the intersection of fashion, spatial design, and software engineering, communicating through experience rather than text. By moving through the site and interacting with garments, visitors form an understanding naturally. The project draws attention through exploration rather than instruction.
 
@@ -70,7 +70,7 @@ git clone https://github.com/angelvalentino/thread-and-mesh.git
   npm install
   ```
 
-#### Development and Production
+### Development and Production
 
 - For development with vite
   
@@ -93,7 +93,6 @@ git clone https://github.com/angelvalentino/thread-and-mesh.git
 <br>
 
 ## 📁 Further Documentation
-
 
 [Walkthrough Video]() – Short summary with visuals
 

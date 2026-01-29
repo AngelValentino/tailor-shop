@@ -19,11 +19,12 @@
   <canvas class="webgl"></canvas>
   <main>
     <div id="portrait-overlay" class="portrait-overlay">
-      <p class="portrait-overlay__text">Please rotate your screen to start interacting</p>
+      <p class="portrait-overlay__text">For the best initial view, rotate your screen horizontally. After interacting, vertical orientation is preferred.</p>
     </div>
-    <div id="loading-overlay" class="loading-overlay">
+    <div id="loading-overlay" class="loading-overlay" role="alert" aria-busy="true" aria-live="polite" aria-label="Content is loading. Please wait." title="Content is loading. Please wait.">
       <div id="loading-bar" class="loading-bar"></div>
       <div id="dom-loader" class="dom-loader"></div>
+      <p class="lcp-text">Loading content</p>
     </div>
     <div id="info-menu" class="info-menu">
       <div class="info-menu__ui-limits">

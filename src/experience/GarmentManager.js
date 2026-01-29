@@ -4,7 +4,7 @@ import GarmentInfoPanel from "../ui/GarmentInfoPanel.js";
 import GarmentRotationHandler from './GarmentRotationHandler.js';
 
 export default class GarmentManager {
-  constructor(scene, camera, renderer, utils, modalHandler, ) {
+  constructor(scene, camera, renderer, utils, modalHandler) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;

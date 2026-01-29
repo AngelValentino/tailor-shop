@@ -73,6 +73,12 @@ main {
   --contrast-text-color: #fff;
 }
 
+.lcp-text {
+  opacity: 0.01;
+  font-size: 1px;
+  position: absolute;
+}
+
 .skip-link {
   position: absolute;
   translate: 0 -9999px;
@@ -118,6 +124,10 @@ main {
 
 .portrait-overlay.active {
   display: flex;
+}
+
+.portrait-overlay.active ~ .ui-container .toggle-menu-btn {
+  pointer-events: none;
 }
 
 .ui-container {

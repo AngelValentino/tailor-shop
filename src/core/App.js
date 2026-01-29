@@ -19,16 +19,15 @@ export default class App {
   constructor(canvas) {
     this.scene = new THREE.Scene();
     this.time = performance.now();
+    const utils = new Utils;
 
     this.camera = new Camera(this.scene);
     this.renderer = new Renderer(canvas, this.scene, this.camera.instance);
     this.lighting = new Lighting(this.scene);
-    this.assetLoader = new AssetLoader(this.scene, this.camera.instance);
+    this.assetLoader = new AssetLoader(this.scene, this.camera.instance, utils);
 
     // Scene init
-    const utils = new Utils;
     const roomGrid = new RoomGrid(this.scene);
-
     const modalHandler = new ModalHandler();
     modalHandler.setDebug(true);
     const menuHandler = new MenuHandler(modalHandler);
@@ -87,8 +86,8 @@ export default class App {
 
     this.camera.update();
     this.experience.update(delta);
-
     this.renderer.render();
+
     requestAnimationFrame(() => {
       this.#loop();
     });

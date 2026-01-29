@@ -3,9 +3,10 @@ import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { DRACOLoader } from 'three/examples/jsm/Addons.js';
 
 export default class AssetLoader {
-    constructor(scene, camera) {
+    constructor(scene, camera, utils) {
     this.scene = scene;
     this.camera = camera;
+    this.utils = utils;
 
     this.loadingBarLm = document.querySelector('.loading-bar');
     this.loadingOverlayLm = document.getElementById('loading-overlay');
@@ -24,7 +25,6 @@ export default class AssetLoader {
     this.dracoLoader.setDecoderPath('/draco/');
     this.gltfLoader.setDRACOLoader(this.dracoLoader);
 
-    this.assets = {};
     this.progress = 0;
   }
 
@@ -60,6 +60,7 @@ export default class AssetLoader {
           // after the background is fully faded, hide it from the dom 
           setTimeout(() => {
             this.loadingOverlayLm.style.display = 'none';
+            this.loadingOverlayLm.ariaBusy = 'false';
           }, 3000);
       }, 250);
     }, 500);
@@ -84,7 +85,10 @@ export default class AssetLoader {
       this.gltfLoader.load(
         '/models/tailorshop.glb',
         (gltf) => {
-          gltf.scene.traverse((obj) => {
+          const wallLamps = [];
+
+          gltf.scene.traverse(obj => {
+            // Enable shadows and render only front faces
             if (obj.isGroup && (obj.name.startsWith('prop__decor') || obj.name.startsWith('prop__interactive'))) {
                 obj.traverse((mesh) => {
                   if (mesh.isMesh) {
@@ -95,44 +99,44 @@ export default class AssetLoader {
                 });
               }
 
+            // Set up garment hover indicator
+            if (obj.name.startsWith('prop__interactive')) {
+              const indicator = new THREE.Mesh(
+                new THREE.CircleGeometry(0.05, 32),
+                new THREE.MeshBasicMaterial({
+                  color: 0xffffff,
+                  transparent: true,
+                  opacity: 0.6,
+                  depthTest: false
+                })
+              );
 
-              if (obj.name.startsWith('prop__interactive')) {
-                const indicator = new THREE.Mesh(
-                  new THREE.CircleGeometry(0.05, 32),
-                  new THREE.MeshBasicMaterial({
-                    color: 0xffffff,
-                    transparent: true,
-                    opacity: 0.6,
-                    depthTest: false
-                  })
-                );
+              const box = new THREE.Box3().setFromObject(obj);
+              const center = new THREE.Vector3();
+              box.getCenter(center);
 
-                const box = new THREE.Box3().setFromObject(obj);
-                const center = new THREE.Vector3();
-                box.getCenter(center);
+              obj.worldToLocal(center);
 
-                obj.worldToLocal(center);
+              obj.add(indicator);
+              indicator.position.copy(center);
+              indicator.lookAt(this.camera.position);
+              obj.userData.indicator = indicator;
+            }
 
-                obj.add(indicator);
-                indicator.position.copy(center);
-                indicator.lookAt(this.camera.position);
-                obj.userData.indicator = indicator;
-              }
+            // Enable shadows and render only front faces
+            if (obj.name === 'room__main__atelier') {
+                obj.traverse((mesh) => {
+                if (mesh.isMesh) {
+                  mesh.receiveShadow = true;
+                  mesh.material.side = THREE.FrontSide;
+                }
+              });
+            }
 
-              if (obj.name === 'room__main__atelier') {
-                  obj.traverse((mesh) => {
-                  if (mesh.isMesh) {
-                    mesh.receiveShadow = true;
-                    mesh.material.side = THREE.FrontSide;
-                  }
-                });
-              }
-
+            // Create directional light
             if (obj.name === 'light__window__area-light') {
               const dirLight = new THREE.DirectionalLight(0xffffff, 1);
               dirLight.position.copy(obj.position);
-              
-              dirLight.target.position.set(0, 0, 0);
               dirLight.castShadow = true;
 
               const shadowCam = dirLight.shadow.camera;
@@ -142,14 +146,14 @@ export default class AssetLoader {
               shadowCam.bottom = -2;
               shadowCam.near = 0.5;
               shadowCam.far = 8;
-
+              
               dirLight.shadow.mapSize.width = 1024;
               dirLight.shadow.mapSize.height = 1024;
 
               this.scene.add(dirLight);
-              this.scene.add(dirLight.target);
             }
 
+            // Set up lighting
             if (obj.isLight) {
               const blenderToThreeScale = 1000;
               const lightIntensity = obj.intensity / blenderToThreeScale;
@@ -159,20 +163,34 @@ export default class AssetLoader {
               if (obj.name === 'light__ceiling__point-light') {
                 obj.intensity = lightIntensity * 1.8;
                 obj.castShadow = true;
-                obj.shadow.mapSize.width = 1024;
-                obj.shadow.mapSize.height = 1024;
+                
                 obj.shadow.camera.near = 0.5;
                 obj.shadow.camera.far = 10;
+                obj.shadow.mapSize.width = 1024;
+                obj.shadow.mapSize.height = 1024;
               }
 
               if (regex.test(obj.name)) {
                 obj.intensity = lightIntensity * 0.2;
+                // Store wall lamps references for later removal on mobile
+                if (this.utils.isTouchBasedDevice()) {
+                  wallLamps.push(obj);
+                };
               }
             }
           });
 
+          // Remove wall lamps for mobile devices to improve performance
+          if (this.utils.isTouchBasedDevice()) {
+            wallLamps.forEach(light => {
+              if (light.parent) {
+                light.parent.remove(light);
+              }
+            });
+            wallLamps.length = 0;
+          }
+
           this.scene.add(gltf.scene);
-          this.assets.tailorShop = gltf.scene;
           resolve(gltf);
         },
         undefined,

@@ -16,13 +16,11 @@ export default class Renderer {
   }
 
   freezeShadows() {
-    console.warn('shadows frozen')
     this.instance.shadowMap.autoUpdate = false;
     this.instance.shadowMap.needsUpdate = true;
   }
 
   unfreezeShadows() {
-    console.warn('shadows unfrozen')
     this.instance.shadowMap.autoUpdate = true;
   }
 

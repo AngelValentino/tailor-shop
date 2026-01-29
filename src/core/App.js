@@ -29,7 +29,6 @@ export default class App {
     // Scene init
     const roomGrid = new RoomGrid(this.scene);
     const modalHandler = new ModalHandler();
-    modalHandler.setDebug(true);
     const menuHandler = new MenuHandler(modalHandler);
     new AppInfoMenu(menuHandler);
 
